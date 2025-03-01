@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Project</string>
+    <string name="focus_text"><font color="#FFFFFF">Tập trung</font> <font color="#888888">&gt;</font></string>
 </resources>
+

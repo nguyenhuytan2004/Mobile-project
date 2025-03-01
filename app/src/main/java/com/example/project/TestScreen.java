@@ -7,6 +7,6 @@ public class TestScreen extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.note);
+        setContentView(R.layout.focus);
     }
 }
