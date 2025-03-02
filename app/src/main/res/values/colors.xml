@@ -16,4 +16,6 @@
     <color name="lime">#FF00FF00</color>
     <color name="magenta">#FFFF00FF</color>
     <color name="lavender">#FFE6E6FA</color>
+    <color name="statistics_blue">#4772fb</color>
+
 </resources>
