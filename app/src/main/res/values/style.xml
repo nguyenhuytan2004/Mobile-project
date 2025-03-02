@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="CalendarWhiteTextStyle">
+        <item name="android:textColor">#FFFFFF</item> <!-- Màu trắng -->
+    </style>
+    <style name="CalendarGrayTextStyle">
+        <item name="android:textColor">#808080</item> <!-- Màu trắng -->
+    </style>
+</resources>
