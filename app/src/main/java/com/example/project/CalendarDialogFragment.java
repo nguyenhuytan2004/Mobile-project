@@ -42,7 +42,9 @@ public class CalendarDialogFragment extends DialogFragment {
 
         // Xử lý sự kiện chọn ngày
         calendarView.setOnDateChangeListener((view1, year, month, dayOfMonth) -> {
-            String selectedDate = String.format(Locale.getDefault(), "Ngày %d, tháng %d", dayOfMonth, month + 1);
+            // Định dạng thành "dd/MM/yyyy"
+            String selectedDate = String.format(Locale.getDefault(), "%02d/%02d/%d", dayOfMonth, month + 1, year);
+
             if (listener != null) {
                 listener.onDateSelected(selectedDate);
             }
