@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000">
+
+    <!-- Avatar và tên người dùng -->
+    <ImageView
+        tools:srcCompat="@tools:sample/avatars"
+        android:id="@+id/avatar"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="32dp"/>
+
+    <TextView
+        android:id="@+id/username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nguyễn Ngọc Giang"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/avatar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"/>
+
+    <!-- Nút "Upgrade to Premium" -->
+    <Button
+        android:id="@+id/btn_upgrade"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="Upgrade to Premium"
+        android:textColor="#FFFFFF"
+        app:layout_constraintTop_toBottomOf="@id/username"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginHorizontal="16dp"/>
+
+    <!-- My Badge -->
+    <TextView
+        android:id="@+id/tv_badge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="My Badge"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/btn_upgrade"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_margin="16dp"/>
+
+    <LinearLayout
+        android:id="@+id/badge_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/tv_badge"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="16dp">
+
+        <ImageView
+            android:id="@+id/imageView17"
+            android:layout_weight="1"
+            app:srcCompat="@android:drawable/btn_star_big_on"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="8dp"/>
+
+        <ImageView
+            android:id="@+id/imageView18"
+            android:layout_weight="1"
+            app:srcCompat="@android:drawable/btn_star_big_on"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="8dp"/>
+
+        <ImageView
+            android:id="@+id/imageView19"
+            android:layout_weight="1"
+            app:srcCompat="@android:drawable/btn_star_big_on"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="8dp"/>/>
+    </LinearLayout>
+
+    <!-- My Achievement Score -->
+    <TextView
+        android:id="@+id/tv_achievement"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="My Achievement Score"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/badge_container"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_margin="16dp"/>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/achievement_card"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="8dp"
+        app:cardBackgroundColor="#121212"
+        app:cardCornerRadius="8dp"
+        app:layout_constraintTop_toBottomOf="@id/tv_achievement"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"/>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Task Statistics -->
+    <TextView
+        android:id="@+id/tv_task_statistics"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Task Statistics"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/achievement_card"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_margin="16dp"/>
+
+    <androidx.cardview.widget.CardView
+        android:layout_marginTop="8dp"
+        android:id="@+id/task_card"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:layout_marginHorizontal="16dp"
+        app:cardBackgroundColor="#121212"
+        app:cardCornerRadius="8dp"
+        app:layout_constraintTop_toBottomOf="@id/tv_task_statistics"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"/>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Focus Statistics -->
+    <TextView
+        android:id="@+id/tv_focus_statistics"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Focus Statistics"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/task_card"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_margin="16dp"/>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/focus_card"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="52dp"
+        app:cardBackgroundColor="#121212"
+        app:cardCornerRadius="8dp"
+        app:layout_constraintTop_toBottomOf="@id/tv_focus_statistics"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY" />
+    </androidx.cardview.widget.CardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
