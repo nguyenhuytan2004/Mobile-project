@@ -91,31 +91,32 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:orientation="horizontal"
-        android:layout_marginBottom="5dp"
+        android:layout_marginBottom="20dp"
         android:gravity="center">
 
         <ImageView
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:src="@drawable/icon1"
-            android:layout_marginEnd="25dp"/>
+            android:layout_weight="1"/>
 
         <ImageView
             android:layout_width="25dp"
             android:layout_height="25dp"
-            android:src="@drawable/icon2"
-            android:layout_marginEnd="25dp" />
+            android:layout_weight="1"
+            android:src="@drawable/icon2" />
 
         <ImageView
             android:layout_width="25dp"
             android:layout_height="25dp"
-            android:src="@drawable/icon3"
-            android:layout_marginEnd="25dp" />
+            android:layout_weight="1"
+            android:src="@drawable/icon3" />
 
         <ImageView
             android:id="@+id/icon4"
             android:layout_width="25dp"
             android:layout_height="25dp"
+            android:layout_weight="1"
             android:src="@drawable/icon4" />
     </LinearLayout>
 </LinearLayout>

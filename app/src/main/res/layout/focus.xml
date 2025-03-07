@@ -152,14 +152,33 @@
             android:layout_weight="1" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/add_focus_note"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Thêm ghi chú tập trung"
-        android:textColor="#888888"
-        android:textSize="18sp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="20dp" />
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        android:layout_marginBottom="20dp"
+        android:gravity="center"
+        android:layout_alignParentBottom="true">
+
+        <ImageView
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/main_icon_1"
+            android:layout_weight="1"
+            />
+
+        <ImageView
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/main_icon_2"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/main_icon_3_blue"
+            android:layout_weight="1" />
+    </LinearLayout>
+
 </RelativeLayout>
