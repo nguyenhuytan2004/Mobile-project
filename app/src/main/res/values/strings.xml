@@ -1,5 +1,12 @@
 <resources>
     <string name="app_name">Project</string>
     <string name="focus_text"><font color="#FFFFFF">Tập trung</font> <font color="#888888">&gt;</font></string>
+    <string-array name="priority_levels">
+        <item>1 - Quan trọng và Khẩn cấp</item>
+        <item>2 - Quan trọng nhưng Không khẩn cấp</item>
+        <item>3 - Không quan trọng nhưng Khẩn cấp</item>
+        <item>4 - Không quan trọng và Không khẩn cấp</item>
+    </string-array>
+
 </resources>
 
