@@ -1,5 +1,6 @@
 package com.example.project;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -12,6 +13,7 @@ import java.util.HashMap;
 public class Matrix_Eisenhower extends AppCompatActivity {
 
     private FloatingActionButton addButton;
+    private LinearLayout navigateTo;
     private HashMap<Integer, LinearLayout> priorityMap;
     private ArrayList<Task> taskList;
 
@@ -29,6 +31,17 @@ public class Matrix_Eisenhower extends AppCompatActivity {
 
         // Khởi tạo danh sách task
         taskList = new ArrayList<>();
+
+        // Chuyển hướng đến trang đơn
+        navigateTo = findViewById(R.id.priority_1);
+        navigateTo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Matrix_Eisenhower.this, SingleMatrix.class);
+                startActivity(intent);
+            }
+        });
+
 
         // Nút thêm task
         addButton = findViewById(R.id.addButton);
