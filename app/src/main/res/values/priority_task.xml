@@ -1,0 +1,8 @@
+<resources>
+    <string-array name="priority_array">
+        <item>Khẩn cấp và quan trọng</item>
+        <item>Không gấp mà quan trọng</item>
+        <item>Khẩn cấp nhưng không quan trọng</item>
+        <item>Không cấp bách và không quan trọng</item>
+    </string-array>
+</resources>
