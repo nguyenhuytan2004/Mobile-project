@@ -1,7 +1,9 @@
 package com.example.project;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -13,6 +15,7 @@ import java.time.format.DateTimeFormatter;
 public class NoteActivity extends AppCompatActivity {
     ImageView icon4;
     TextView txtDate;
+    TextView btnBack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,8 +24,9 @@ public class NoteActivity extends AppCompatActivity {
 
         txtDate = findViewById(R.id.txtDate);
         icon4 = findViewById(R.id.icon4);
+        btnBack = findViewById(R.id.textView);
 
-        icon4.setOnClickListener(v -> {
+        icon4.setOnClickListener(view -> {
             CalendarDialogFragment dialog = new CalendarDialogFragment();
             dialog.setOnDateSelectedListener(date -> {
                 txtDate.setText(date);
@@ -43,6 +47,10 @@ public class NoteActivity extends AppCompatActivity {
                 }
             });
             dialog.show(getSupportFragmentManager(), "CalendarDialog");
+        });
+        btnBack.setOnClickListener(view -> {
+            Intent intent = new Intent(NoteActivity.this, MainActivity.class);
+            startActivity(intent);
         });
     }
 }

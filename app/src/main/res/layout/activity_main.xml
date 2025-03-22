@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#121212"
+    android:background="@color/black"
     tools:context=".MainActivity">
 
     <!-- Header -->
@@ -100,12 +100,14 @@
                 />
 
             <ImageView
+                android:id="@+id/calendarTab"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:layout_weight="1"
                 android:src="@drawable/main_icon_2" />
 
             <ImageView
+                android:id="@+id/focusTab"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:src="@drawable/main_icon_3"
@@ -137,36 +139,36 @@
         android:padding="16dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <!-- EditText for Task Name -->
         <EditText
             android:id="@+id/et_task_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
             android:hint="Bạn thích làm gì?"
+            android:padding="12dp"
             android:textColor="#FFFFFF"
             android:textColorHint="#AAAAAA"
-            android:padding="12dp"
-            android:layout_marginBottom="8dp"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <!-- EditText for Task Description -->
         <EditText
             android:id="@+id/et_task_description"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
             android:hint="Thêm mô tả công việc"
+            android:padding="12dp"
             android:textColor="#FFFFFF"
             android:textColorHint="#AAAAAA"
-            android:padding="12dp"
-            android:layout_marginBottom="8dp"
-            app:layout_constraintTop_toBottomOf="@id/et_task_name"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/et_task_name" />
 
         <!-- Button to Add Task -->
         <Button
@@ -176,8 +178,8 @@
             android:backgroundTint="#FFA500"
             android:text="Thêm"
             android:textColor="#FFFFFF"
-            app:layout_constraintTop_toBottomOf="@id/et_task_description"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/et_task_description" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

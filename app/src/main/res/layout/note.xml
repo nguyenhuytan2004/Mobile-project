@@ -13,11 +13,12 @@
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginLeft="25dp"
+            android:layout_marginLeft="15dp"
             android:gravity="center"
             android:text="&lt;"
             android:textColor="#FFFFFF"
-            android:textSize="30sp" />
+            android:textSize="30sp"
+            android:paddingHorizontal="10dp"/>
 
         <View
             android:layout_width="0dp"
