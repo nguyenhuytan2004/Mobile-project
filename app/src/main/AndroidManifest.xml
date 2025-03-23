@@ -25,6 +25,7 @@
         <activity android:name=".NoteActivity"/>
         <activity android:name=".CalendarTab"/>
         <activity android:name=".FocusTab"/>
+        <activity android:name=".WhiteNoise"/>
     </application>
 
 </manifest>

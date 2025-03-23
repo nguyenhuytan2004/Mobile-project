@@ -1,186 +1,336 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000000">
 
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/front"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_marginTop="20dp"
-        android:paddingHorizontal="20dp">
+        android:layout_height="match_parent"
+        android:visibility="visible">
 
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/down_arrow_icon"
-            android:tint="#D3D3D3" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="20dp"
+            android:paddingHorizontal="20dp">
 
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Pomodoro"
+                android:textColor="@color/white"
+                android:textSize="30sp"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:paddingStart="25dp"
+                />
 
-        <ImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:src="@drawable/sun_icon"
-            android:tint="#D3D3D3" />
+            <TextView
+                android:id="@+id/textView53"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:text="⋮"
+                android:textColor="#FFFFFF"
+                android:textSize="30sp"
+                android:paddingHorizontal="10dp"
+                android:paddingBottom="6dp"/>
+        </LinearLayout>
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/focus_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:text="⋮"
             android:textColor="#FFFFFF"
-            android:textSize="30sp"
-            android:paddingLeft="40dp"
-            android:paddingBottom="6dp"/>
-    </LinearLayout>
+            android:textSize="20sp"
+            android:layout_centerHorizontal="true"
+            android:layout_above="@id/countdown_timer"
+            android:layout_marginBottom="150dp"
+            android:text="@string/focus_text" />
 
-    <TextView
-        android:id="@+id/focus_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="#FFFFFF"
-        android:textSize="20sp"
-        android:layout_centerHorizontal="true"
-        android:layout_above="@id/countdown_timer"
-        android:layout_marginBottom="100dp"
-        android:text="@string/focus_text" />
+        <ProgressBar
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:indeterminate="false"
+            android:max="100"
+            android:progress="0"
+            android:progressDrawable="@drawable/circle_progress_in_focus_tab"
+            android:layout_centerInParent="true"
+            style="?android:attr/progressBarStyleHorizontal"/>
 
-
-    <!-- Countdown Timer -->
-    <TextView
-        android:id="@+id/countdown_timer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="05:00"
-        android:textColor="#FFFFFF"
-        android:textSize="50sp"
-        android:layout_centerInParent="true" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/countdown_timer"
-        android:layout_marginTop="100dp"
-        android:gravity="center">
-
-        <View
-            android:id="@+id/view"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
+        <TextView
+            android:id="@+id/countdown_timer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="05:00"
+            android:textColor="#FFFFFF"
+            android:textSize="50sp"
+            android:layout_centerInParent="true" />
 
         <LinearLayout
-            android:id="@+id/white_noise_button"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/countdown_timer"
+            android:layout_marginTop="150dp"
+            android:gravity="center">
+
+            <View
+                android:id="@+id/view"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="2" />
+
+            <Button
+                android:id="@+id/btnStart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bắt đầu"
+                android:backgroundTint="@color/blue"
+                android:layout_weight="1"
+                android:paddingVertical="15dp"
+                />
+
+            <View
+                android:id="@+id/view2"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="2" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal"
+            android:layout_marginBottom="20dp"
             android:gravity="center"
-            android:orientation="vertical"
-            android:layout_marginTop="5dp">
+            android:layout_alignParentBottom="true">
 
             <ImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/music_icon"
+                android:id="@+id/homeTab"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:src="@drawable/main_icon_1"
+                android:layout_weight="1"
+                />
+
+            <ImageView
+                android:id="@+id/calendarTab"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:src="@drawable/main_icon_2"
+                android:layout_weight="1" />
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:src="@drawable/main_icon_3_blue"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/behind"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="20dp"
+            android:paddingHorizontal="20dp">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/down_arrow_icon"
+                android:tint="#D3D3D3" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/sun_icon"
                 android:tint="#D3D3D3" />
 
             <TextView
+                android:id="@+id/textView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="White Noise"
-                android:textColor="#888888" />
+                android:gravity="center_vertical"
+                android:text="⋮"
+                android:textColor="#FFFFFF"
+                android:textSize="30sp"
+                android:paddingLeft="40dp"
+                android:paddingBottom="6dp"/>
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/focus_text2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:layout_centerHorizontal="true"
+            android:layout_above="@id/countdown_timer2"
+            android:layout_marginBottom="150dp"
+            android:text="@string/focus_text" />
+
+        <ProgressBar
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:indeterminate="false"
+            android:max="100"
+            android:progress="1"
+            android:progressDrawable="@drawable/circle_progress_in_focus_tab"
+            android:layout_centerInParent="true"
+            style="?android:attr/progressBarStyleHorizontal"/>
+
+        <TextView
+            android:id="@+id/countdown_timer2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="05:00"
+            android:textColor="#FFFFFF"
+            android:textSize="50sp"
+            android:layout_centerInParent="true" />
 
         <LinearLayout
-            android:id="@+id/pause_button"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="horizontal"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/countdown_timer2"
+            android:layout_marginTop="150dp"
+            android:gravity="center">
 
-            <ImageView
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:src="@drawable/play_icon"/>
+            <View
+                android:id="@+id/view"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Pause"
-                android:textColor="#888888" />
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:layout_marginTop="5dp">
+
+                <ImageView
+                    android:id="@+id/white_noise_button"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/music_icon"
+                    android:tint="#D3D3D3" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="White Noise"
+                    android:textColor="#888888" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/pauseLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/pause_button"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:src="@drawable/pause_icon"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Pause"
+                    android:textColor="#888888" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/playLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/play_button"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:src="@drawable/play_icon"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Continue"
+                    android:textColor="#888888" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:layout_marginTop="5dp">
+
+                <ImageView
+                    android:id="@+id/end_button"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/stop_icon"
+                    android:tint="#D3D3D3" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="End"
+                    android:textColor="#888888" />
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/view2"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/end_button"
-            android:layout_width="0dp"
+        <TextView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="20dp"
             android:gravity="center"
-            android:orientation="vertical"
-            android:layout_marginTop="5dp">
+            android:text="Thêm ghi chú tập trung"
+            android:textSize="20sp"
+            android:textColor="@color/gray"
+            android:layout_alignParentBottom="true"/>
 
-            <ImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/stop_icon"
-                android:tint="#D3D3D3" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="End"
-                android:textColor="#888888" />
-
-        </LinearLayout>
-
-        <View
-            android:id="@+id/view2"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:orientation="horizontal"
-        android:layout_marginBottom="20dp"
-        android:gravity="center"
-        android:layout_alignParentBottom="true">
-
-        <ImageView
-            android:id="@+id/homeTab"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:src="@drawable/main_icon_1"
-            android:layout_weight="1"
-            />
-
-        <ImageView
-            android:id="@+id/calendarTab"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:src="@drawable/main_icon_2"
-            android:layout_weight="1" />
-
-        <ImageView
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:src="@drawable/main_icon_3_blue"
-            android:layout_weight="1" />
-    </LinearLayout>
+    </RelativeLayout>
 
 </RelativeLayout>

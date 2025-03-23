@@ -20,8 +20,9 @@
             android:layout_height="wrap_content"
             android:text="&lt;"
             android:textColor="#CCE9E9E8"
-            android:textSize="40sp"
+            android:textSize="35sp"
             android:paddingBottom="3dp"
+            android:paddingHorizontal="10dp"
             android:layout_marginRight="30dp"/>
 
         <TextView
