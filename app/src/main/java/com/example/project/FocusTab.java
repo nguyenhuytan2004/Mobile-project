@@ -1,5 +1,6 @@
 package com.example.project;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.SeekBar;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,7 +23,7 @@ public class FocusTab extends AppCompatActivity {
     Button btnStart;
     ImageView btnEnd, btnPause, btnPlay, btnWhiteNoise;
     LinearLayout pauseLayout, playLayout;
-    TextView btnOption;
+    TextView btnOption, focusNotes, focusTime;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -44,6 +46,8 @@ public class FocusTab extends AppCompatActivity {
         pauseLayout = findViewById(R.id.pauseLayout);
         playLayout = findViewById(R.id.playLayout);
 
+        focusNotes = findViewById(R.id.textView54);
+        focusTime = findViewById(R.id.countdown_timer);
 
         homeTab.setOnClickListener(view -> {
             startActivity(new Intent(FocusTab.this, MainActivity.class));
@@ -91,6 +95,71 @@ public class FocusTab extends AppCompatActivity {
                 Toast.makeText(FocusTab.this, "Thêm bản ghi chuyên tâm", Toast.LENGTH_SHORT).show();
                 popupWindow.dismiss();
             });
+        });
+
+        focusNotes.setOnClickListener(v -> {
+            View focusNotesView = getLayoutInflater().inflate(R.layout.add_focus_notes, null);
+            AlertDialog.Builder builder = new AlertDialog.Builder(FocusTab.this);
+            builder.setView(focusNotesView);
+
+            Button button2 = focusNotesView.findViewById(R.id.button2);
+            Button button3 = focusNotesView.findViewById(R.id.button3);
+
+            AlertDialog dialog = builder.create();
+
+            button2.setOnClickListener(v2 -> {
+                dialog.dismiss();
+            });
+
+            button3.setOnClickListener(v2 -> {
+                dialog.dismiss();
+            });
+
+            dialog.show();
+        });
+
+        focusTime.setOnClickListener(v -> {
+            View focusTimeView = getLayoutInflater().inflate(R.layout.change_focus_time, null);
+            AlertDialog.Builder builder = new AlertDialog.Builder(FocusTab.this);
+            builder.setView(focusTimeView);
+
+            SeekBar seekBar = focusTimeView.findViewById(R.id.seekBar);
+            TextView pomoTime = focusTimeView.findViewById(R.id.pomoTime);
+            seekBar.setProgress(Integer.parseInt(focusTime.getText().toString().substring(0, 2)) - 5);
+            pomoTime.setText(String.valueOf(seekBar.getProgress() + 5));
+
+            seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    int value = progress + 5;
+                    pomoTime.setText(String.valueOf(value));
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+                }
+            });
+
+            Button btnCancel = focusTimeView.findViewById(R.id.button2);
+            Button btnSave = focusTimeView.findViewById(R.id.button3);
+
+            AlertDialog dialog = builder.create();
+
+            btnCancel.setOnClickListener(v2 -> {
+                dialog.dismiss();
+            });
+
+            btnSave.setOnClickListener(v2 -> {
+                int newTime = seekBar.getProgress() + 5;
+                focusTime.setText(String.format("%02d:00", newTime));
+                dialog.dismiss();
+            });
+
+            dialog.show();
         });
     }
 }
