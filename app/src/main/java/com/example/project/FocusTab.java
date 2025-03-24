@@ -1,29 +1,46 @@
 package com.example.project;
 
 import android.app.AlertDialog;
+
 import android.content.Intent;
+
 import android.os.Bundle;
+import android.os.CountDownTimer;
+
 import android.view.LayoutInflater;
 import android.view.View;
+
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.SeekBar;
 
 import androidx.annotation.Nullable;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 public class FocusTab extends AppCompatActivity {
+
+    // Variable from layout
     ImageView homeTab, calendarTab;
     RelativeLayout front, behind;
     Button btnStart;
     ImageView btnEnd, btnPause, btnPlay, btnWhiteNoise;
     LinearLayout pauseLayout, playLayout;
-    TextView btnOption, focusNotes, focusTime;
+    TextView btnOption, focusNotes, focusTime, focusTime2, pomoTime;
+    ProgressBar progressBar2;
+
+    // Self-made variable
+    private CountDownTimer countDownTimer;
+    private long timeLeftInMillis;
+    private boolean isPaused = false;
+    private String focusNotesText = "";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -48,6 +65,9 @@ public class FocusTab extends AppCompatActivity {
 
         focusNotes = findViewById(R.id.textView54);
         focusTime = findViewById(R.id.countdown_timer);
+        focusTime2 = findViewById(R.id.countdown_timer2);
+
+        progressBar2 = findViewById(R.id.progressBar2);
 
         homeTab.setOnClickListener(view -> {
             startActivity(new Intent(FocusTab.this, MainActivity.class));
@@ -60,19 +80,47 @@ public class FocusTab extends AppCompatActivity {
         btnStart.setOnClickListener(view -> {
             front.setVisibility(View.GONE);
             behind.setVisibility(View.VISIBLE);
+
+            if (pauseLayout.getVisibility() == View.GONE) {
+                pauseLayout.setVisibility(View.VISIBLE);
+                playLayout.setVisibility(View.GONE);
+            }
+
+            int totalSecond = Integer.parseInt(focusTime.getText().toString().substring(0, 2)) * 60;
+            timeLeftInMillis = totalSecond * 1000;
+
+            progressBar2.setMax(totalSecond);
+            progressBar2.setProgress(0);
+
+            startTimer();
         });
 
         btnEnd.setOnClickListener(view -> {
+            if (countDownTimer != null) {
+                countDownTimer.cancel();
+                countDownTimer = null;
+            }
+
             front.setVisibility(View.VISIBLE);
             behind.setVisibility(View.GONE);
         });
 
         btnPause.setOnClickListener(view -> {
+            if (countDownTimer != null) {
+                countDownTimer.cancel();
+                isPaused = true;
+            }
+
             pauseLayout.setVisibility(View.GONE);
             playLayout.setVisibility(View.VISIBLE);
         });
 
         btnPlay.setOnClickListener(view -> {
+            if (isPaused) {
+                startTimer();
+                isPaused = false;
+            }
+
             pauseLayout.setVisibility(View.VISIBLE);
             playLayout.setVisibility(View.GONE);
         });
@@ -102,6 +150,11 @@ public class FocusTab extends AppCompatActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(FocusTab.this);
             builder.setView(focusNotesView);
 
+            EditText editText = focusNotesView.findViewById(R.id.addNoteEditText);
+            if (!focusNotesText.isEmpty()) {
+                editText.setText(focusNotesText);
+            }
+
             Button button2 = focusNotesView.findViewById(R.id.button2);
             Button button3 = focusNotesView.findViewById(R.id.button3);
 
@@ -112,6 +165,7 @@ public class FocusTab extends AppCompatActivity {
             });
 
             button3.setOnClickListener(v2 -> {
+                focusNotesText = editText.getText().toString();
                 dialog.dismiss();
             });
 
@@ -124,7 +178,7 @@ public class FocusTab extends AppCompatActivity {
             builder.setView(focusTimeView);
 
             SeekBar seekBar = focusTimeView.findViewById(R.id.seekBar);
-            TextView pomoTime = focusTimeView.findViewById(R.id.pomoTime);
+            pomoTime = focusTimeView.findViewById(R.id.pomoTime);
             seekBar.setProgress(Integer.parseInt(focusTime.getText().toString().substring(0, 2)) - 5);
             pomoTime.setText(String.valueOf(seekBar.getProgress() + 5));
 
@@ -161,5 +215,20 @@ public class FocusTab extends AppCompatActivity {
 
             dialog.show();
         });
+    }
+
+    private void startTimer() {
+        countDownTimer = new CountDownTimer(timeLeftInMillis, 1000) {
+            public void onTick(long millisUntilFinished) {
+                timeLeftInMillis = millisUntilFinished;
+                int secondsLeft = (int) (millisUntilFinished / 1000);
+                focusTime2.setText(String.format("%02d:%02d", secondsLeft / 60, secondsLeft % 60));
+                progressBar2.setProgress(progressBar2.getMax() - secondsLeft);
+            }
+
+            public void onFinish() {
+                btnEnd.performClick();
+            }
+        }.start();
     }
 }
