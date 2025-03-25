@@ -71,7 +71,10 @@
             android:hint="Tiêu đề"
             android:textColor="#FFFFFF"
             android:textColorHint="#888888"
-            android:textSize="30sp" />
+            android:textSize="30sp"
+            android:background="@color/black"
+            android:layout_marginBottom="16dp"
+            android:inputType="textMultiLine"/>
 
         <EditText
             android:layout_width="wrap_content"
@@ -79,13 +82,30 @@
             android:hint="Nội dung"
             android:textColor="#FFFFFF"
             android:textColorHint="#888888"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:background="@color/black"/>
     </LinearLayout>
 
-    <View
-        android:layout_width="0dp"
+    <com.google.android.flexbox.FlexboxLayout
+        xmlns:flexbox="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/attachmentContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        flexbox:flexWrap="wrap"
+        flexbox:justifyContent="flex_start"
+        android:padding="30dp">
+    </com.google.android.flexbox.FlexboxLayout>
+
+    <com.google.android.flexbox.FlexboxLayout
+        xmlns:flexbox="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/tagContainer"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        flexbox:flexWrap="wrap"
+        flexbox:justifyContent="flex_start"
+        android:padding="30dp"
+        android:layout_weight="1">
+    </com.google.android.flexbox.FlexboxLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -96,6 +116,7 @@
         android:gravity="center">
 
         <ImageView
+            android:id="@+id/cardIcon"
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:src="@drawable/icon1"
@@ -108,6 +129,7 @@
             android:src="@drawable/icon2" />
 
         <ImageView
+            android:id="@+id/imageIcon"
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:layout_weight="1"
