@@ -13,7 +13,7 @@
         android:theme="@style/Theme.Project"
         tools:targetApi="31">
         <activity
-            android:name=".Matrix_Eisenhower"
+            android:name=".HabitActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,6 +26,8 @@
         <activity android:name=".CalendarTab"/>
         <activity android:name=".FocusTab"/>
         <activity android:name=".WhiteNoise"/>
+        <activity android:name=".NewHabitActivity" />
+        <activity android:name=".NewHabitAimActivity" />
     </application>
 
 </manifest>
