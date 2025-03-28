@@ -53,16 +53,12 @@ public class MainActivity extends AppCompatActivity {
         rvTaskList.setAdapter(taskAdapter);
 
         // Sự kiện khi nhấn Floating Action Button (FAB)
-        fabAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                // Hiển thị form nhập công việc
-//                taskInputLayout.setVisibility(View.VISIBLE);
-//                fabAdd.setVisibility(View.GONE); // Ẩn FAB khi form nhập công việc hiển thị
-
-                Intent intent = new Intent(MainActivity.this, NoteActivity.class);
-                startActivity(intent);
-            }
+        fabAdd.setOnClickListener(v -> {
+            AddTaskDialog dialog = new AddTaskDialog(newTask -> {
+                taskList.add(newTask);
+                taskAdapter.notifyDataSetChanged();
+            });
+            dialog.show(getSupportFragmentManager(), "AddTaskDialog");
         });
 
         focusTab.setOnClickListener(new View.OnClickListener() {

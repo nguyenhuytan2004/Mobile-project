@@ -26,6 +26,8 @@
         <activity android:name=".CalendarTab"/>
         <activity android:name=".FocusTab"/>
         <activity android:name=".WhiteNoise"/>
+        <activity android:name=".NewHabitActivity" />
+        <activity android:name=".NewHabitAimActivity" />
     </application>
 
 </manifest>
