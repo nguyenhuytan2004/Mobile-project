@@ -35,7 +35,7 @@ public class AddTaskDialog extends BottomSheetDialogFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.dialog_add_task, container, false);
+        View view = inflater.inflate(R.layout.bottom_popup_add_task, container, false);
 
         etTaskName = view.findViewById(R.id.et_task_name);
         etTaskDescription = view.findViewById(R.id.et_task_description);

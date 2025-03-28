@@ -13,7 +13,6 @@ import java.util.HashMap;
 public class Matrix_Eisenhower extends AppCompatActivity {
 
     private FloatingActionButton addButton;
-    private LinearLayout navigateTo;
     private HashMap<Integer, LinearLayout> priorityMap;
     private ArrayList<Task> taskList;
 
@@ -32,16 +31,8 @@ public class Matrix_Eisenhower extends AppCompatActivity {
         // Khởi tạo danh sách task
         taskList = new ArrayList<>();
 
-        // Chuyển hướng đến trang đơn
-        navigateTo = findViewById(R.id.priority_1);
-        navigateTo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Matrix_Eisenhower.this, SingleMatrix.class);
-                startActivity(intent);
-            }
-        });
-
+        // Set up click listeners for all priority quadrants
+        setupPriorityClickListeners();
 
         // Nút thêm task
         addButton = findViewById(R.id.addButton);
@@ -52,10 +43,34 @@ public class Matrix_Eisenhower extends AppCompatActivity {
                     @Override
                     public void onTaskAdded(Task task) {
                         addTaskToUI(task);
+                        taskList.add(task);  // Add task to the list
                     }
                 });
             }
         });
+    }
+    
+    // Set up click listeners for priority quadrants
+    private void setupPriorityClickListeners() {
+        // For Priority 1: Khẩn cấp và Quan trọng
+        priorityMap.get(1).setOnClickListener(v -> navigateToSingleMatrix(1, "Khẩn cấp và Quan trọng"));
+        
+        // For Priority 2: Không gấp mà quan trọng
+        priorityMap.get(2).setOnClickListener(v -> navigateToSingleMatrix(2, "Không gấp mà quan trọng"));
+        
+        // For Priority 3: Khẩn cấp nhưng không quan trọng
+        priorityMap.get(3).setOnClickListener(v -> navigateToSingleMatrix(3, "Khẩn cấp nhưng không quan trọng"));
+        
+        // For Priority 4: Không cấp bách và không quan trọng
+        priorityMap.get(4).setOnClickListener(v -> navigateToSingleMatrix(4, "Không cấp bách và không quan trọng"));
+    }
+    
+    // Navigate to SingleMatrix activity with the selected priority
+    private void navigateToSingleMatrix(int priority, String title) {
+        Intent intent = new Intent(Matrix_Eisenhower.this, SingleMatrix.class);
+        intent.putExtra("priority", priority);
+        intent.putExtra("title", title);
+        startActivity(intent);
     }
 
     // Hàm thêm task vào UI theo priority

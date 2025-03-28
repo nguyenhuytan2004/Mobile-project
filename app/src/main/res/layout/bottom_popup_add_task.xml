@@ -1,0 +1,84 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#4D4D4D"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/et_task_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Bạn thích làm gì?"
+        android:textColor="@color/white"
+        android:textColorHint="#353535"
+        android:background="@null"
+        android:textSize="18sp" />
+
+    <EditText
+        android:id="@+id/et_task_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Mô tả"
+        android:textColor="@color/white"
+        android:textColorHint="#353535"
+        android:background="@null"
+        android:textSize="16sp" />
+
+    <!-- Row chứa các biểu tượng và nút thêm công việc -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingTop="8dp">
+
+        <ImageView
+            android:id="@+id/btn_date"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_calendar"
+            android:tint="@color/orange"
+            android:layout_marginEnd="12dp" />
+
+        <ImageView
+            android:id="@+id/btn_tag"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_tag"
+            android:tint="@color/white"
+            android:layout_marginEnd="12dp" />
+
+        <ImageView
+            android:id="@+id/btn_attach"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_attach"
+            android:tint="@color/white"
+            android:layout_marginEnd="12dp" />
+
+        <ImageView
+            android:id="@+id/btn_more"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_more"
+            android:tint="@color/white"
+            android:layout_marginEnd="12dp" />
+
+        <!-- Đẩy nút thêm công việc sang phải -->
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <ImageButton
+            android:id="@+id/btn_add_task"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_arrow_up"
+            android:tint="@color/orange"
+            android:background="@null"
+            android:contentDescription="Thêm công việc"/>
+    </LinearLayout>
+
+</LinearLayout>

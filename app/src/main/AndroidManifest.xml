@@ -17,15 +17,17 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        <!-- Các activity khác -->
+        <activity android:name=".SingleMatrix" />
         <activity android:name=".NoteActivity"/>
         <activity android:name=".CalendarTab"/>
         <activity android:name=".FocusTab"/>
         <activity android:name=".WhiteNoise"/>
+        <activity android:name=".NewHabitActivity" />
+        <activity android:name=".NewHabitAimActivity" />
     </application>
 
 </manifest>

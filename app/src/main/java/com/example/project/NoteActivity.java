@@ -44,7 +44,7 @@ public class NoteActivity extends AppCompatActivity {
         attachmentContainer = findViewById(R.id.attachmentContainer);
 
         btnDate.setOnClickListener(view -> {
-            CalendarDialogFragment dialog = new CalendarDialogFragment();
+            SetReminderDialogFragment dialog = new SetReminderDialogFragment();
             dialog.setOnDateSelectedListener(date -> {
                 txtDate.setText(date);
 

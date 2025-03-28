@@ -1,84 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="#4D4D4D"
     android:padding="16dp">
 
-    <EditText
-        android:id="@+id/et_task_name"
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Bạn thích làm gì?"
-        android:textColor="@color/white"
-        android:textColorHint="#353535"
-        android:background="@null"
-        android:textSize="18sp" />
+        android:text="Tên công việc"
+        android:textStyle="bold" />
 
     <EditText
-        android:id="@+id/et_task_description"
+        android:id="@+id/edt_task_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Mô tả"
-        android:textColor="@color/white"
-        android:textColorHint="#353535"
-        android:background="@null"
-        android:textSize="16sp" />
+        android:hint="Nhập tên công việc"
+        android:inputType="text" />
 
-    <!-- Row chứa các biểu tượng và nút thêm công việc -->
-    <LinearLayout
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingTop="8dp">
+        android:layout_marginTop="8dp"
+        android:text="Mô tả"
+        android:textStyle="bold" />
 
-        <ImageView
-            android:id="@+id/btn_date"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_calendar"
-            android:tint="@color/orange"
-            android:layout_marginEnd="12dp" />
+    <EditText
+        android:id="@+id/edt_task_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Nhập mô tả (không bắt buộc)"
+        android:inputType="textMultiLine"
+        android:minLines="2" />
 
-        <ImageView
-            android:id="@+id/btn_tag"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_tag"
-            android:tint="@color/white"
-            android:layout_marginEnd="12dp" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Ưu tiên"
+        android:textStyle="bold" />
 
-        <ImageView
-            android:id="@+id/btn_attach"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_attach"
-            android:tint="@color/white"
-            android:layout_marginEnd="12dp" />
+    <RadioGroup
+        android:id="@+id/rg_priority"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-        <ImageView
-            android:id="@+id/btn_more"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_more"
-            android:tint="@color/white"
-            android:layout_marginEnd="12dp" />
-
-        <!-- Đẩy nút thêm công việc sang phải -->
-        <Space
-            android:layout_width="0dp"
+        <RadioButton
+            android:id="@+id/rb_priority1"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:text="Khẩn cấp và Quan trọng" />
 
-        <ImageButton
-            android:id="@+id/btn_add_task"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/ic_arrow_up"
-            android:tint="@color/orange"
-            android:background="@null"
-            android:contentDescription="Thêm công việc"/>
-    </LinearLayout>
+        <RadioButton
+            android:id="@+id/rb_priority2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Không gấp mà quan trọng" />
 
+        <RadioButton
+            android:id="@+id/rb_priority3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Khẩn cấp nhưng không quan trọng" />
+
+        <RadioButton
+            android:id="@+id/rb_priority4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Không cấp bách và không quan trọng" />
+    </RadioGroup>
 </LinearLayout>
