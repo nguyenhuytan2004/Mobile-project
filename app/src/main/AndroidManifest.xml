@@ -21,6 +21,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".NoteActivity"/>
+        <activity android:name=".CalendarTab"/>
+        <activity android:name=".FocusTab"/>
+        <activity android:name=".WhiteNoise"/>
     </application>
 
 </manifest>

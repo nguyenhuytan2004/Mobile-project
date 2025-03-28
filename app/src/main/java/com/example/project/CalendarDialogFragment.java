@@ -13,16 +13,16 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+
 import java.lang.reflect.Field;
 import java.util.Calendar;
 import java.util.Locale;
 
 public class CalendarDialogFragment extends DialogFragment {
+    private OnDateSelectedListener listener;
     public interface OnDateSelectedListener {
         void onDateSelected(String date);
     }
-
-    private OnDateSelectedListener listener;
 
     public void setOnDateSelectedListener(OnDateSelectedListener listener) {
         this.listener = listener;
