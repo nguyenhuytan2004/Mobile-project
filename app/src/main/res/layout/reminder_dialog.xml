@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/button_custom"
+    android:padding="20dp"
+    >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Lời nhắc"
+        android:textColor="@color/white"
+        android:textSize="25sp"
+        android:fontFamily="sans-serif-black"
+        android:padding="10dp"
+        />
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/time_reminder_text"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:padding="10dp"
+        />
+
+    <TextView
+        android:id="@+id/text1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/time_reminder_text1"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:padding="10dp"
+        />
+
+    <TextView
+        android:id="@+id/text2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/time_reminder_text2"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:padding="10dp"
+        />
+
+    <TextView
+        android:id="@+id/text3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/time_reminder_text3"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:padding="10dp"
+        />
+
+    <TextView
+        android:id="@+id/text4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/time_reminder_text4"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:padding="10dp"
+        />
+
+    <TextView
+        android:id="@+id/text5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/time_reminder_text5"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:padding="10dp"
+        />
+
+    <TextView
+        android:id="@+id/text6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/time_reminder_text6"
+        android:textColor="@color/statistics_blue"
+        android:textSize="20sp"
+        android:padding="10dp"
+        />
+
+    <TextView
+        android:id="@+id/text7"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/time_reminder_text7"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:padding="10dp"
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray"
+        android:layout_marginVertical="10dp"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/textRepeat"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:text="Nhắc nhở liên tục" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switchRepeatReminder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:theme="@style/SwitchTheme" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -46,7 +46,10 @@ public class NoteActivity extends AppCompatActivity {
         btnDate.setOnClickListener(view -> {
             SetReminderDialogFragment dialog = new SetReminderDialogFragment();
             dialog.setOnDateSelectedListener(date -> {
-                txtDate.setText(date);
+                if (date.isEmpty()) {
+                    txtDate.setText("");
+                    return;
+                }
 
                 // Chuyển đổi ngày được chọn thành LocalDate (API 26+)
                 LocalDate selectedDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
