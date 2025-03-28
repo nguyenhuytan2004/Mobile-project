@@ -47,9 +47,9 @@
             android:id="@+id/calendarView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/black"
-            android:dateTextAppearance="@style/CalendarWhiteTextStyle"
-            android:weekDayTextAppearance="@style/CalendarGrayTextStyle"/>
+            android:theme="@style/CustomCalendarView"
+            android:firstDayOfWeek="2"
+            />
 
     </LinearLayout>
 

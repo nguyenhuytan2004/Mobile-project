@@ -1,9 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="CalendarWhiteTextStyle">
-        <item name="android:textColor">#FFFFFF</item> <!-- Màu trắng -->
+    <style name="CustomCalendarView" parent="Theme.AppCompat">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:colorAccent">@color/gray</item>
+        <item name="android:weekDayTextAppearance">@style/CustomCalendarWeekDay</item>
+        <item name="android:dateTextAppearance">@style/CustomCalendarDate</item>
     </style>
-    <style name="CalendarGrayTextStyle">
-        <item name="android:textColor">@color/gray</item> <!-- Màu xám -->
+
+    <style name="CustomCalendarWeekDay" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/gray</item>
+    </style>
+
+    <style name="CustomCalendarDate" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/white</item>
     </style>
 </resources>
