@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tên công việc"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/edt_task_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Nhập tên công việc"
+        android:inputType="text" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Mô tả"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/edt_task_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Nhập mô tả (không bắt buộc)"
+        android:inputType="textMultiLine"
+        android:minLines="2" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Ưu tiên"
+        android:textStyle="bold" />
+
+    <RadioGroup
+        android:id="@+id/rg_priority"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RadioButton
+            android:id="@+id/rb_priority1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Khẩn cấp và Quan trọng" />
+
+        <RadioButton
+            android:id="@+id/rb_priority2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Không gấp mà quan trọng" />
+
+        <RadioButton
+            android:id="@+id/rb_priority3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Khẩn cấp nhưng không quan trọng" />
+
+        <RadioButton
+            android:id="@+id/rb_priority4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Không cấp bách và không quan trọng" />
+    </RadioGroup>
+</LinearLayout>
