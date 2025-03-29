@@ -13,7 +13,7 @@
         android:theme="@style/Theme.Project"
         tools:targetApi="31">
         <activity
-            android:name=".Matrix_Eisenhower"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,7 +21,7 @@
             </intent-filter>
         </activity>
         <!-- Các activity khác -->
-
+        <activity android:name=".Matrix_Eisenhower"/>
         <activity android:name=".SingleMatrix" />
         <activity android:name=".NoteActivity"/>
         <activity android:name=".CalendarTab"/>
