@@ -54,11 +54,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Sự kiện khi nhấn Floating Action Button (FAB)
         fabAdd.setOnClickListener(v -> {
-            AddTaskDialog dialog = new AddTaskDialog(newTask -> {
-                taskList.add(newTask);
-                taskAdapter.notifyDataSetChanged();
-            });
-            dialog.show(getSupportFragmentManager(), "AddTaskDialog");
+            Intent intent = new Intent(MainActivity.this, NoteActivity.class);
+            startActivity(intent);
         });
 
         focusTab.setOnClickListener(new View.OnClickListener() {
