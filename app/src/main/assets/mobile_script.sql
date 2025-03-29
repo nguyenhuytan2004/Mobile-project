@@ -2,15 +2,15 @@
 DROP TABLE IF EXISTS tbl_user;
 CREATE TABLE tbl_user (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT UNIQUE NOT NULL,
-    email TEXT UNIQUE NOT NULL,
-    password_hash TEXT NOT NULL
+    email TEXT NOT NULL,
+    password_hash TEXT NOT NULL,
+    isGoogle INTEGER DEFAULT 0
 );
 
 -- Thêm dữ liệu mẫu vào bảng người dùng
-INSERT INTO tbl_user (username, email, password_hash) VALUES
-('alice', 'alice@example.com', 'hashed_password_123'),
-('bob', 'bob@example.com', 'hashed_password_456');
+INSERT INTO tbl_user (email, password_hash) VALUES
+('alice@example.com', 'hashed_password_123'),
+('bob@example.com', 'hashed_password_456');
 
 -- Tạo bảng ghi chú
 DROP TABLE IF EXISTS tbl_note;
@@ -79,12 +79,13 @@ DROP TABLE IF EXISTS tbl_note_reminder;
 CREATE TABLE tbl_note_reminder (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     note_id INTEGER NOT NULL,
-    reminder_date TEXT NOT NULL,  -- Lưu dưới dạng chuỗi ISO 8601
+    reminder_date DATE NOT NULL,
+    reminder_time TIME NOT NULL,
     remind_before_days INTEGER DEFAULT 0,
     FOREIGN KEY (note_id) REFERENCES tbl_note(id) ON DELETE CASCADE
 );
 
 -- Thêm dữ liệu mẫu vào bảng nhắc nhở
-INSERT INTO tbl_note_reminder (note_id, reminder_date, remind_before_days) VALUES
-(1, '2025-04-01 08:00:00', 1),
-(2, '2025-04-02 10:00:00', 2);
+INSERT INTO tbl_note_reminder (note_id, reminder_date, reminder_time, remind_before_days) VALUES
+(1, '2025-04-01', "09:00:00", 1),
+(2, '2025-04-02', "08:00:00", 2);

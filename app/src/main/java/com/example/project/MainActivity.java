@@ -2,6 +2,7 @@ package com.example.project;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,10 +32,23 @@ public class MainActivity extends AppCompatActivity {
     ImageView focusTab;
     ImageView calendarTab;
 
+    // Quản lý phiên đăng nhập
+    private LoginSessionManager loginSessionManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        loginSessionManager = LoginSessionManager.getInstance(this);
+        if (loginSessionManager.isLoggedIn()) {
+            Log.d("MainActivity", "User is logged in");
+        }
+        else {
+            Log.d("MainActivity", "User is not logged in");
+            loginSessionManager.createSession(1);
+            Log.d("MainActivity", "User session created with ID: " + loginSessionManager.getUserId());
+        }
 
         // Ánh xạ các thành phần trong giao diện
         fabAdd = findViewById(R.id.fab_add);
