@@ -50,7 +50,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="🔥 Khẩn cấp và Quan trọng"
+                    android:text="I. Khẩn cấp và Quan trọng"
                     android:textColor="#FF4A4A"
                     android:textStyle="bold" />
 
@@ -73,7 +73,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="🌟 Không gấp mà quan trọng"
+                    android:text="II. Không gấp mà quan trọng"
                     android:textColor="#FFC107"
                     android:textStyle="bold" />
 
@@ -96,7 +96,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="⚡ Khẩn cấp nhưng không quan trọng"
+                    android:text="III. Khẩn cấp nhưng không quan trọng"
                     android:textColor="#4A90E2"
                     android:textStyle="bold" />
 
@@ -118,7 +118,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="💡 Không cấp bách và không quan trọng"
+                    android:text="IV. Không cấp bách và không quan trọng"
                     android:textColor="#28A745"
                     android:textStyle="bold" />
 
