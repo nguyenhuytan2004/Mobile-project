@@ -3,12 +3,14 @@ package com.example.project;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.HashMap;
+import android.graphics.Paint;
 
 public class Matrix_Eisenhower extends AppCompatActivity {
 
@@ -79,25 +81,48 @@ public class Matrix_Eisenhower extends AppCompatActivity {
         if (priorityLayout != null) {
             // Tạo một LinearLayout
             LinearLayout taskContainer = new LinearLayout(this);
-            taskContainer.setOrientation(LinearLayout.VERTICAL);
+            taskContainer.setOrientation(LinearLayout.HORIZONTAL);
             taskContainer.setPadding(8, 4, 8, 4);
+
+            // Tạo container cho text
+            LinearLayout textContainer = new LinearLayout(this);
+            textContainer.setOrientation(LinearLayout.VERTICAL);
+            textContainer.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT));
+            textContainer.setPadding(8, 0, 0, 0);
 
             // Tạo TextView cho Task Name
             TextView taskNameView = new TextView(this);
-            taskNameView.setText("• " + task.getTaskName());
+            taskNameView.setText(task.getTitle());
             taskNameView.setTextColor(getResources().getColor(android.R.color.white));
             taskNameView.setTextSize(16);
 
             // Tạo TextView cho Task Description
             TextView taskDescView = new TextView(this);
-            taskDescView.setText(task.getTaskDescription());
+            taskDescView.setText(task.getDescription());
             taskDescView.setTextColor(getResources().getColor(android.R.color.darker_gray));
             taskDescView.setTextSize(14);
-            taskDescView.setPadding(24, 0, 0, 0);
 
-            // Thêm các TextView vào taskContainer
-            taskContainer.addView(taskNameView);
-            taskContainer.addView(taskDescView);
+            // Tạo CheckBox cho Task
+            CheckBox taskCheckBox = new CheckBox(this);
+            taskCheckBox.setButtonDrawable(R.drawable.custom_checkbox);
+            taskCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                // Handle checkbox state change
+                if (isChecked) {
+                    taskNameView.setPaintFlags(taskNameView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                } else {
+                    taskNameView.setPaintFlags(taskNameView.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+                }
+            });
+
+            // Thêm TextView vào textContainer
+            textContainer.addView(taskNameView);
+            textContainer.addView(taskDescView);
+
+            // Thêm các view vào taskContainer
+            taskContainer.addView(taskCheckBox);
+            taskContainer.addView(textContainer);
 
             // Thêm taskContainer vào priorityLayout
             priorityLayout.addView(taskContainer);

@@ -1,94 +1,120 @@
 package com.example.project;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-
-import androidx.appcompat.app.AlertDialog;
+import android.widget.TextView;
+import android.widget.Toast;
+import androidx.fragment.app.FragmentActivity;
 
 public class TaskDialogHelper {
+
+    private static String reminderDate = ""; // To store selected reminder date
 
     public interface TaskDialogCallback {
         void onTaskAdded(Task task);
     }
 
-    public static void showInputDialog(Context context, TaskDialogCallback callback) {
-        showInputDialog(context, -1, callback);
-    }
-
-    public static void showInputDialog(Context context, int preSelectedPriority, TaskDialogCallback callback) {
-        // Inflate the dialog layout
-        View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_add_task, null);
-        
-        // Get references to views
-        EditText edtTaskName = dialogView.findViewById(R.id.edt_task_name);
-        EditText edtTaskDescription = dialogView.findViewById(R.id.edt_task_description);
-        RadioGroup rgPriority = dialogView.findViewById(R.id.rg_priority);
-        
-        // If a priority is pre-selected, select the corresponding radio button
-        if (preSelectedPriority > 0 && preSelectedPriority <= 4) {
-            int radioButtonId = 0;
-            switch (preSelectedPriority) {
-                case 1:
-                    radioButtonId = R.id.rb_priority1;
-                    break;
-                case 2:
-                    radioButtonId = R.id.rb_priority2;
-                    break;
-                case 3:
-                    radioButtonId = R.id.rb_priority3;
-                    break;
-                case 4:
-                    radioButtonId = R.id.rb_priority4;
-                    break;
-            }
-            
-            if (radioButtonId != 0) {
-                rgPriority.check(radioButtonId);
-            }
-        }
-        
-        // Build the dialog
+    public static void showInputDialog(Context context, int defaultPriority, TaskDialogCallback callback) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("Add Task");
+        View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_task_input, null);
+
+        EditText etTitle = dialogView.findViewById(R.id.etTaskTitle);
+        EditText etDescription = dialogView.findViewById(R.id.etTaskDescription);
+        RadioGroup rgPriority = dialogView.findViewById(R.id.rgPriority);
+        Button btnAdd = dialogView.findViewById(R.id.btnAddTask);
+        Button btnCancel = dialogView.findViewById(R.id.btnCancel);
+        ImageButton btnSetReminder = dialogView.findViewById(R.id.btnSetReminder);
+        TextView tvReminderInfo = dialogView.findViewById(R.id.tvReminderInfo);
+
+        // Set default priority
+        switch (defaultPriority) {
+            case 1:
+                rgPriority.check(R.id.rbPriority1);
+                break;
+            case 2:
+                rgPriority.check(R.id.rbPriority2);
+                break;
+            case 3:
+                rgPriority.check(R.id.rbPriority3);
+                break;
+            case 4:
+                rgPriority.check(R.id.rbPriority4);
+                break;
+        }
+
         builder.setView(dialogView);
-        
-        // Add buttons
-        builder.setPositiveButton("Add", (dialog, which) -> {
-            // Get task name and description
-            String taskName = edtTaskName.getText().toString().trim();
-            String taskDescription = edtTaskDescription.getText().toString().trim();
-            
-            // Determine priority from selected radio button
-            int selectedId = rgPriority.getCheckedRadioButtonId();
-            int priority = 1; // Default to priority 1
-            
-            // Map radio button ID to priority
-            if (selectedId == R.id.rb_priority1) {
-                priority = 1;
-            } else if (selectedId == R.id.rb_priority2) {
-                priority = 2;
-            } else if (selectedId == R.id.rb_priority3) {
-                priority = 3;
-            } else if (selectedId == R.id.rb_priority4) {
-                priority = 4;
-            }
-            
-            // Create task object
-            Task task = new Task(taskName, taskDescription, priority);
-            
-            // Notify callback
-            if (callback != null) {
-                callback.onTaskAdded(task);
+        AlertDialog dialog = builder.create();
+
+        // Set reminder button click listener
+        btnSetReminder.setOnClickListener(v -> {
+            if (context instanceof FragmentActivity) {
+                FragmentActivity activity = (FragmentActivity) context;
+                SetReminderDialogFragment reminderDialog = new SetReminderDialogFragment();
+
+                reminderDialog.setOnDateSelectedListener(new SetReminderDialogFragment.OnDateSelectedListener() {
+                    @Override
+                    public void onDateSelected(String date) {
+                        reminderDate = date;
+                        if (!date.isEmpty()) {
+                            tvReminderInfo.setVisibility(View.VISIBLE);
+                            tvReminderInfo.setText("Nhắc nhở: " + date);
+                        } else {
+                            tvReminderInfo.setVisibility(View.GONE);
+                        }
+                    }
+                });
+
+                reminderDialog.show(activity.getSupportFragmentManager(), "reminder_dialog");
             }
         });
-        
-        builder.setNegativeButton("Cancel", null);
-        
-        // Show the dialog
-        builder.create().show();
+
+        btnAdd.setOnClickListener(v -> {
+            String title = etTitle.getText().toString().trim();
+            String description = etDescription.getText().toString().trim();
+
+            // Get selected priority (1-4)
+            int priority = defaultPriority; // Use the default priority
+            int selectedId = rgPriority.getCheckedRadioButtonId();
+
+            if (selectedId == R.id.rbPriority1) {
+                priority = 1;
+            } else if (selectedId == R.id.rbPriority2) {
+                priority = 2;
+            } else if (selectedId == R.id.rbPriority3) {
+                priority = 3;
+            } else if (selectedId == R.id.rbPriority4) {
+                priority = 4;
+            }
+
+            if (title.isEmpty()) {
+                Toast.makeText(context, "Vui lòng nhập tiêu đề task", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            Task newTask = new Task(title, description, priority);
+            if (!reminderDate.isEmpty()) {
+                newTask.setReminderDate(reminderDate);
+            }
+
+            callback.onTaskAdded(newTask);
+            reminderDate = ""; // Reset reminder date for next use
+            dialog.dismiss();
+        });
+
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
+    }
+
+    // Overloaded method for backward compatibility
+    public static void showInputDialog(Context context, TaskDialogCallback callback) {
+        showInputDialog(context, 1, callback); // Default priority is 1
     }
 }

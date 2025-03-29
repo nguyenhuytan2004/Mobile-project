@@ -4,30 +4,38 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.ArrayList;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
 
-    private ArrayList<com.example.project.Task> taskList;
+    private ArrayList<Task> taskList;
 
-    public TaskAdapter(ArrayList<com.example.project.Task> taskList) {
+    public TaskAdapter(ArrayList<Task> taskList) {
         this.taskList = taskList;
     }
 
+    @NonNull
     @Override
-    public TaskViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public TaskViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_task, parent, false);
         return new TaskViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(TaskViewHolder holder, int position) {
-        com.example.project.Task task = taskList.get(position);
-        holder.tvTaskName.setText(task.getTaskName());
-        //holder.tvTaskDescription.setText(task.getTaskDescription());
+    public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
+        Task task = taskList.get(position);
+        holder.tvTitle.setText(task.getTitle());
+        holder.tvDescription.setText(task.getDescription());
+
+        // Show reminder if it exists
+        if (task.hasReminder()) {
+            holder.tvReminder.setVisibility(View.VISIBLE);
+            holder.tvReminder.setText("⏰ " + task.getReminderDate());
+        } else {
+            holder.tvReminder.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -36,12 +44,13 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     }
 
     public static class TaskViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTaskName, tvTaskDescription;
+        TextView tvTitle, tvDescription, tvReminder;
 
-        public TaskViewHolder(View itemView) {
+        public TaskViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvTaskName = itemView.findViewById(R.id.tv_task_name);
-            //tvTaskDescription = itemView.findViewById(R.id.tv_task_description);
+            tvTitle = itemView.findViewById(R.id.tvTaskTitle);
+            tvDescription = itemView.findViewById(R.id.tvTaskDescription);
+            tvReminder = itemView.findViewById(R.id.tvTaskReminder);
         }
     }
 }
