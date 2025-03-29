@@ -8,6 +8,15 @@
     tools:context=".MainActivity">
 
     <!-- Header -->
+
+    <ImageView
+        android:id="@+id/sidebarView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_more_selection"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="16dp" />
+
     <TextView
         android:id="@+id/tv_welcome"
         android:layout_width="wrap_content"
@@ -105,6 +114,13 @@
                 android:layout_height="25dp"
                 android:layout_weight="1"
                 android:src="@drawable/main_icon_2" />
+
+            <ImageView
+                android:id="@+id/matrixView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/icons8_matrix_32" />
 
             <ImageView
                 android:id="@+id/focusTab"
