@@ -21,8 +21,14 @@ public class TestScreen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        DatabaseHelper dbHelper = new DatabaseHelper(this);
-        SQLiteDatabase db = dbHelper.openDatabase();
+        SQLiteDatabase db = DatabaseHelper.getInstance(this).openDatabase();
+
+        int rowAffected = db.delete("tbl_user", "id = ?", new String[]{"1"});
+        if (rowAffected > 0) {
+            Log.d("TestScreen", "Xoá thành công bản ghi có id = 1");
+        } else {
+            Log.d("TestScreen", "Không tìm thấy bản ghi có id = 1");
+        }
 
         Cursor cursor = db.rawQuery("SELECT * FROM tbl_user", null);
         if (cursor.moveToFirst()) {
@@ -32,6 +38,7 @@ public class TestScreen extends AppCompatActivity {
             } while (cursor.moveToNext());
         }
         cursor.close();
+
         db.close();
     }
 }

@@ -6,31 +6,42 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
-    private static final String TAG = "DatabaseHelper"; // Tag để Log dễ đọc
-    private static final String DATABASE_NAME = "mobile_db.db"; // Tên file .db
+    private static final String TAG = "DatabaseHelper";
+    private static final String DATABASE_NAME = "mobile_db.db";
     private static final int DATABASE_VERSION = 1;
     private final Context context;
     private final String DATABASE_PATH;
+    private static DatabaseHelper instance;
+    private SQLiteDatabase database;
 
-    public DatabaseHelper(Context context) {
+    // Singleton để đảm bảo chỉ có một instance duy nhất
+    public static synchronized DatabaseHelper getInstance(Context context) {
+        if (instance == null) {
+            instance = new DatabaseHelper(context.getApplicationContext());
+        }
+        return instance;
+    }
+
+    private DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.context = context;
         this.DATABASE_PATH = context.getApplicationInfo().dataDir + "/databases/";
 
-        Log.d(TAG, "📌 Database path: " + DATABASE_PATH);
-        copyDatabase();
+        Log.d(TAG, "Database path: " + DATABASE_PATH);
+        copyDatabaseFromAssets();
     }
 
-    private void copyDatabase() {
+    private void copyDatabaseFromAssets() {
         File dbFile = new File(DATABASE_PATH + DATABASE_NAME);
         if (dbFile.exists()) {
-            Log.d(TAG, "Database đã tồn tại, xoá để cập nhật lại...");
-            dbFile.delete();
+            Log.d(TAG, "Database đã tồn tại trên thiết bị, không cần sao chép");
+            return;
         }
 
         try {
@@ -62,21 +73,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public SQLiteDatabase openDatabase() {
-        File dbFile = new File(DATABASE_PATH + DATABASE_NAME);
-        if (!dbFile.exists()) {
-            Log.e(TAG, "Database không tồn tại: " + dbFile.getAbsolutePath());
-            return null;
-        }
+    public synchronized SQLiteDatabase openDatabase() {
+        if (database == null || !database.isOpen()) {
+            File dbFile = new File(DATABASE_PATH + DATABASE_NAME);
+            if (!dbFile.exists()) {
+                Log.e(TAG, "Database không tồn tại trên thiết bị");
+                return null;
+            }
 
-        try {
-            SQLiteDatabase db = SQLiteDatabase.openDatabase(dbFile.getPath(), null, SQLiteDatabase.OPEN_READWRITE);
-            Log.d(TAG, "Database đã mở thành công!");
-            return db;
-        } catch (Exception e) {
-            Log.e(TAG, "Lỗi khi mở database", e);
-            return null;
+            try {
+                database = SQLiteDatabase.openDatabase(dbFile.getPath(), null, SQLiteDatabase.OPEN_READWRITE);
+                Log.d(TAG, "Database đã mở thành công!");
+            } catch (Exception e) {
+                Log.e(TAG, "Lỗi khi mở database", e);
+            }
         }
+        return database;
     }
 
     @Override
@@ -87,5 +99,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Xử lý nâng cấp database nếu cần
+    }
+
+    // Đóng database khi không còn sử dụng
+    public synchronized void closeDatabase() {
+        if (database != null && database.isOpen()) {
+            database.close();
+            database = null;
+            Log.d(TAG, "Database đã được đóng.");
+        }
     }
 }

@@ -1,91 +1,57 @@
--- Tạo bảng người dùng
+-- 🏷 Xóa bảng nếu đã tồn tại để tránh lỗi khi chạy lại script
 DROP TABLE IF EXISTS tbl_user;
+DROP TABLE IF EXISTS tbl_note;
+DROP TABLE IF EXISTS tbl_tag;
+DROP TABLE IF EXISTS tbl_photo;
+DROP TABLE IF EXISTS tbl_reminder;
+
+-- 🧑‍💻 Tạo bảng người dùng
 CREATE TABLE tbl_user (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    email TEXT NOT NULL,
-    password_hash TEXT NOT NULL,
-    isGoogle INTEGER DEFAULT 0
+    email TEXT NOT NULL,        -- Email người dùng, có thể trùng (do đăng nhập Google)
+    password_hash TEXT,         -- Mật khẩu đã hash (NULL nếu đăng nhập Google)
+    isGoogle INTEGER DEFAULT 0  -- 0: Đăng ký bình thường, 1: Đăng nhập bằng Google
 );
 
--- Thêm dữ liệu mẫu vào bảng người dùng
-INSERT INTO tbl_user (email, password_hash) VALUES
-('alice@example.com', 'hashed_password_123'),
-('bob@example.com', 'hashed_password_456');
+-- 📝 Thêm dữ liệu mẫu cho bảng người dùng
+INSERT INTO tbl_user (email, password_hash, isGoogle) VALUES
+('alice@example.com', 'hashed_password_123', 0),
+('bob@example.com', 'hashed_password_456', 0),
+('alice@example.com', NULL, 1); -- Alice đăng nhập bằng Google, không cần mật khẩu
 
--- Tạo bảng ghi chú
-DROP TABLE IF EXISTS tbl_note;
-CREATE TABLE tbl_note (
+-- 🗒 Tạo bảng ghi chú
+CREATE TABLE tbl_user_note (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER NOT NULL,
-    title TEXT NOT NULL,
-    content TEXT,
+    user_id INTEGER NOT NULL,  -- Mỗi ghi chú thuộc về một người dùng
+    title TEXT NOT NULL,       -- Tiêu đề ghi chú
+    content TEXT,              -- Nội dung ghi chú
     FOREIGN KEY (user_id) REFERENCES tbl_user(id) ON DELETE CASCADE
 );
 
--- Thêm dữ liệu mẫu vào bảng ghi chú
-INSERT INTO tbl_note (user_id, title, content) VALUES
-(1, 'Lập kế hoạch tuần', 'Hoàn thành checklist công việc.'),
-(1, 'Mua sắm', 'Cần mua laptop mới và bàn phím.'),
-(2, 'Dự án mới', 'Lên ý tưởng cho sản phẩm AI.');
-
--- Tạo bảng thẻ (label) cho ghi chú
-DROP TABLE IF EXISTS tbl_note_tag;
+-- 🏷 Tạo bảng lưu thẻ (tags) cho ghi chú
 CREATE TABLE tbl_note_tag (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    user_id INTEGER NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES tbl_user(id) ON DELETE CASCADE
-);
-
--- Thêm dữ liệu mẫu vào bảng thẻ
-INSERT INTO tbl_note_tag (name, user_id) VALUES
-('Công việc', 1),
-('Cá nhân', 1),
-('Dự án', 2);
-
--- Bảng trung gian để liên kết ghi chú với thẻ
-DROP TABLE IF EXISTS tbl_note_detail;
-CREATE TABLE tbl_note_detail (
-    note_id INTEGER NOT NULL,
-    tag_id INTEGER NOT NULL,
-    PRIMARY KEY (note_id, tag_id),
-    FOREIGN KEY (note_id) REFERENCES tbl_note(id) ON DELETE CASCADE,
-    FOREIGN KEY (tag_id) REFERENCES tbl_note_tag(id) ON DELETE CASCADE
-);
-
--- Thêm dữ liệu mẫu vào bảng chi tiết ghi chú
-INSERT INTO tbl_note_detail (note_id, tag_id) VALUES
-(1, 1), -- "Lập kế hoạch tuần" có thẻ "Công việc"
-(2, 2), -- "Mua sắm" có thẻ "Cá nhân"
-(3, 3); -- "Dự án mới" có thẻ "Dự án"
-
--- Tạo bảng tệp đính kèm
-DROP TABLE IF EXISTS tbl_note_attachment;
-CREATE TABLE tbl_note_attachment (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    note_id INTEGER NOT NULL,
-    file_name TEXT NOT NULL,
-    file_url TEXT NOT NULL,
+    note_id INTEGER NOT NULL, -- Ghi chú liên quan đến thẻ này
+    tag_text TEXT NOT NULL,   -- Nội dung thẻ (ví dụ: "Công việc", "Ghi chú quan trọng")
+    tag_color TEXT NOT NULL,  -- Màu sắc của thẻ (ví dụ: "#FF5733")
     FOREIGN KEY (note_id) REFERENCES tbl_note(id) ON DELETE CASCADE
 );
 
--- Thêm dữ liệu mẫu vào bảng tệp đính kèm
-INSERT INTO tbl_note_attachment (note_id, file_name, file_url) VALUES
-(1, 'plan.pdf', 'https://example.com/plan.pdf'),
-(3, 'idea.txt', 'https://example.com/idea.txt');
+-- 📷 Tạo bảng lưu ảnh đính kèm với ghi chú
+CREATE TABLE tbl_note_photo (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    note_id INTEGER NOT NULL, -- Ghi chú liên quan đến ảnh này
+    photo_uri TEXT NOT NULL,  -- Đường dẫn ảnh (URI hoặc URL)
+    FOREIGN KEY (note_id) REFERENCES tbl_note(id) ON DELETE CASCADE
+);
 
--- Tạo bảng nhắc nhở
-DROP TABLE IF EXISTS tbl_note_reminder;
+-- ⏰ Tạo bảng lưu nhắc nhở cho ghi chú
 CREATE TABLE tbl_note_reminder (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    note_id INTEGER NOT NULL,
-    reminder_date DATE NOT NULL,
-    reminder_time TIME NOT NULL,
-    remind_before_days INTEGER DEFAULT 0,
+    note_id INTEGER NOT NULL,    -- Ghi chú liên quan đến nhắc nhở này
+    date TEXT,                   -- Ngày nhắc nhở (YYYY-MM-DD)
+    time TEXT,                   -- Giờ nhắc nhở (HH:MM)
+    reminder_text TEXT,           -- Nội dung nhắc nhở
+    is_repeat BOOLEAN DEFAULT 0,  -- 1: Nhắc lại định kỳ, 0: Chỉ nhắc một lần
     FOREIGN KEY (note_id) REFERENCES tbl_note(id) ON DELETE CASCADE
 );
-
--- Thêm dữ liệu mẫu vào bảng nhắc nhở
-INSERT INTO tbl_note_reminder (note_id, reminder_date, reminder_time, remind_before_days) VALUES
-(1, '2025-04-01', "09:00:00", 1),
-(2, '2025-04-02', "08:00:00", 2);

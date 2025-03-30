@@ -1,11 +1,16 @@
 package com.example.project;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -24,8 +29,11 @@ import java.util.Random;
 
 public class NoteActivity extends AppCompatActivity {
     ImageView btnDate, btnCard, btnImage;
-    TextView txtDate, btnBack, btnOption;
+    TextView txtDate, btnBack, btnOption, btnSave;
+    EditText titleInput, contentInput;
     FlexboxLayout tagContainer, attachmentContainer;
+
+    SQLiteDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +43,10 @@ public class NoteActivity extends AppCompatActivity {
         txtDate = findViewById(R.id.txtDate);
         btnBack = findViewById(R.id.textView);
         btnOption = findViewById(R.id.textView2);
+        btnSave = findViewById(R.id.saveButton);
+
+        titleInput = findViewById(R.id.titleInput);
+        contentInput = findViewById(R.id.contentInput);
 
         btnDate = findViewById(R.id.icon4);
         btnCard = findViewById(R.id.cardIcon);
@@ -164,6 +176,8 @@ public class NoteActivity extends AppCompatActivity {
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(intent, 100);
         });
+
+        btnSave.setOnClickListener(view -> saveNote());
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -173,6 +187,7 @@ public class NoteActivity extends AppCompatActivity {
 
             ImageView attachedPhoto = new ImageView(this);
             attachedPhoto.setImageURI(selectedImageUri);
+            attachedPhoto.setTag(selectedImageUri.toString()); // Store URI for saving
 
             FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams(
                     300,
@@ -181,6 +196,89 @@ public class NoteActivity extends AppCompatActivity {
             attachedPhoto.setLayoutParams(params);
 
             attachmentContainer.addView(attachedPhoto);
+        }
+    }
+
+    private void saveNote() {
+        String title = titleInput.getText().toString();
+        if (title.isEmpty()) {
+            Toast.makeText(NoteActivity.this, "Vui lòng nhập tiêu đề!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        db = DatabaseHelper.getInstance(this).openDatabase();
+        db.beginTransaction();
+
+        try {
+            // Save main note
+            ContentValues noteValues = new ContentValues();
+            noteValues.put("title", title);
+            noteValues.put("content", contentInput.getText().toString());
+            noteValues.put("user_id", LoginSessionManager.getInstance(this).getUserId());
+
+            long noteId = db.insert("tbl_user_note", null, noteValues);
+
+            if (noteId != -1) {
+                // Save tags
+                for (int i = 0; i < tagContainer.getChildCount(); i++) {
+                    View child = tagContainer.getChildAt(i);
+                    if (child instanceof TextView) {
+                        TextView tag = (TextView) child;
+                        GradientDrawable background = (GradientDrawable) tag.getBackground();
+
+                        ContentValues tagValues = new ContentValues();
+                        tagValues.put("note_id", noteId);
+                        tagValues.put("tag_text", tag.getText().toString());
+                        tagValues.put("tag_color", String.format("#%06X", background.getColor().getDefaultColor() & 0xFFFFFF));
+
+                        db.insert("tbl_note_tag", null, tagValues);
+                    }
+                }
+
+                // Save photos
+                for (int i = 0; i < attachmentContainer.getChildCount(); i++) {
+                    View child = attachmentContainer.getChildAt(i);
+                    if (child instanceof ImageView) {
+                        ImageView imageView = (ImageView) child;
+                        String uriString = (String) imageView.getTag();
+                        if (uriString != null) {
+                            ContentValues photoValues = new ContentValues();
+                            photoValues.put("note_id", noteId);
+                            photoValues.put("photo_uri", uriString);
+                            db.insert("tbl_note_photo", null, photoValues);
+                        }
+                    }
+                }
+
+                // Save reminder if date is set
+                String reminderDate = txtDate.getText().toString();
+                if (!reminderDate.isEmpty()) {
+                    ContentValues reminderValues = new ContentValues();
+                    reminderValues.put("note_id", noteId);
+                    // Parse date from "Ngày X, tháng Y" format
+                    String[] parts = reminderDate.split(", ");
+                    if (parts.length == 2) {
+                        String day = parts[0].replace("Ngày ", "");
+                        String month = parts[1].replace("tháng ", "");
+                        int year = LocalDate.now().getYear();
+                        reminderValues.put("date", String.format("%02d/%02d/%d",
+                                Integer.parseInt(day), Integer.parseInt(month), year));
+                    }
+                    reminderValues.put("time", "");  // Set actual time if needed
+                    reminderValues.put("reminder_text", "");  // Set actual reminder text if needed
+                    reminderValues.put("is_repeat", 0);  // Set repeat status if needed
+                    db.insert("tbl_note_reminder", null, reminderValues);
+                }
+
+                db.setTransactionSuccessful();
+                Log.d("NoteActivity", "Note saved successfully");
+            }
+        } catch (Exception e) {
+            Log.e("NoteActivity", "Error saving note", e);
+        } finally {
+            db.endTransaction();
+            DatabaseHelper.getInstance(this).closeDatabase();
+            finish();
         }
     }
 }

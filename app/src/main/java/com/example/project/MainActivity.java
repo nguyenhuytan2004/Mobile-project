@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,9 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private ConstraintLayout taskInputLayout;
     private EditText etTaskName, etTaskDescription;
     private Button btnAddTask;
-    private RecyclerView rvTaskList;
-
-    private ArrayList<Task> taskList;
+    private LinearLayout taskListLayout;
     private TaskAdapter taskAdapter;
 
     ImageView focusTab;
@@ -56,15 +55,9 @@ public class MainActivity extends AppCompatActivity {
         etTaskName = findViewById(R.id.et_task_name);
         etTaskDescription = findViewById(R.id.et_task_description);
         btnAddTask = findViewById(R.id.btn_add_task);
-        rvTaskList = findViewById(R.id.rv_task_list);
+        taskListLayout = findViewById(R.id.rv_task_list);
         focusTab = findViewById(R.id.focusTab);
         calendarTab = findViewById(R.id.calendarTab);
-
-        // Khởi tạo danh sách công việc và adapter
-        taskList = new ArrayList<>();
-        taskAdapter = new TaskAdapter(taskList);
-        rvTaskList.setLayoutManager(new LinearLayoutManager(this));
-        rvTaskList.setAdapter(taskAdapter);
 
         // Sự kiện khi nhấn Floating Action Button (FAB)
         fabAdd.setOnClickListener(v -> {
