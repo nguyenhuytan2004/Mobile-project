@@ -2,6 +2,7 @@ package com.example.project;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
@@ -21,17 +22,26 @@ import com.google.android.flexbox.FlexWrap;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class NoteActivity extends AppCompatActivity {
-    ImageView btnDate, btnCard, btnImage;
+    ImageView btnDate, btnTag, btnImage;
     TextView txtDate, btnBack, btnOption, btnSave;
     EditText titleInput, contentInput;
     FlexboxLayout tagContainer, attachmentContainer;
 
     SQLiteDatabase db;
+    String noteId;
 
     private String reminderTime = "";
     private int reminderDaysBefore = 0;
@@ -51,14 +61,20 @@ public class NoteActivity extends AppCompatActivity {
         contentInput = findViewById(R.id.contentInput);
 
         btnDate = findViewById(R.id.icon4);
-        btnCard = findViewById(R.id.cardIcon);
+        btnTag = findViewById(R.id.cardIcon);
         btnImage = findViewById(R.id.imageIcon);
 
         tagContainer = findViewById(R.id.tagContainer);
         attachmentContainer = findViewById(R.id.attachmentContainer);
 
+        noteId = getIntent().getStringExtra("noteId");
+        Log.d("NoteActivity", "Note ID: " + noteId);
+        if (noteId != null && !noteId.equals("-1")) {
+            loadNote();
+        }
+
         btnDate.setOnClickListener(view -> {
-            SetReminderDialog dialog = new SetReminderDialog();
+            SetReminderDialog dialog = new SetReminderDialog(noteId);
             dialog.setOnDateSelectedListener(new SetReminderDialog.OnReminderSettingsListener() {
                 @Override
                 public void onReminderSet(String date, String time, int daysBefore, boolean isRepeat) {
@@ -125,7 +141,7 @@ public class NoteActivity extends AppCompatActivity {
             });
         });
 
-        btnCard.setOnClickListener(view -> {
+        btnTag.setOnClickListener(view -> {
             BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(NoteActivity.this);
             View sheetView = getLayoutInflater().inflate(R.layout.add_card_bottom_sheet_in_note, null);
             bottomSheetDialog.setContentView(sheetView);
@@ -191,24 +207,170 @@ public class NoteActivity extends AppCompatActivity {
 
         btnSave.setOnClickListener(view -> saveNote());
     }
+
+    // When selecting an image (in onActivityResult)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 100 && resultCode == RESULT_OK && data != null) {
             Uri selectedImageUri = data.getData();
 
-            ImageView attachedPhoto = new ImageView(this);
-            attachedPhoto.setImageURI(selectedImageUri);
-            attachedPhoto.setTag(selectedImageUri.toString()); // Store URI for saving
+            try {
+                // Copy image to app's private storage
+                String fileName = "note_img_" + System.currentTimeMillis() + ".jpg";
+                Uri localUri = copyImageToAppStorage(selectedImageUri, fileName);
 
-            FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams(
-                    300,
-                    300);
-            params.setMargins(0, 0, 10, 10);
-            attachedPhoto.setLayoutParams(params);
+                ImageView attachedPhoto = new ImageView(this);
+                attachedPhoto.setImageURI(localUri);
+                attachedPhoto.setTag(localUri.toString()); // Store local URI for saving
 
-            attachmentContainer.addView(attachedPhoto);
+                FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams(300, 300);
+                params.setMargins(0, 0, 10, 10);
+                attachedPhoto.setLayoutParams(params);
+
+                attachmentContainer.addView(attachedPhoto);
+            } catch (IOException e) {
+                Log.e("NoteActivity", "Error copying image", e);
+                Toast.makeText(this, "Không thể thêm ảnh", Toast.LENGTH_SHORT).show();
+            }
         }
+    }
+
+    // Helper method to copy image to app storage
+    private Uri copyImageToAppStorage(Uri sourceUri, String fileName) throws IOException {
+        InputStream inputStream = getContentResolver().openInputStream(sourceUri);
+        File destFile = new File(getFilesDir(), fileName);
+
+        FileOutputStream outputStream = new FileOutputStream(destFile);
+        byte[] buffer = new byte[4096];
+        int bytesRead;
+
+        while ((bytesRead = inputStream.read(buffer)) != -1) {
+            outputStream.write(buffer, 0, bytesRead);
+        }
+
+        inputStream.close();
+        outputStream.close();
+
+        // Return URI to file in app storage
+        return Uri.fromFile(destFile);
+    }
+
+    private void loadNote() {
+        Bundle bundle = getIntent().getExtras();
+        String noteId = bundle.getString("noteId");
+
+        db = DatabaseHelper.getInstance(this).openDatabase();
+        String query = "SELECT n.id, n.title, n.content, r.date " +
+                        "FROM tbl_note n " +
+                        "LEFT JOIN tbl_note_reminder r ON n.id = r.note_id " +
+                        "WHERE n.id = ? " +
+                        "ORDER BY n.id DESC";
+        Cursor cursor = db.rawQuery(query, new String[]{noteId});
+
+        if (cursor != null && cursor.moveToFirst()) {
+            titleInput.setText(cursor.getString(cursor.getColumnIndexOrThrow("title")));
+            contentInput.setText(cursor.getString(cursor.getColumnIndexOrThrow("content")));
+            String date = "";
+            int dateColumnIndex = cursor.getColumnIndexOrThrow("date");
+            if (!cursor.isNull(dateColumnIndex)) {
+                date = cursor.getString(dateColumnIndex);
+            }
+            txtDate.setText(date);
+            if (!date.isEmpty()) {
+                Pattern pattern = Pattern.compile("(\\d+)");
+                Matcher matcher = pattern.matcher(date);
+
+                int day = 0, month = 0;
+                if (matcher.find()) {
+                    day = Integer.parseInt(matcher.group(1));
+                }
+                if (matcher.find()) {
+                    month = Integer.parseInt(matcher.group(1));
+                }
+
+                LocalDate noteDate = LocalDate.of(LocalDate.now().getYear(), month, day);
+
+                if (noteDate.isBefore(LocalDate.now())) {
+                    txtDate.setTextColor(getResources().getColor(R.color.red));
+                }
+                else {
+                    txtDate.setTextColor(getResources().getColor(R.color.statistics_blue));
+                }
+            }
+
+            // Load tags
+            Cursor tagCursor = db.rawQuery("SELECT * FROM tbl_note_tag WHERE note_id = ?", new String[]{noteId});
+            if (tagCursor != null) {
+                while (tagCursor.moveToNext()) {
+                    TextView tag = new TextView(this);
+                    tag.setText(tagCursor.getString(tagCursor.getColumnIndexOrThrow("tag_text")));
+                    tag.setTextSize(18);
+                    tag.setTextColor(Color.WHITE);
+
+                    int color = Color.parseColor(tagCursor.getString(tagCursor.getColumnIndexOrThrow("tag_color")));
+                    GradientDrawable drawable = new GradientDrawable();
+                    drawable.setColor(color);
+                    drawable.setCornerRadius(50);
+                    tag.setBackground(drawable);
+
+                    FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams(
+                            FlexboxLayout.LayoutParams.WRAP_CONTENT,
+                            FlexboxLayout.LayoutParams.WRAP_CONTENT
+                    );
+                    params.setMargins(0, 0, 10, 10);
+                    tag.setLayoutParams(params);
+
+                    tag.setPadding(30, 10, 25, 10);
+                    tagContainer.addView(tag);
+                }
+                tagCursor.close();
+            }
+
+            // Load photos
+            Cursor photoCursor = db.rawQuery("SELECT * FROM tbl_note_photo WHERE note_id = ?", new String[]{noteId});
+            if (photoCursor != null && photoCursor.getCount() > 0) {
+                while (photoCursor.moveToNext()) {
+                    ImageView attachedPhoto = new ImageView(this);
+                    try {
+                        Uri photoUri = Uri.parse(photoCursor.getString(photoCursor.getColumnIndexOrThrow("photo_uri")));
+
+                        // Check if it's a file URI (our app storage)
+                        if (photoUri.getScheme().equals("file")) {
+                            attachedPhoto.setImageURI(photoUri);
+                            attachedPhoto.setTag(photoUri.toString()); // Store local URI for saving
+                        } else {
+                            // For older content:// URIs, try to load with permission
+                            attachedPhoto.setImageBitmap(MediaStore.Images.Media.getBitmap(getContentResolver(), photoUri));
+                        }
+                    } catch (Exception e) {
+                        Log.e("NoteActivity", "Error loading image: " + e.getMessage());
+                    }
+
+                    FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams(
+                            300,
+                            300);
+                    params.setMargins(0, 0, 10, 10);
+                    attachedPhoto.setLayoutParams(params);
+
+                    attachmentContainer.addView(attachedPhoto);
+                }
+                photoCursor.close();
+            }
+
+            // Load reminder settings
+            Cursor reminderCursor = db.rawQuery("SELECT * FROM tbl_note_reminder WHERE note_id = ?", new String[]{noteId});
+            if (reminderCursor != null && reminderCursor.moveToFirst()) {
+                String timeReminder = reminderCursor.getString(reminderCursor.getColumnIndexOrThrow("time"));
+                int daysBefore = reminderCursor.getInt(reminderCursor.getColumnIndexOrThrow("days_before"));
+                int isRepeat = reminderCursor.getInt(reminderCursor.getColumnIndexOrThrow("is_repeat"));
+
+                reminderTime = timeReminder != null ? timeReminder : "";
+                reminderDaysBefore = daysBefore;
+                reminderRepeatEnabled = isRepeat == 1;
+            }
+        }
+        DatabaseHelper.getInstance(this).closeDatabase();
     }
 
     private void saveNote() {
@@ -223,8 +385,6 @@ public class NoteActivity extends AppCompatActivity {
 
         try {
             boolean noteExists = false;
-            Bundle bundle = getIntent().getExtras();
-            String noteId = bundle.getString("noteId");
 
             ContentValues noteValues = new ContentValues();
             noteValues.put("title", title);
@@ -293,7 +453,7 @@ public class NoteActivity extends AppCompatActivity {
                     if (parts.length == 2) {
                         String day = parts[0].replace("Ngày ", "");
                         String month = parts[1].replace("tháng ", "");
-                        reminderValues.put("date", String.format("Ngày %02d, tháng %02d",
+                        reminderValues.put("date", String.format("Ngày %d, tháng %d",
                                 Integer.parseInt(day), Integer.parseInt(month)));
                     }
 

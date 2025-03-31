@@ -3,6 +3,8 @@ package com.example.project;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
@@ -20,14 +22,24 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import java.lang.reflect.Field;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class SetReminderDialog extends BottomSheetDialogFragment {
 
+    CalendarView calendarView;
     TextView timeValue, reminderValue, removeReminder;
     SwitchCompat switchRepeatReminder;
     private OnReminderSettingsListener listener;
+    private String noteId;
+    private String selectedDate = "";
+    private String mTimeValue = null;
+    private int mDaysBefore = 0;
+    private boolean mIsRepeat = false;
 
-    String selectedDate = "";
+    public SetReminderDialog(String noteId) {
+        this.noteId = noteId;
+    }
 
     public interface OnReminderSettingsListener {
         void onReminderSet(String date, String time, int daysBefore, boolean isRepeat);
@@ -41,10 +53,12 @@ public class SetReminderDialog extends BottomSheetDialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.set_reminder, container, false);
 
-        CalendarView calendarView = view.findViewById(R.id.calendarView);
-        calendarView.setFirstDayOfWeek(Calendar.MONDAY);
-
+        calendarView = view.findViewById(R.id.calendarView);
+        timeValue = view.findViewById(R.id.timeValue);
+        reminderValue = view.findViewById(R.id.reminderValue);
         removeReminder = view.findViewById(R.id.removeReminder);
+
+        loadNoteReminder(noteId);
 
         // Custom weekday names
         try {
@@ -67,13 +81,58 @@ public class SetReminderDialog extends BottomSheetDialogFragment {
             e.printStackTrace();
         }
 
+        if (!selectedDate.isEmpty()) {
+            // Parse the date and set calendar
+            try {
+                Pattern pattern = Pattern.compile("(\\d+)");
+                Matcher matcher = pattern.matcher(selectedDate);
+                int day = 0, month = 0, year = Calendar.getInstance().get(Calendar.YEAR);
+                if (matcher.find()) {
+                    day = Integer.parseInt(matcher.group(1));
+                }
+                if (matcher.find()) {
+                    month = Integer.parseInt(matcher.group(1)) - 1;
+                }
+                selectedDate = String.format(Locale.getDefault(), "%02d/%02d/%d", day, month + 1, year);
+
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(year, month, day);
+                calendarView.setDate(calendar.getTimeInMillis());
+
+                removeReminder.setVisibility(View.VISIBLE);
+
+            } catch (Exception e) {
+                Log.e("SetReminderDialog", "Error parsing date: " + selectedDate, e);
+            }
+        } else {
+            selectedDate = String.format(Locale.getDefault(), "%02d/%02d/%d",
+                    Calendar.getInstance().get(Calendar.DAY_OF_MONTH),
+                    Calendar.getInstance().get(Calendar.MONTH) + 1,
+                    Calendar.getInstance().get(Calendar.YEAR));
+        }
+
+        // Apply time value if available
+        if (mTimeValue != null) {
+            timeValue.setText(mTimeValue);
+            timeValue.setTextColor(getResources().getColor(R.color.statistics_blue));
+            timeValue.setTextSize(18);
+        }
+
+        // Apply days before value if available
+        if (mDaysBefore > 0 && mDaysBefore <= 7) {
+            String[] reminderOptions = {"1 ngày trước", "2 ngày trước", "3 ngày trước",
+                    "4 ngày trước", "5 ngày trước", "6 ngày trước", "7 ngày trước"};
+            reminderValue.setText(reminderOptions[mDaysBefore - 1]);
+            reminderValue.setTextColor(getResources().getColor(R.color.statistics_blue));
+            reminderValue.setTextSize(18);
+        }
+
         calendarView.setOnDateChangeListener((view1, year, month, dayOfMonth) -> {
             selectedDate = String.format(Locale.getDefault(), "%02d/%02d/%d", dayOfMonth, month + 1, year);
 
             removeReminder.setVisibility(View.VISIBLE);
         });
 
-        timeValue = view.findViewById(R.id.timeValue);
         timeValue.setOnClickListener(v -> {
             final int[] time = {12, 0};
             if (!timeValue.getText().toString().equals("Không có >")) {
@@ -96,7 +155,6 @@ public class SetReminderDialog extends BottomSheetDialogFragment {
             timePickerDialog.show();
         });
 
-        reminderValue = view.findViewById(R.id.reminderValue);
         reminderValue.setOnClickListener(v -> {
             View reminderView = LayoutInflater.from(getContext()).inflate(R.layout.reminder_dialog, null);
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -111,6 +169,7 @@ public class SetReminderDialog extends BottomSheetDialogFragment {
             TextView text7 = reminderView.findViewById(R.id.text7);
 
             switchRepeatReminder = reminderView.findViewById(R.id.switchRepeatReminder);
+            switchRepeatReminder.setChecked(mIsRepeat);
 
             AlertDialog dialog = builder.create();
 
@@ -144,6 +203,8 @@ public class SetReminderDialog extends BottomSheetDialogFragment {
         removeReminder.setOnClickListener(v -> {
             listener.onReminderSet("", "", 0, false);
 
+            selectedDate = "";
+
             timeValue.setText("Không có >");
             timeValue.setTextColor(getResources().getColor(R.color.gray));
             timeValue.setTextSize(16);
@@ -167,14 +228,57 @@ public class SetReminderDialog extends BottomSheetDialogFragment {
             bottomSheet.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
         }
     }
+
+    private void loadNoteReminder(String noteId) {
+        SQLiteDatabase db = DatabaseHelper.getInstance(getContext()).openDatabase();
+        try {
+            Cursor cursor = db.rawQuery(
+                    "SELECT date, time, days_before, is_repeat FROM tbl_note_reminder WHERE note_id = ?",
+                    new String[]{noteId}
+            );
+
+            if (cursor != null && cursor.moveToFirst()) {
+                String dateStr = cursor.getString(cursor.getColumnIndexOrThrow("date"));
+                if (dateStr != null && !dateStr.isEmpty()) {
+                    selectedDate = dateStr;
+                }
+
+                // Store time value to be set after views are initialized
+                String timeStr = cursor.getString(cursor.getColumnIndexOrThrow("time"));
+                if (timeStr != null && !timeStr.isEmpty()) {
+                    mTimeValue = timeStr;
+                }
+
+                // Store days before value
+                int daysBefore = cursor.getInt(cursor.getColumnIndexOrThrow("days_before"));
+                if (daysBefore > 0 && daysBefore <= 7) {
+                    mDaysBefore = daysBefore;
+                }
+
+                // Store repeat status
+                mIsRepeat = cursor.getInt(cursor.getColumnIndexOrThrow("is_repeat")) == 1;
+
+                cursor.close();
+            }
+        } catch (Exception e) {
+            Log.e("SetReminderDialog", "Error loading note reminder", e);
+        } finally {
+            DatabaseHelper.getInstance(getContext()).closeDatabase();
+        }
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         if (listener != null) {
             String date = selectedDate;
-            String time = timeValue.getText().toString();
-            int daysBefore = Integer.parseInt(reminderValue.getText().toString().substring(0, 1));
-            boolean isRepeat = switchRepeatReminder.isChecked();
+            String time = !timeValue.getText().toString().equals("Không có >") ? timeValue.getText().toString() : "";
+            int daysBefore = 0;
+            if (!reminderValue.getText().toString().substring(0, 1).equals("K"))
+            {
+                daysBefore = Integer.parseInt(reminderValue.getText().toString().substring(0, 1));
+            }
+            boolean isRepeat = switchRepeatReminder != null && switchRepeatReminder.isChecked();
 
             listener.onReminderSet(date, time, daysBefore, isRepeat);
         }

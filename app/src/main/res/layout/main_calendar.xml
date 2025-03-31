@@ -134,7 +134,7 @@
                 <ImageView
                     android:layout_width="25dp"
                     android:layout_height="25dp"
-                    android:src="@drawable/icon2"
+                    android:src="@drawable/note_icon"
                     android:layout_marginEnd="5dp" />
 
                 <TextView
@@ -157,7 +157,7 @@
                 <ImageView
                     android:layout_width="25dp"
                     android:layout_height="25dp"
-                    android:src="@drawable/icon2"
+                    android:src="@drawable/note_icon"
                     android:layout_marginEnd="5dp" />
 
                 <TextView

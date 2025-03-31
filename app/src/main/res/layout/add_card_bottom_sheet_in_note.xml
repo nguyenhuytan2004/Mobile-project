@@ -10,7 +10,7 @@
         <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:src="@drawable/icon1"
+            android:src="@drawable/tag_icon"
             android:layout_marginEnd="16dp"/>
 
         <EditText

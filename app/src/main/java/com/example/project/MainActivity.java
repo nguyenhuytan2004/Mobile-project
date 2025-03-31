@@ -21,7 +21,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -82,6 +87,12 @@ public class MainActivity extends AppCompatActivity {
         loadNotes();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadNotes();
+    }
+
     private void loadNotes() {
         // Clear previous notes
         taskListLayout.removeAllViews();
@@ -139,6 +150,27 @@ public class MainActivity extends AppCompatActivity {
         titleTextView.setText(title);
         contentTextView.setText(content);
         dateTextView.setText(date);
+        if (!date.isEmpty()) {
+            Pattern pattern = Pattern.compile("(\\d+)");
+            Matcher matcher = pattern.matcher(date);
+
+            int day = 0, month = 0;
+            if (matcher.find()) {
+                day = Integer.parseInt(matcher.group(1));
+            }
+            if (matcher.find()) {
+                month = Integer.parseInt(matcher.group(1));
+            }
+
+            LocalDate noteDate = LocalDate.of(LocalDate.now().getYear(), month, day);
+
+            if (noteDate.isBefore(LocalDate.now())) {
+                dateTextView.setTextColor(getResources().getColor(R.color.red));
+            }
+            else {
+                dateTextView.setTextColor(getResources().getColor(R.color.statistics_blue));
+            }
+        }
 
         // Make the note clickable to open for editing
         noteView.setOnClickListener(v -> {

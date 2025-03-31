@@ -63,7 +63,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="15sp"
-            android:textColor="@color/orange"
             android:layout_marginBottom="10dp"
             />
 
@@ -130,14 +129,7 @@
                 android:id="@+id/cardIcon"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
-                android:src="@drawable/icon1"
-                android:layout_marginEnd="30dp"
-                />
-
-            <ImageView
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:src="@drawable/icon2"
+                android:src="@drawable/tag_icon"
                 android:layout_marginEnd="30dp"
                 />
 
@@ -145,7 +137,7 @@
                 android:id="@+id/imageIcon"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
-                android:src="@drawable/icon3"
+                android:src="@drawable/album_icon"
                 android:layout_marginEnd="30dp"
                 />
 
