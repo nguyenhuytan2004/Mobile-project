@@ -53,9 +53,9 @@ public class AddTaskDialog extends BottomSheetDialogFragment {
 
         // Set up date button to open reminder dialog
         btnDate.setOnClickListener(v -> {
-            SetReminderDialogFragment reminderDialog = new SetReminderDialogFragment();
+            CalendarDialog reminderDialog = new CalendarDialog();
 
-            reminderDialog.setOnDateSelectedListener(new SetReminderDialogFragment.OnDateSelectedListener() {
+            reminderDialog.setOnDateSelectedListener(new CalendarDialog.OnDateSelectedListener() {
                 @Override
                 public void onDateSelected(String date) {
                     reminderDate = date;

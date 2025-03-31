@@ -18,20 +18,10 @@
         />
 
     <TextView
-        android:id="@+id/text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/time_reminder_text"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        android:padding="10dp"
-        />
-
-    <TextView
         android:id="@+id/text1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/time_reminder_text1"
+        android:text="1 day early"
         android:textColor="@color/white"
         android:textSize="20sp"
         android:padding="10dp"
@@ -41,7 +31,7 @@
         android:id="@+id/text2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/time_reminder_text2"
+        android:text="2 days early"
         android:textColor="@color/white"
         android:textSize="20sp"
         android:padding="10dp"
@@ -51,7 +41,7 @@
         android:id="@+id/text3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/time_reminder_text3"
+        android:text="3 days early"
         android:textColor="@color/white"
         android:textSize="20sp"
         android:padding="10dp"
@@ -61,7 +51,7 @@
         android:id="@+id/text4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/time_reminder_text4"
+        android:text="4 days early"
         android:textColor="@color/white"
         android:textSize="20sp"
         android:padding="10dp"
@@ -71,7 +61,7 @@
         android:id="@+id/text5"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/time_reminder_text5"
+        android:text="5 days early"
         android:textColor="@color/white"
         android:textSize="20sp"
         android:padding="10dp"
@@ -81,8 +71,8 @@
         android:id="@+id/text6"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/time_reminder_text6"
-        android:textColor="@color/statistics_blue"
+        android:text="6 days early"
+        android:textColor="@color/white"
         android:textSize="20sp"
         android:padding="10dp"
         />
@@ -91,7 +81,7 @@
         android:id="@+id/text7"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/time_reminder_text7"
+        android:text="7 days early"
         android:textColor="@color/white"
         android:textSize="20sp"
         android:padding="10dp"
@@ -124,7 +114,9 @@
             android:id="@+id/switchRepeatReminder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:theme="@style/SwitchTheme" />
+            android:theme="@style/SwitchTheme"
+            android:checked="false"
+            />
     </LinearLayout>
 
 </LinearLayout>

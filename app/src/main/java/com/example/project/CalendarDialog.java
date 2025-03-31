@@ -22,7 +22,7 @@ import java.lang.reflect.Field;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class SetReminderDialogFragment extends BottomSheetDialogFragment {
+public class CalendarDialog extends BottomSheetDialogFragment {
 
     TextView timeValue, reminderValue, removeReminder;
     private OnDateSelectedListener listener;
@@ -74,68 +74,9 @@ public class SetReminderDialogFragment extends BottomSheetDialogFragment {
             removeReminder.setVisibility(View.VISIBLE);
         });
 
-        timeValue = view.findViewById(R.id.timeValue);
-        timeValue.setOnClickListener(v -> {
-            TimePickerDialog timePickerDialog = new TimePickerDialog(
-                    new ContextThemeWrapper(getContext(), R.style.CustomTimePickerDialog),
-                    (view12, hourOfDay, minute) -> {
-                        String selectedTime = String.format(Locale.getDefault(), "%02d:%02d", hourOfDay, minute);
-                        timeValue.setText(selectedTime);
-                        timeValue.setTextColor(getResources().getColor(R.color.statistics_blue));
-                        timeValue.setTextSize(18);
-
-                        removeReminder.setVisibility(View.VISIBLE);
-                    },
-                    12, 0, true
-            );
-            timePickerDialog.show();
-        });
-
-        reminderValue = view.findViewById(R.id.reminderValue);
-        reminderValue.setOnClickListener(v -> {
-            View reminderView = LayoutInflater.from(getContext()).inflate(R.layout.reminder_dialog, null);
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            builder.setView(reminderView);
-
-            TextView text = reminderView.findViewById(R.id.text);
-            TextView text1 = reminderView.findViewById(R.id.text1);
-            TextView text2 = reminderView.findViewById(R.id.text2);
-            TextView text3 = reminderView.findViewById(R.id.text3);
-            TextView text4 = reminderView.findViewById(R.id.text4);
-            TextView text5 = reminderView.findViewById(R.id.text5);
-            TextView text6 = reminderView.findViewById(R.id.text6);
-            TextView text7 = reminderView.findViewById(R.id.text7);
-
-            AlertDialog dialog = builder.create();
-
-            TextView[] textViews = {text, text1, text2, text3, text4, text5, text6, text7};
-            for (int i = 0; i < textViews.length; i++) {
-                int finalI = i;
-                textViews[i].setOnClickListener(v1 -> {
-                    String selectedReminder = textViews[finalI].getText().toString();
-                    reminderValue.setText(selectedReminder);
-                    reminderValue.setTextColor(getResources().getColor(R.color.statistics_blue));
-                    reminderValue.setTextSize(18);
-                    removeReminder.setVisibility(View.VISIBLE);
-
-                    dialog.dismiss();
-                });
-            }
-
-            dialog.show();
-        });
-
         TextView removeReminder = view.findViewById(R.id.removeReminder);
         removeReminder.setOnClickListener(v -> {
             listener.onDateSelected("");
-
-            timeValue.setText("Không có >");
-            timeValue.setTextColor(getResources().getColor(R.color.gray));
-            timeValue.setTextSize(16);
-
-            reminderValue.setText("Không có >");
-            reminderValue.setTextColor(getResources().getColor(R.color.gray));
-            reminderValue.setTextSize(16);
 
             removeReminder.setVisibility(View.INVISIBLE);
         });
@@ -153,4 +94,3 @@ public class SetReminderDialogFragment extends BottomSheetDialogFragment {
         }
     }
 }
-

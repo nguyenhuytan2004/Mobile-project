@@ -2,10 +2,8 @@ package com.example.project;
 
 import android.content.ContentValues;
 import android.content.Intent;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -35,6 +33,10 @@ public class NoteActivity extends AppCompatActivity {
 
     SQLiteDatabase db;
 
+    private String reminderTime = "";
+    private int reminderDaysBefore = 0;
+    private boolean reminderRepeatEnabled = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,29 +58,39 @@ public class NoteActivity extends AppCompatActivity {
         attachmentContainer = findViewById(R.id.attachmentContainer);
 
         btnDate.setOnClickListener(view -> {
-            SetReminderDialogFragment dialog = new SetReminderDialogFragment();
-            dialog.setOnDateSelectedListener(date -> {
-                if (date.isEmpty()) {
-                    txtDate.setText("");
-                    return;
-                }
+            SetReminderDialog dialog = new SetReminderDialog();
+            dialog.setOnDateSelectedListener(new SetReminderDialog.OnReminderSettingsListener() {
+                @Override
+                public void onReminderSet(String date, String time, int daysBefore, boolean isRepeat) {
+                    if (date.isEmpty()) {
+                        txtDate.setText("");
+                        reminderTime = "";
+                        reminderDaysBefore = 0;
+                        reminderRepeatEnabled = false;
+                        return;
+                    }
 
-                // Chuyển đổi ngày được chọn thành LocalDate (API 26+)
-                LocalDate selectedDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-                LocalDate today = LocalDate.now();
+                    // Store the reminder settings
+                    reminderTime = time;
+                    reminderDaysBefore = daysBefore;
+                    reminderRepeatEnabled = isRepeat;
 
-                int day = selectedDate.getDayOfMonth();
-                int month = selectedDate.getMonthValue();
-                txtDate.setText("Ngày " + day + ", tháng " + month);
+                    // Existing date formatting code
+                    LocalDate selectedDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+                    LocalDate today = LocalDate.now();
 
-                // Đổi màu text
-                if (selectedDate.isBefore(today)) {
-                    txtDate.setTextColor(getResources().getColor(R.color.red)); // Ngày trong quá khứ
-                } else {
-                    txtDate.setTextColor(getResources().getColor(R.color.statistics_blue)); // Ngày hôm nay hoặc tương lai
+                    int day = selectedDate.getDayOfMonth();
+                    int month = selectedDate.getMonthValue();
+                    txtDate.setText("Ngày " + day + ", tháng " + month);
+
+                    if (selectedDate.isBefore(today)) {
+                        txtDate.setTextColor(getResources().getColor(R.color.red));
+                    } else {
+                        txtDate.setTextColor(getResources().getColor(R.color.statistics_blue));
+                    }
                 }
             });
-            dialog.show(getSupportFragmentManager(), "CalendarDialog");
+            dialog.show(getSupportFragmentManager(), "SetReminderDialogFragment");
         });
 
         btnBack.setOnClickListener(view -> {
@@ -210,15 +222,35 @@ public class NoteActivity extends AppCompatActivity {
         db.beginTransaction();
 
         try {
-            // Save main note
+            boolean noteExists = false;
+            Bundle bundle = getIntent().getExtras();
+            String noteId = bundle.getString("noteId");
+
             ContentValues noteValues = new ContentValues();
             noteValues.put("title", title);
             noteValues.put("content", contentInput.getText().toString());
             noteValues.put("user_id", LoginSessionManager.getInstance(this).getUserId());
 
-            long noteId = db.insert("tbl_user_note", null, noteValues);
+            if (Integer.parseInt(noteId) != -1) {
+                noteExists = true;
 
-            if (noteId != -1) {
+                // Update existing note
+                db.update("tbl_note", noteValues, "id = ?",
+                        new String[]{noteId});
+
+                // Delete existing related data to avoid duplicates
+                db.delete("tbl_note_tag", "note_id = ?",
+                        new String[]{String.valueOf(noteId)});
+                db.delete("tbl_note_photo", "note_id = ?",
+                        new String[]{String.valueOf(noteId)});
+                db.delete("tbl_note_reminder", "note_id = ?",
+                        new String[]{String.valueOf(noteId)});
+            } else {
+                // Insert new note
+                noteId = String.valueOf(db.insert("tbl_note", null, noteValues));
+            }
+
+            if (Integer.parseInt(noteId) != -1) {
                 // Save tags
                 for (int i = 0; i < tagContainer.getChildCount(); i++) {
                     View child = tagContainer.getChildAt(i);
@@ -250,28 +282,31 @@ public class NoteActivity extends AppCompatActivity {
                     }
                 }
 
-                // Save reminder if date is set
+                // Save reminder setting
                 String reminderDate = txtDate.getText().toString();
                 if (!reminderDate.isEmpty()) {
                     ContentValues reminderValues = new ContentValues();
                     reminderValues.put("note_id", noteId);
+
                     // Parse date from "Ngày X, tháng Y" format
                     String[] parts = reminderDate.split(", ");
                     if (parts.length == 2) {
                         String day = parts[0].replace("Ngày ", "");
                         String month = parts[1].replace("tháng ", "");
-                        int year = LocalDate.now().getYear();
-                        reminderValues.put("date", String.format("%02d/%02d/%d",
-                                Integer.parseInt(day), Integer.parseInt(month), year));
+                        reminderValues.put("date", String.format("Ngày %02d, tháng %02d",
+                                Integer.parseInt(day), Integer.parseInt(month)));
                     }
-                    reminderValues.put("time", "");  // Set actual time if needed
-                    reminderValues.put("reminder_text", "");  // Set actual reminder text if needed
-                    reminderValues.put("is_repeat", 0);  // Set repeat status if needed
+
+                    // Save time, days before, and repeat settings
+                    reminderValues.put("time", reminderTime);
+                    reminderValues.put("days_before", reminderDaysBefore);
+                    reminderValues.put("is_repeat", reminderRepeatEnabled ? 1 : 0);
+
                     db.insert("tbl_note_reminder", null, reminderValues);
                 }
 
                 db.setTransactionSuccessful();
-                Log.d("NoteActivity", "Note saved successfully");
+                Log.d("NoteActivity", noteExists ? "Note updated successfully" : "Note created successfully");
             }
         } catch (Exception e) {
             Log.e("NoteActivity", "Error saving note", e);

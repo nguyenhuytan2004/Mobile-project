@@ -56,9 +56,9 @@ public class TaskDialogHelper {
         btnSetReminder.setOnClickListener(v -> {
             if (context instanceof FragmentActivity) {
                 FragmentActivity activity = (FragmentActivity) context;
-                SetReminderDialogFragment reminderDialog = new SetReminderDialogFragment();
+                CalendarDialog reminderDialog = new CalendarDialog();
 
-                reminderDialog.setOnDateSelectedListener(new SetReminderDialogFragment.OnDateSelectedListener() {
+                reminderDialog.setOnDateSelectedListener(new CalendarDialog.OnDateSelectedListener() {
                     @Override
                     public void onDateSelected(String date) {
                         reminderDate = date;
