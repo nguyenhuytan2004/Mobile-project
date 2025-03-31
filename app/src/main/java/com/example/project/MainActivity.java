@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
 
     private FloatingActionButton fabAdd;
     private LinearLayout taskListLayout;
-    ImageView focusTab, calendarTab;
+    ImageView focusTab, calendarTab, sideBarView, matrixView;
     private LoginSessionManager loginSessionManager;
     private SQLiteDatabase db;
 
@@ -51,7 +51,32 @@ public class MainActivity extends AppCompatActivity {
         taskListLayout = findViewById(R.id.task_list_layout);
         focusTab = findViewById(R.id.focusTab);
         calendarTab = findViewById(R.id.calendarTab);
+        sideBarView = findViewById(R.id.sidebarView);
+        matrixView = findViewById(R.id.matrixView);
 
+        sideBarView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SideBarHelper.showSideBar(MainActivity.this, new SideBarHelper.SideBarCallback() {
+                    @Override
+                    public void onTaskCategorySelected(String category) {
+                        Toast.makeText(MainActivity.this, "Selected: " + category, Toast.LENGTH_SHORT).show();
+                        // Here you would load the tasks for the selected category
+                        // For example:
+                        // loadTasksForCategory(category);
+                    }
+                });
+            }
+        });
+
+        matrixView.setOnClickListener(new View.OnClickListener() {
+              @Override
+              public void onClick(View v) {
+                  Intent intent = new Intent(MainActivity.this, Matrix_Eisenhower.class);
+                    startActivity(intent);
+              }
+          }
+        );
         // Sự kiện khi nhấn Floating Action Button (FAB)
         fabAdd.setOnClickListener(v -> {
             Bundle bundle = new Bundle();

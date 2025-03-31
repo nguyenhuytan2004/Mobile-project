@@ -8,7 +8,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class CalendarTab extends AppCompatActivity {
-    ImageView homeTab, focusTab;
+    ImageView homeTab, focusTab, matrixTab;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -16,9 +16,14 @@ public class CalendarTab extends AppCompatActivity {
 
         homeTab = findViewById(R.id.homeTab);
         focusTab = findViewById(R.id.focusTab);
+        matrixTab = findViewById(R.id.matrixTab);
 
         homeTab.setOnClickListener(view -> {
             startActivity(new Intent(CalendarTab.this, MainActivity.class));
+        });
+
+        matrixTab.setOnClickListener(view -> {
+            startActivity(new Intent(CalendarTab.this, Matrix_Eisenhower.class));
         });
 
         focusTab.setOnClickListener(view -> {
