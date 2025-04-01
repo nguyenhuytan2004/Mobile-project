@@ -1,7 +1,10 @@
 package com.example.project;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
@@ -35,7 +38,6 @@ public class Matrix_Eisenhower extends AppCompatActivity {
 
         // Set up click listeners for all priority quadrants
         setupPriorityClickListeners();
-
         // Nút thêm task
         addButton = findViewById(R.id.addButton);
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -50,21 +52,65 @@ public class Matrix_Eisenhower extends AppCompatActivity {
                 });
             }
         });
+        // Load tasks from database
+        loadTasksFromDatabase();
     }
-    
+
+    private void loadTasksFromDatabase() {
+        SQLiteDatabase db = DatabaseHelper.getInstance(this).openDatabase();
+        if (db == null) {
+            Log.e("Matrix_Eisenhower", "Database không tồn tại hoặc không thể mở");
+            return;
+        }
+
+        Cursor cursor = db.rawQuery("SELECT * FROM tbl_task", null);
+        if (cursor.moveToFirst()) {
+            do {
+                int titleIndex = cursor.getColumnIndex("title");
+                String title = (titleIndex >= 0) ? cursor.getString(titleIndex) : "";
+                int descriptionIndex = cursor.getColumnIndex("description");
+                String description = (descriptionIndex >= 0) ? cursor.getString(descriptionIndex) : "";
+                int priorityIndex = cursor.getColumnIndex("priority");
+                int priority = (cursor.getInt(priorityIndex));
+                int reminderDateIndex = cursor.getColumnIndex("reminder_date");
+                String reminderDate = (reminderDateIndex >= 0) ? cursor.getString(reminderDateIndex) : "";
+
+                Task task = new Task(title, description, priority);
+                task.setReminderDate(reminderDate);
+                addTaskToUI(task);
+                taskList.add(task);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+    }
     // Set up click listeners for priority quadrants
     private void setupPriorityClickListeners() {
+        Log.d("Matrix_Eisenhower", "Setting up click listeners for priority quadrants");
+
         // For Priority 1: Khẩn cấp và Quan trọng
-        priorityMap.get(1).setOnClickListener(v -> navigateToSingleMatrix(1, "Khẩn cấp và Quan trọng"));
-        
+        LinearLayout priority1Layout = priorityMap.get(1);
+        if (priority1Layout != null) {
+            priority1Layout.setOnClickListener(v -> navigateToSingleMatrix(1, "Khẩn cấp và Quan trọng"));
+        }
+
         // For Priority 2: Không gấp mà quan trọng
-        priorityMap.get(2).setOnClickListener(v -> navigateToSingleMatrix(2, "Không gấp mà quan trọng"));
-        
+        LinearLayout priority2Layout = priorityMap.get(2);
+        if (priority2Layout != null) {
+            priority2Layout.setOnClickListener(v -> navigateToSingleMatrix(2, "Không gấp mà quan trọng"));
+        }
+
         // For Priority 3: Khẩn cấp nhưng không quan trọng
-        priorityMap.get(3).setOnClickListener(v -> navigateToSingleMatrix(3, "Khẩn cấp nhưng không quan trọng"));
-        
+        LinearLayout priority3Layout = priorityMap.get(3);
+        if (priority3Layout != null) {
+            priority3Layout.setOnClickListener(v -> navigateToSingleMatrix(3, "Khẩn cấp nhưng không quan trọng"));
+        }
+
         // For Priority 4: Không cấp bách và không quan trọng
-        priorityMap.get(4).setOnClickListener(v -> navigateToSingleMatrix(4, "Không cấp bách và không quan trọng"));
+        LinearLayout priority4Layout = priorityMap.get(4);
+        if (priority4Layout != null) {
+            priority4Layout.setOnClickListener(v -> navigateToSingleMatrix(4, "Không cấp bách và không quan trọng"));
+        }
     }
     
     // Navigate to SingleMatrix activity with the selected priority
