@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -12,6 +16,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Project"
         tools:targetApi="31">
+
+        <!--Permission of Notification-->
+        <receiver android:name=".ReminderService" android:exported="false" />
+        <receiver android:name=".BootReceiver" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <!--Set main activity-->
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -20,7 +34,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <!-- Các activity khác -->
+
+        <!-- Others activity -->
         <activity android:name=".Matrix_Eisenhower"/>
         <activity android:name=".SingleMatrix" />
         <activity android:name=".NoteActivity"/>
@@ -29,6 +44,7 @@
         <activity android:name=".WhiteNoise"/>
         <activity android:name=".NewHabitActivity" />
         <activity android:name=".NewHabitAimActivity" />
+
     </application>
 
 </manifest>

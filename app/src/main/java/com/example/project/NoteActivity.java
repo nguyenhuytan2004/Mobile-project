@@ -136,8 +136,28 @@ public class NoteActivity extends AppCompatActivity {
             });
 
             deleteNote.setOnClickListener(v -> {
-                Toast.makeText(NoteActivity.this, "Ghi chú đã bị xoá!", Toast.LENGTH_SHORT).show();
+                db = DatabaseHelper.getInstance(NoteActivity.this).openDatabase();
+                db.beginTransaction();
+                try {
+                    db.delete("tbl_note_reminder", "note_id = ?", new String[]{noteId});
+                    db.delete("tbl_note_photo", "note_id = ?", new String[]{noteId});
+                    db.delete("tbl_note_tag", "note_id = ?", new String[]{noteId});
+
+                    db.delete("tbl_note", "id = ?", new String[]{noteId});
+
+                    db.setTransactionSuccessful();
+                    Log.d("NoteActivity", "Note deleted successfully");
+
+                    ReminderService.cancelReminder(NoteActivity.this, noteId);
+                } catch (Exception e) {
+                    Log.e("NoteActivity", "Error deleting note", e);
+                } finally {
+                    db.endTransaction();
+                    DatabaseHelper.getInstance(NoteActivity.this).closeDatabase();
+                }
+
                 bottomSheetDialog.dismiss();
+                finish();
             });
         });
 
@@ -467,6 +487,18 @@ public class NoteActivity extends AppCompatActivity {
 
                 db.setTransactionSuccessful();
                 Log.d("NoteActivity", noteExists ? "Note updated successfully" : "Note created successfully");
+
+                if (!reminderDate.isEmpty()) {
+                    ReminderService.scheduleNoteReminder(
+                            this,
+                            noteId,
+                            title,
+                            reminderDate,
+                            reminderTime,
+                            reminderDaysBefore,
+                            reminderRepeatEnabled
+                    );
+                }
             }
         } catch (Exception e) {
             Log.e("NoteActivity", "Error saving note", e);

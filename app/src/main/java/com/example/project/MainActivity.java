@@ -41,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        ReminderService.scheduleReminders(this);
+
         loginSessionManager = LoginSessionManager.getInstance(this);
         if (loginSessionManager.isLoggedIn()) {
             Log.d("MainActivity", "User is logged in");
@@ -173,8 +175,26 @@ public class MainActivity extends AppCompatActivity {
         TextView dateTextView = noteView.findViewById(R.id.note_date);
 
         titleTextView.setText(title);
-        contentTextView.setText(content);
-        dateTextView.setText(date);
+        if (content.isEmpty()) {
+            Log.d("123", "123");
+            contentTextView.setVisibility(View.GONE);
+        }
+        else {
+            int numLines = content.split("\n").length;
+            if (content.length() > 33) {
+                content = content.substring(0, 33) + "...";
+            }
+            else if (numLines > 2) {
+                content = content.split("\n")[0] + "\n" + content.split("\n")[1] + "...";
+            }
+            contentTextView.setText(content);
+        }
+        if (date.isEmpty()) {
+            contentTextView.setVisibility(View.GONE);
+        }
+        else {
+            dateTextView.setText(date);
+        }
         if (!date.isEmpty()) {
             Pattern pattern = Pattern.compile("(\\d+)");
             Matcher matcher = pattern.matcher(date);
