@@ -90,7 +90,8 @@ public class CalendarTab extends AppCompatActivity {
                     "SELECT n.id, n.title, n.content, r.date, r.time " +
                             "FROM tbl_note n " +
                             "JOIN tbl_note_reminder r ON n.id = r.note_id " +
-                            "WHERE r.date IS NOT NULL AND r.date != ''",
+                            "WHERE r.date IS NOT NULL AND r.date != ''" +
+                            "ORDER BY n.id",
                     null);
 
             if (cursor != null && cursor.moveToFirst()) {
