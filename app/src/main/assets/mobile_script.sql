@@ -53,6 +53,15 @@ CREATE TABLE "tbl_user" (
 	"isGoogle"	INTEGER DEFAULT 0,
 	PRIMARY KEY("id" AUTOINCREMENT)
 );
+-- 🏷 Tạo bảng lưu trữ task
+DROP TABLE IF EXISTS "tbl_task";
+CREATE TABLE tbl_task (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    description TEXT,
+    priority INTEGER NOT NULL,  -- 1-4 representing quadrants
+    reminder_date TEXT          -- Date for reminder (optional)
+);
 
 INSERT INTO "android_metadata" VALUES ('en_US');
 INSERT INTO "tbl_note" VALUES (1,1,'Tourism','Da Nang
@@ -68,5 +77,9 @@ INSERT INTO "tbl_note_tag" VALUES (26,1,'😊','#E67E22');
 INSERT INTO "tbl_user" VALUES (1,'alice@example.com','hashed_password_123',0);
 INSERT INTO "tbl_user" VALUES (2,'bob@example.com','hashed_password_456',0);
 INSERT INTO "tbl_user" VALUES (3,'alice@example.com',NULL,1);
+INSERT INTO tbl_task (title, description, priority, reminder_date)
+VALUES
+    ('Hoàn thành báo cáo', 'Báo cáo tài chính quý 1', 1, '2025-04-05'),
+    ('Mua sách mới', 'Sách về lập trình Android', 3, '2025-04-10');
 
 COMMIT;

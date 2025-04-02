@@ -1,7 +1,10 @@
 package com.example.project;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -32,13 +35,13 @@ public class SingleMatrix extends AppCompatActivity {
         Intent intent = getIntent();
         currentPriority = intent.getIntExtra("priority", 1); // Default to priority 1 if not specified
         currentTitle = intent.getStringExtra("title");
-        
+
         // Initialize views
         fabAdd = findViewById(R.id.floatingActionButton2);
         rvTaskList = findViewById(R.id.recyclerView);
         backBtn = findViewById(R.id.backBtn);
         titleTextView = findViewById(R.id.textView3);
-        
+
         // Set the title based on the passed priority
         if (currentTitle != null) {
             titleTextView.setText(currentTitle);
@@ -49,13 +52,11 @@ public class SingleMatrix extends AppCompatActivity {
 
         // Initialize task list and adapter
         taskList = new ArrayList<>();
-        
-        // Load tasks for the current priority - this would be replaced by your database query
-        // For now, we'll use dummy data
-        loadTasksForPriority(currentPriority);
-        
         taskAdapter = new TaskAdapter(taskList);
         rvTaskList.setAdapter(taskAdapter);
+
+        // Load tasks from database for the current priority
+        loadTasksForPriority(currentPriority);
 
         // backBtn click listener
         backBtn.setOnClickListener(new View.OnClickListener(){
@@ -76,28 +77,34 @@ public class SingleMatrix extends AppCompatActivity {
             });
         });
     }
-    
-    // Load tasks for the selected priority
+
+    // Load tasks for the selected priority from the database
     private void loadTasksForPriority(int priority) {
-        // In a real application, this would query your database
-        // For now, we'll just create some example tasks
-        
-        // Clear existing tasks
-        taskList.clear();
-        
-        // Example tasks (in a real app, you would load from a database or shared storage)
-        if (priority == 1) {
-            taskList.add(new Task("Submit project report", "Complete the project documentation", 1));
-            taskList.add(new Task("Client meeting", "Prepare presentation for client", 1));
-        } else if (priority == 2) {
-            taskList.add(new Task("Learn Android development", "Complete the course on Udemy", 2));
-            taskList.add(new Task("Weekly planning", "Set goals for the week", 2));
-        } else if (priority == 3) {
-            taskList.add(new Task("Reply to emails", "Check inbox and respond to messages", 3));
-            taskList.add(new Task("Team update call", "Join the daily standup", 3));
-        } else if (priority == 4) {
-            taskList.add(new Task("Browse social media", "Check updates on Twitter", 4));
-            taskList.add(new Task("Organize desk", "Clean up workspace", 4));
+        SQLiteDatabase db = DatabaseHelper.getInstance(this).openDatabase();
+        if (db == null) {
+            Log.e("SingleMatrix", "Database không tồn tại hoặc không thể mở");
+            return;
         }
+
+        Cursor cursor = db.rawQuery("SELECT * FROM tbl_task WHERE priority = ?", new String[]{String.valueOf(priority)});
+        if (cursor.moveToFirst()) {
+            do {
+                int titleIndex = cursor.getColumnIndex("title");
+                String title = (titleIndex >= 0) ? cursor.getString(titleIndex) : "";
+                int descriptionIndex = cursor.getColumnIndex("description");
+                String description = (descriptionIndex >= 0) ? cursor.getString(descriptionIndex) : "";
+                int reminderDateIndex = cursor.getColumnIndex("reminder_date");
+                String reminderDate = (reminderDateIndex >= 0) ? cursor.getString(reminderDateIndex) : "";
+
+                Task task = new Task(title, description, priority);
+                task.setReminderDate(reminderDate);
+                taskList.add(task);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+
+        // Notify the adapter that data has changed
+        taskAdapter.notifyDataSetChanged();
     }
 }
