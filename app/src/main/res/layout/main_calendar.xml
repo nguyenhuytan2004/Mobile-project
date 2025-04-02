@@ -14,11 +14,10 @@
         android:padding="25dp">
 
         <TextView
-            android:id="@+id/textView46"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Tháng 3"
+            android:text="Calendar"
             android:textColor="#d8d9d9"
             android:textSize="34sp"/>
 
@@ -62,53 +61,7 @@
         app:cardCornerRadius="10dp">
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingTop="10dp"
-            android:paddingLeft="10dp"
-            android:paddingBottom="2dp">
-
-            <TextView
-                android:id="@+id/textView48"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingLeft="8dp"
-                android:text="Nhiệm vụ"
-                android:textColor="#b2b3b2"
-                android:textSize="20sp"
-                />
-
-            <CheckBox
-                android:id="@+id/checkBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Học thuộc"
-                android:textColor="#d5d5d5"
-                android:textSize="20sp"
-                android:layout_marginTop="5dp"/>
-
-            <CheckBox
-                android:id="@+id/checkBox2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Làm bài tập"
-                android:textColor="#d5d5d5"
-                android:textSize="20sp"
-                android:layout_marginTop="5dp"/>
-
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
-
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="25dp"
-        android:layout_marginBottom="20dp"
-        app:cardBackgroundColor="#1c1d1d"
-        app:cardCornerRadius="10dp">
-
-        <LinearLayout
+            android:id="@+id/notesContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -138,13 +91,21 @@
                     android:layout_marginEnd="5dp" />
 
                 <TextView
-                    android:id="@+id/textView51"
+                    android:id="@+id/note_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Du lịch"
                     android:textColor="#d5d5d5"
                     android:textSize="20sp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="09:00"
+                    android:textColor="@color/statistics_blue"
+                    android:textSize="15sp"
+                    />
             </LinearLayout>
 
             <LinearLayout
@@ -168,17 +129,33 @@
                     android:text="Check-in"
                     android:textColor="#d5d5d5"
                     android:textSize="20sp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="09:00"
+                    android:textColor="@color/statistics_blue"
+                    android:textSize="15sp"
+                    />
+
             </LinearLayout>
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="35dp"
+        android:layout_marginTop="25dp"
         android:orientation="horizontal"
-        android:gravity="center">
+        android:layout_marginBottom="20dp"
+        >
 
         <ImageView
             android:id="@+id/homeTab"

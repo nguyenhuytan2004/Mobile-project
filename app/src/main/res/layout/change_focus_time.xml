@@ -40,23 +40,28 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_gravity="end">
+        android:layout_gravity="end"
+        >
 
-        <Button
+        <TextView
             android:id="@+id/button2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="HUỶ BỎ"
-            android:layout_marginRight="15dp"
+            android:layout_marginRight="30dp"
+            android:textSize="18sp"
+            android:textColor="@color/statistics_blue"
             android:background="@drawable/button_custom"/>
 
-        <Button
+        <TextView
             android:id="@+id/button3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="LƯU"
+            android:textSize="18sp"
+            android:textColor="@color/statistics_blue"
             android:background="@drawable/button_custom"
             />
     </LinearLayout>

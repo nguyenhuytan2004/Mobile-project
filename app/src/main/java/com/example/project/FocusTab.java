@@ -136,8 +136,8 @@ public class FocusTab extends AppCompatActivity {
 
         btnOption.setOnClickListener(view -> {
             View popupView = LayoutInflater.from(FocusTab.this).inflate(R.layout.option_in_focus, null);
-            PopupWindow popupWindow = new PopupWindow(popupView, 500, LinearLayout.LayoutParams.WRAP_CONTENT, true);
-            popupWindow.showAsDropDown(view, -430, -100);
+            PopupWindow popupWindow = new PopupWindow(popupView, 700, LinearLayout.LayoutParams.WRAP_CONTENT, true);
+            popupWindow.showAsDropDown(view, -630, -100);
 
             popupView.findViewById(R.id.focusSetting).setOnClickListener(v -> {
                 Toast.makeText(FocusTab.this, "Cài đặt tập trung", Toast.LENGTH_SHORT).show();
@@ -203,8 +203,8 @@ public class FocusTab extends AppCompatActivity {
                 }
             });
 
-            Button btnCancel = focusTimeView.findViewById(R.id.button2);
-            Button btnSave = focusTimeView.findViewById(R.id.button3);
+            TextView btnCancel = focusTimeView.findViewById(R.id.button2);
+            TextView btnSave = focusTimeView.findViewById(R.id.button3);
 
             AlertDialog dialog = builder.create();
 

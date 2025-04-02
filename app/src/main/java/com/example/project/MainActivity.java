@@ -7,24 +7,16 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -168,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void addNoteView(int noteId, String title, String content, String date) {
-        View noteView = LayoutInflater.from(this).inflate(R.layout.note_item, taskListLayout, false);
+        View noteView = LayoutInflater.from(this).inflate(R.layout.note_item_in_main, taskListLayout, false);
 
         TextView titleTextView = noteView.findViewById(R.id.note_title);
         TextView contentTextView = noteView.findViewById(R.id.note_content);
