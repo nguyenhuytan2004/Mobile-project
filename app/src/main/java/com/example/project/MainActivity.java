@@ -12,11 +12,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -57,14 +60,15 @@ public class MainActivity extends AppCompatActivity {
         sideBarView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SideBarHelper.showSideBar(MainActivity.this, new SideBarHelper.SideBarCallback() {
-                    @Override
-                    public void onTaskCategorySelected(String category) {
-                        Toast.makeText(MainActivity.this, "Selected: " + category, Toast.LENGTH_SHORT).show();
-                        // Here you would load the tasks for the selected category
-                        // For example:
-                        // loadTasksForCategory(category);
-                    }
+                sideBarView.setOnClickListener(p -> {
+                    SideBarHelper.showSideBar(MainActivity.this, category -> {
+                        // Handle category selection
+                        if (category.equals("Tất cả công việc")) {
+                            loadAllTasks();
+                        } else {
+                            loadTasksByCategory(category);
+                        }
+                    }, () -> getAllTasksFromDatabase());
                 });
             }
         });
@@ -228,5 +232,132 @@ public class MainActivity extends AppCompatActivity {
         });
 
         taskListLayout.addView(noteView);
+    }
+    // Method 1: Load all tasks from the database
+    private void loadAllTasks() {
+        taskListLayout.removeAllViews();
+        SQLiteDatabase db = null;
+        Cursor cursor = null;
+
+        try {
+            db = DatabaseHelper.getInstance(this).openDatabase();
+
+            String query = "SELECT id, title, description, priority, reminder_date, category " +
+                    "FROM tbl_task ORDER BY priority ASC";
+
+            cursor = db.rawQuery(query, null);
+
+            if (cursor != null && cursor.getCount() > 0) {
+                while (cursor.moveToNext()) {
+                    int taskId = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
+                    String title = cursor.getString(cursor.getColumnIndexOrThrow("title"));
+
+                    String description = "";
+                    int descColumnIndex = cursor.getColumnIndexOrThrow("description");
+                    if (!cursor.isNull(descColumnIndex)) {
+                        description = cursor.getString(descColumnIndex);
+                    }
+
+                    String date = "";
+                    int dateColumnIndex = cursor.getColumnIndexOrThrow("reminder_date");
+                    if (!cursor.isNull(dateColumnIndex)) {
+                        date = cursor.getString(dateColumnIndex);
+                    }
+
+                    addNoteView(taskId, title, description, date);
+                }
+            } else {
+                TextView emptyText = new TextView(this);
+                emptyText.setText("Không có công việc nào");
+                emptyText.setTextColor(getResources().getColor(android.R.color.white));
+                emptyText.setPadding(16, 16, 16, 16);
+                taskListLayout.addView(emptyText);
+            }
+        } catch (Exception e) {
+            Log.e("MainActivity", "Error loading tasks", e);
+        } finally {
+            if (cursor != null) cursor.close();
+            if (db != null) DatabaseHelper.getInstance(this).closeDatabase();
+        }
+    }
+
+    // Method 2: Load tasks filtered by category
+    private void loadTasksByCategory(String category) {
+        taskListLayout.removeAllViews();
+        SQLiteDatabase db = null;
+        Cursor cursor = null;
+
+        try {
+            db = DatabaseHelper.getInstance(this).openDatabase();
+
+            String query = "SELECT id, title, description, priority, reminder_date " +
+                    "FROM tbl_task WHERE category = ? " +
+                    "ORDER BY priority ASC";
+
+            cursor = db.rawQuery(query, new String[]{category});
+
+            if (cursor != null && cursor.getCount() > 0) {
+                while (cursor.moveToNext()) {
+                    int taskId = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
+                    String title = cursor.getString(cursor.getColumnIndexOrThrow("title"));
+
+                    String description = "";
+                    int descColumnIndex = cursor.getColumnIndexOrThrow("description");
+                    if (!cursor.isNull(descColumnIndex)) {
+                        description = cursor.getString(descColumnIndex);
+                    }
+
+                    String date = "";
+                    int dateColumnIndex = cursor.getColumnIndexOrThrow("reminder_date");
+                    if (!cursor.isNull(dateColumnIndex)) {
+                        date = cursor.getString(dateColumnIndex);
+                    }
+
+                    addNoteView(taskId, title, description, date);
+                }
+            } else {
+                TextView emptyText = new TextView(this);
+                emptyText.setText("Không có công việc nào trong danh mục này");
+                emptyText.setTextColor(getResources().getColor(android.R.color.white));
+                emptyText.setPadding(16, 16, 16, 16);
+                taskListLayout.addView(emptyText);
+            }
+        } catch (Exception e) {
+            Log.e("MainActivity", "Error loading tasks by category", e);
+        } finally {
+            if (cursor != null) cursor.close();
+            if (db != null) DatabaseHelper.getInstance(this).closeDatabase();
+        }
+    }
+
+    // Method 3: Get categories from database for the sidebar
+    private List<Task> getAllTasksFromDatabase() {
+        List<Task> categories = new ArrayList<>();
+        SQLiteDatabase db = null;
+        Cursor cursor = null;
+
+        try {
+            db = DatabaseHelper.getInstance(this).openDatabase();
+
+            // Get unique categories from tbl_task
+            String query = "SELECT DISTINCT category FROM tbl_task WHERE category IS NOT NULL AND category != ''";
+            cursor = db.rawQuery(query, null);
+
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    String categoryName = cursor.getString(0);
+                    Task categoryTask = new Task();
+                    categoryTask.setCategory(categoryName);
+                    categories.add(categoryTask);
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            Log.e("MainActivity", "Error getting categories", e);
+        } finally {
+            if (cursor != null) cursor.close();
+            if (db != null) DatabaseHelper.getInstance(this).closeDatabase();
+        }
+
+        return categories;
     }
 }

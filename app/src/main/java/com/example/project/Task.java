@@ -21,6 +21,10 @@ public class Task {
         this.category = category;
     }
 
+    public Task() {
+
+    }
+
     public String getTitle() {
         return title;
     }
