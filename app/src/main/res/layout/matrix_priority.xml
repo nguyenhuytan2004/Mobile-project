@@ -8,7 +8,8 @@
         tools:context=".MainActivity">
 
         <!-- Tiêu đề -->
-        <TextView
+
+    <TextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -135,6 +136,50 @@
             android:backgroundTint="#FF9800"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_margin="16dp"/>
+            android:layout_marginBottom="80dp"
+            android:layout_marginEnd="16dp"/>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="683dp">
+
+        <ImageView
+            android:id="@+id/homeTab"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_weight="1"
+            android:src="@drawable/main_icon_1" />
+
+        <ImageView
+            android:id="@+id/calendarTab2"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_weight="1"
+            android:src="@drawable/main_icon_2" />
+
+        <ImageView
+            android:id="@+id/matrixTab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/icons8_matrix_32_active" />
+
+        <ImageView
+            android:id="@+id/focusTab"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_weight="1"
+            android:src="@drawable/main_icon_3" />
+
+        <ImageView
+            android:id="@+id/habitTabCalender"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/ic_healthy_lifestyle" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

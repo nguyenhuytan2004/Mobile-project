@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
 
     private FloatingActionButton fabAdd;
     private LinearLayout taskListLayout;
-    ImageView focusTab, calendarTab, sideBarView, matrixView;
+    ImageView focusTab, calendarTab, sideBarView, matrixView, habitTab;
     private LoginSessionManager loginSessionManager;
     private SQLiteDatabase db;
 
@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
         calendarTab = findViewById(R.id.calendarTab);
         sideBarView = findViewById(R.id.sidebarView);
         matrixView = findViewById(R.id.matrixView);
+        habitTab = findViewById(R.id.habitTab);
 
         sideBarView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,6 +100,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, CalendarTab.class);
+                startActivity(intent);
+            }
+        });
+
+        habitTab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, HabitActivity.class);
                 startActivity(intent);
             }
         });

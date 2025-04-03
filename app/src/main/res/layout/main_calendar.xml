@@ -184,6 +184,13 @@
             android:layout_height="25dp"
             android:src="@drawable/main_icon_3"
             android:layout_weight="1" />
+
+        <ImageView
+            android:id="@+id/habitTabCalender"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/ic_healthy_lifestyle" />
     </LinearLayout>
 
 </LinearLayout>

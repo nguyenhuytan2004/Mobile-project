@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,12 +20,51 @@ public class Matrix_Eisenhower extends AppCompatActivity {
 
     private FloatingActionButton addButton;
     private HashMap<Integer, LinearLayout> priorityMap;
+
+    ImageView focusTab, calendarTab, homeTab, habitTab;
     private ArrayList<Task> taskList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.matrix_priority);
+
+        calendarTab = findViewById(R.id.calendarTab2);
+        focusTab = findViewById(R.id.focusTab);
+        homeTab = findViewById(R.id.homeTab);
+        habitTab = findViewById(R.id.habitTabCalender);
+
+        focusTab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Matrix_Eisenhower.this, FocusTab.class);
+                startActivity(intent);
+            }
+        });
+
+        calendarTab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Matrix_Eisenhower.this, CalendarTab.class);
+                startActivity(intent);
+            }
+        });
+
+        habitTab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Matrix_Eisenhower.this, HabitActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        homeTab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Matrix_Eisenhower.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
 
         // Ánh xạ các LinearLayout tương ứng với từng mức độ ưu tiên
         priorityMap = new HashMap<>();
