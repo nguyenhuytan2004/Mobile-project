@@ -8,13 +8,16 @@
     android:padding="16dp">
 
     <!-- User Profile Section -->
+
+    <!-- Top Icons (Search, Notification, Settings) -->
     <ImageView
         android:id="@+id/img_user_profile"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:src="@drawable/ic_user_avatar"
+        android:layout_marginTop="8dp"
         android:background="@drawable/circle_background"
         android:padding="4dp"
+        android:src="@drawable/ic_user_avatar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -22,16 +25,16 @@
         android:id="@+id/tv_user_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:text="Nguyễn Ngọc Giang"
         android:textColor="#FFFFFF"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:layout_marginStart="12dp"
+        app:layout_constraintBottom_toBottomOf="@id/img_user_profile"
         app:layout_constraintStart_toEndOf="@id/img_user_profile"
         app:layout_constraintTop_toTopOf="@id/img_user_profile"
-        app:layout_constraintBottom_toBottomOf="@id/img_user_profile" />
+        app:layout_constraintVertical_bias="1.0" />
 
-    <!-- Top Icons (Search, Notification, Settings) -->
     <LinearLayout
         android:id="@+id/icon_section"
         android:layout_width="wrap_content"

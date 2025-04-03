@@ -30,7 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CalendarTab extends AppCompatActivity {
-    ImageView homeTab, focusTab, matrixTab;
+    ImageView homeTab, focusTab, matrixTab, habitTab;
     CalendarView calendarView;
     LinearLayout notesContainer;
     private Map<String, List<NoteInfo>> dateToNotesMap = new HashMap<>();
@@ -45,6 +45,7 @@ public class CalendarTab extends AppCompatActivity {
         focusTab = findViewById(R.id.focusTab);
         matrixTab = findViewById(R.id.matrixTab);
         calendarView = findViewById(R.id.calendarView);
+        habitTab = findViewById(R.id.habitTabCalender);
         notesContainer = findViewById(R.id.notesContainer);
 
         // Tải tất cả các ghi chú từ cơ sở dữ liệu
@@ -70,6 +71,10 @@ public class CalendarTab extends AppCompatActivity {
 
         focusTab.setOnClickListener(view -> {
             startActivity(new Intent(CalendarTab.this, FocusTab.class));
+        });
+
+        habitTab.setOnClickListener(view -> {
+            startActivity(new Intent(CalendarTab.this, HabitActivity.class));
         });
     }
 

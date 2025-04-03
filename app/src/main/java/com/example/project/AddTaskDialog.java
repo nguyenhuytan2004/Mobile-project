@@ -16,7 +16,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 public class AddTaskDialog extends BottomSheetDialogFragment {
 
-    private EditText etTaskName, etTaskDescription;
+    private EditText etTaskName, etTaskDescription, etTaskCategory;
     private ImageView btnDate, btnTag, btnAttach, btnMore;
     private ImageButton btnAddTask;
     private TextView tvReminderInfo;
@@ -44,6 +44,7 @@ public class AddTaskDialog extends BottomSheetDialogFragment {
 
         etTaskName = view.findViewById(R.id.et_task_name);
         etTaskDescription = view.findViewById(R.id.et_task_description);
+        etTaskCategory = view.findViewById(R.id.et_task_category);
         btnDate = view.findViewById(R.id.btn_date);
         btnTag = view.findViewById(R.id.btn_tag);
         btnAttach = view.findViewById(R.id.btn_attach);
@@ -74,9 +75,10 @@ public class AddTaskDialog extends BottomSheetDialogFragment {
         btnAddTask.setOnClickListener(v -> {
             String taskName = etTaskName.getText().toString().trim();
             String taskDesc = etTaskDescription.getText().toString().trim();
+            String taskCategory = etTaskCategory.getText().toString().trim(); // Get category
 
             if (!taskName.isEmpty()) {
-                Task newTask = new Task(taskName, taskDesc, priority);
+                Task newTask = new Task(taskName, taskDesc, priority, taskCategory);
                 if (!reminderDate.isEmpty()) {
                     newTask.setReminderDate(reminderDate);
                 }

@@ -31,7 +31,7 @@ public class FocusTab extends AppCompatActivity {
     ImageView homeTab, calendarTab;
     RelativeLayout front, behind;
     Button btnStart;
-    ImageView btnEnd, btnPause, btnPlay, btnWhiteNoise, matrixTab;
+    ImageView btnEnd, btnPause, btnPlay, btnWhiteNoise, matrixTab, habitTab;
     LinearLayout pauseLayout, playLayout;
     TextView btnOption, focusNotes, focusTime, focusTime2, pomoTime;
     ProgressBar progressBar2;
@@ -53,6 +53,7 @@ public class FocusTab extends AppCompatActivity {
         homeTab = findViewById(R.id.homeTab);
         calendarTab = findViewById(R.id.calendarTab);
         matrixTab = findViewById(R.id.matrixTab);
+        habitTab = findViewById(R.id.habitTabFocus);
 
         btnStart = findViewById(R.id.btnStart);
         btnEnd = findViewById(R.id.end_button);
@@ -80,6 +81,10 @@ public class FocusTab extends AppCompatActivity {
 
         matrixTab.setOnClickListener(view -> {
             startActivity(new Intent(FocusTab.this, Matrix_Eisenhower.class));
+        });
+
+        habitTab.setOnClickListener(view -> {
+            startActivity(new Intent(FocusTab.this, HabitActivity.class));
         });
 
         btnStart.setOnClickListener(view -> {

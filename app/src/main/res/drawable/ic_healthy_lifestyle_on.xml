@@ -7,23 +7,23 @@
 
     <!-- Rectangular border -->
     <path
-        android:strokeColor="#FFFFFF"
+        android:strokeColor="#3F51B5"
         android:strokeWidth="1"
         android:fillColor="#00000000"
         android:pathData="M2,2 L22,2 L22,22 L2,22 Z" />
 
     <!-- Cơ thể -->
-    <path android:fillColor="#FFFFFF" android:pathData="M10,6 L14,6 L12,12 L8,20 L10,20 L12,16 L14,20 L16,20 L12,12 Z"/>
+    <path android:fillColor="#3F51B5" android:pathData="M10,6 L14,6 L12,12 L8,20 L10,20 L12,16 L14,20 L16,20 L12,12 Z"/>
 
     <!-- Tay trái -->
-    <path android:fillColor="#FFFFFF" android:pathData="M8,8 L6,4 L4,5 L7,10 Z"/>
+    <path android:fillColor="#3F51B5" android:pathData="M8,8 L6,4 L4,5 L7,10 Z"/>
 
     <!-- Tay phải -->
-    <path android:fillColor="#FFFFFF" android:pathData="M16,8 L18,4 L20,5 L17,10 Z"/>
+    <path android:fillColor="#3F51B5" android:pathData="M16,8 L18,4 L20,5 L17,10 Z"/>
 
     <!-- Border following icon shape -->
     <path
-        android:strokeColor="#FFFFFF"
+        android:strokeColor="#3F51B5"
         android:strokeWidth="0.5"
         android:strokeLineCap="round"
         android:strokeLineJoin="round"

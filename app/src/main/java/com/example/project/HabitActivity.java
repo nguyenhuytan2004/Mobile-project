@@ -7,6 +7,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -17,6 +18,7 @@ public class HabitActivity extends AppCompatActivity {
     private GridView gridView;
     private Button btnAll, btnCompleted, btnPending, btnAddHabit;
     private ImageButton btnBack;
+    ImageView focusTab, calendarTab, homeTab, matrixTab;
     private ArrayList<Habit> habitList;
     private HabitAdapter habitAdapter;
 
@@ -32,6 +34,42 @@ public class HabitActivity extends AppCompatActivity {
         btnPending = findViewById(R.id.btnPending);
         btnAddHabit = findViewById(R.id.button);
         btnBack = findViewById(R.id.imageButton4);
+        calendarTab = findViewById(R.id.calendarTab2);
+        focusTab = findViewById(R.id.focusTab);
+        homeTab = findViewById(R.id.homeTab);
+        matrixTab = findViewById(R.id.matrixTabHabit);
+
+        focusTab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HabitActivity.this, FocusTab.class);
+                startActivity(intent);
+            }
+        });
+
+        calendarTab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HabitActivity.this, CalendarTab.class);
+                startActivity(intent);
+            }
+        });
+
+        matrixTab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HabitActivity.this, Matrix_Eisenhower.class);
+                startActivity(intent);
+            }
+        });
+
+        homeTab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HabitActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
 
         // Initialize habit list
         habitList = new ArrayList<>();

@@ -27,6 +27,7 @@ public class TaskDialogHelper {
 
         EditText etTitle = dialogView.findViewById(R.id.etTaskTitle);
         EditText etDescription = dialogView.findViewById(R.id.etTaskDescription);
+        EditText etCategory = dialogView.findViewById(R.id.etTaskCategory);
         RadioGroup rgPriority = dialogView.findViewById(R.id.rgPriority);
         Button btnAdd = dialogView.findViewById(R.id.btnAddTask);
         Button btnCancel = dialogView.findViewById(R.id.btnCancel);
@@ -78,6 +79,7 @@ public class TaskDialogHelper {
         btnAdd.setOnClickListener(v -> {
             String title = etTitle.getText().toString().trim();
             String description = etDescription.getText().toString().trim();
+            String category = etCategory.getText().toString().trim();
 
             // Get selected priority (1-4)
             int priority = defaultPriority; // Use the default priority
@@ -98,7 +100,7 @@ public class TaskDialogHelper {
                 return;
             }
 
-            Task newTask = new Task(title, description, priority);
+            Task newTask = new Task(title, description, priority, category);
             if (!reminderDate.isEmpty()) {
                 newTask.setReminderDate(reminderDate);
             }

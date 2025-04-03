@@ -60,7 +60,8 @@ CREATE TABLE tbl_task (
     title TEXT NOT NULL,
     description TEXT,
     priority INTEGER NOT NULL,  -- 1-4 representing quadrants
-    reminder_date TEXT          -- Date for reminder (optional)
+    reminder_date TEXT,          -- Date for reminder (optional)
+	category TEXT DEFAULT ''
 );
 
 INSERT INTO "android_metadata" VALUES ('en_US');
@@ -82,9 +83,8 @@ INSERT INTO "tbl_note_reminder" VALUES (22,1,'Ngày 1, tháng 4','15:15',0,0);
 INSERT INTO "tbl_note_tag" VALUES (25,1,'excited ','#8E44AD');
 INSERT INTO "tbl_note_tag" VALUES (26,1,'😊','#E67E22');
 
-INSERT INTO tbl_task (title, description, priority, reminder_date)
+INSERT INTO tbl_task (title, description, priority, reminder_date, category)
 VALUES
-    ('Hoàn thành báo cáo', 'Báo cáo tài chính quý 1', 1, '2025-04-05'),
-    ('Mua sách mới', 'Sách về lập trình Android', 3, '2025-04-10');
-
+    ('Hoàn thành báo cáo', 'Báo cáo tài chính quý 1', 1, '2025-04-05', 'Công việc'),
+    ('Mua sách mới', 'Sách về lập trình Android', 3, '2025-04-10', 'Cá nhân');
 COMMIT;

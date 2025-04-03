@@ -86,8 +86,12 @@ public class Matrix_Eisenhower extends AppCompatActivity {
                 TaskDialogHelper.showInputDialog(Matrix_Eisenhower.this, new TaskDialogHelper.TaskDialogCallback() {
                     @Override
                     public void onTaskAdded(Task task) {
+                        // Add task to UI
                         addTaskToUI(task);
-                        taskList.add(task);  // Add task to the list
+                        // Add task to the list
+                        taskList.add(task);
+                        // Save task to database
+                        saveTaskToDatabase(task);
                     }
                 });
             }
@@ -212,6 +216,37 @@ public class Matrix_Eisenhower extends AppCompatActivity {
 
             // Thêm taskContainer vào priorityLayout
             priorityLayout.addView(taskContainer);
+        }
+    }
+
+    private void saveTaskToDatabase(Task task) {
+        SQLiteDatabase db = DatabaseHelper.getInstance(this).openDatabase();
+        if (db == null) {
+            Log.e("Matrix_Eisenhower", "Database không tồn tại hoặc không thể mở");
+            return;
+        }
+        
+        try {
+            // Create ContentValues to store task data
+            android.content.ContentValues values = new android.content.ContentValues();
+            values.put("title", task.getTitle());
+            values.put("description", task.getDescription());
+            values.put("priority", task.getPriority());
+            values.put("reminder_date", task.hasReminder() ? task.getReminderDate() : "");
+            values.put("category", task.getCategory());
+            
+            // Insert into database
+            long result = db.insert("tbl_task", null, values);
+            
+            if (result == -1) {
+                Log.e("Matrix_Eisenhower", "Lỗi khi lưu task vào database");
+            } else {
+                Log.d("Matrix_Eisenhower", "Task đã được lưu vào database thành công");
+            }
+        } catch (Exception e) {
+            Log.e("Matrix_Eisenhower", "Lỗi: " + e.getMessage());
+        } finally {
+            db.close();
         }
     }
 }
