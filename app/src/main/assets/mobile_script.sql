@@ -64,6 +64,21 @@ CREATE TABLE tbl_task (
 	category TEXT DEFAULT ''
 );
 
+DROP TABLE IF EXISTS "tbl_habit";
+CREATE TABLE tbl_habit (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    quote TEXT,
+    frequency TEXT,
+    week_days TEXT,        -- JSON string of boolean array
+    goal TEXT,
+    start_date TEXT,       -- Store as ISO8601 string
+    goal_days TEXT,
+    section TEXT,
+    reminder TEXT,
+    auto_popup INTEGER     -- 0/1
+);
+
 INSERT INTO "android_metadata" VALUES ('en_US');
 INSERT INTO "tbl_user" VALUES (1,'alice@example.com','hashed_password_123',0);
 INSERT INTO "tbl_user" VALUES (2,'bob@example.com','hashed_password_456',0);
@@ -87,4 +102,8 @@ INSERT INTO tbl_task (title, description, priority, reminder_date, category)
 VALUES
     ('Hoàn thành báo cáo', 'Báo cáo tài chính quý 1', 1, '2025-04-05', 'Công việc'),
     ('Mua sách mới', 'Sách về lập trình Android', 3, '2025-04-10', 'Cá nhân');
+
+	INSERT INTO tbl_habit (name, quote, frequency, week_days, goal, start_date, goal_days, section, reminder, auto_popup) VALUES
+('Morning Jog', 'Start your day with energy!', 'daily', '[true, true, true, true, true, false, false]', 'Run 3km', '2024-04-01', '30', 'Health', '07:00 AM', 1),
+('Reading', 'A book a day keeps ignorance away.', 'weekly', '[false, false, true, false, false, true, false]', 'Read 20 pages', '2024-03-15', '60', 'Education', '09:00 PM', 0);
 COMMIT;
