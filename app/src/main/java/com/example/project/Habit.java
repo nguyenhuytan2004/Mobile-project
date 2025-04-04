@@ -19,6 +19,8 @@ public class Habit implements Serializable {
         weekDays = new boolean[7];
     }
 
+    public int setID;
+
     public String getName() {
         return name;
     }
@@ -97,5 +99,9 @@ public class Habit implements Serializable {
 
     public void setAutoPopup(boolean autoPopup) {
         this.autoPopup = autoPopup;
+    }
+
+    public void setId(long aLong) {
+        this.setID = (int) aLong;
     }
 }

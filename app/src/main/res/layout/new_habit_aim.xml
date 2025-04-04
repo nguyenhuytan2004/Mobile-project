@@ -170,14 +170,18 @@
                         android:textSize="20sp"
                         android:textStyle="bold" />
 
-                    <TextView
+                    <EditText
+                        android:id="@+id/editTextGoal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="5 Page daily"
+                        android:hint="Enter your goal (e.g. 5 pages daily)"
+                        android:textColorHint="#888888"
                         android:textColor="#D3D3D3"
                         android:layout_marginLeft="8dp"
                         android:layout_marginBottom="8dp"
-                        android:textSize="16sp" />
+                        android:textSize="16sp"
+                        android:background="@android:color/transparent"
+                        android:padding="4dp"/>
 
                     <TextView
                         android:layout_width="match_parent"
@@ -188,13 +192,19 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/tvStartDate"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Nov 5"
+                        android:text="Select date..."
                         android:textColor="#D3D3D3"
                         android:layout_marginLeft="8dp"
                         android:layout_marginBottom="8dp"
-                        android:textSize="16sp" />
+                        android:textSize="16sp"
+                        android:drawableEnd="@android:drawable/ic_menu_my_calendar"
+                        android:drawablePadding="8dp"
+                        android:padding="4dp"
+                        android:clickable="true"
+                        android:focusable="true"/>
 
                     <TextView
                         android:layout_width="match_parent"
@@ -204,14 +214,13 @@
                         android:textSize="20sp"
                         android:textStyle="bold" />
 
-                    <TextView
+                    <Spinner
+                        android:id="@+id/spinnerGoalDays"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Forever"
-                        android:textSize="16sp"
-                        android:textColor="#D3D3D3"
                         android:layout_marginLeft="8dp"
-                        android:layout_marginBottom="8dp"/>
+                        android:layout_marginBottom="8dp"
+                        android:backgroundTint="#D3D3D3" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -239,14 +248,13 @@
                         android:textSize="20sp"
                         android:textStyle="bold" />
 
-                    <TextView
+                    <Spinner
+                        android:id="@+id/spinnerSection"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="4dp"
-                        android:textColor="#D3D3D3"
-                        android:text="Others"
-                        android:textSize="16sp"
-                        android:layout_marginLeft="8dp"/>
+                        android:layout_marginLeft="8dp"
+                        android:backgroundTint="#D3D3D3"
+                        android:padding="4dp"/>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -276,24 +284,34 @@
                         android:layout_marginTop="12dp"/>
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:id="@+id/tvReminderTime"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="13:00"
                             android:textSize="16sp"
                             android:textColor="#D3D3D3"
                             android:layout_marginLeft="20dp"
-                            android:layout_marginBottom="8dp"/>
+                            android:layout_marginBottom="8dp"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:drawableEnd="@android:drawable/ic_menu_recent_history"
+                            android:drawablePadding="8dp"/>
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:id="@+id/tvAddReminder"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="+ Add"
-                            android:textColor="@color/blue" />
+                            android:textColor="@color/blue"
+                            android:layout_marginStart="16dp"
+                            android:clickable="true"
+                            android:focusable="true"/>
                     </LinearLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
