@@ -2,6 +2,7 @@ package com.example.project;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.text.TextUtils;
 import android.util.Log;
@@ -109,10 +110,14 @@ public class SideBarHelper {
             text.setEllipsize(TextUtils.TruncateAt.END);
             text.setMaxLines(1);
 
-            // Click listener
             itemLayout.setOnClickListener(v -> {
-                callback.onTaskCategorySelected(categoryName);
-                dialog.dismiss();
+                // Mở TaskByCategory activity
+                Intent intent = new Intent(context, TaskByCategory.class);
+                intent.putExtra("category", categoryName);
+                intent.putExtra("title", categoryName); // Gửi thêm title nếu cần
+                context.startActivity(intent);
+
+                dialog.dismiss(); // Đóng sidebar
             });
 
             itemLayout.addView(icon);

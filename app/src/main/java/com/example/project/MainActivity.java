@@ -73,14 +73,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        matrixView.setOnClickListener(new View.OnClickListener() {
-              @Override
-              public void onClick(View v) {
-                  Intent intent = new Intent(MainActivity.this, Matrix_Eisenhower.class);
-                    startActivity(intent);
-              }
-          }
-        );
+
         // Sự kiện khi nhấn Floating Action Button (FAB)
         fabAdd.setOnClickListener(v -> {
             Bundle bundle = new Bundle();
@@ -91,6 +84,15 @@ public class MainActivity extends AppCompatActivity {
 
             startActivity(intent);
         });
+
+        matrixView.setOnClickListener(new View.OnClickListener() {
+                                          @Override
+                                          public void onClick(View v) {
+                                              Intent intent = new Intent(MainActivity.this, Matrix_Eisenhower.class);
+                                              startActivity(intent);
+                                          }
+                                      }
+        );
 
         focusTab.setOnClickListener(new View.OnClickListener() {
             @Override
