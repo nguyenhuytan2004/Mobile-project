@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 
 import android.content.Intent;
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 
@@ -35,6 +36,7 @@ public class FocusTab extends AppCompatActivity {
     LinearLayout pauseLayout, playLayout;
     TextView btnOption, focusNotes, focusTime, focusTime2, pomoTime;
     ProgressBar progressBar2;
+    MediaPlayer mediaPlayer;
 
     // Self-made variable
     private CountDownTimer countDownTimer;
@@ -71,6 +73,8 @@ public class FocusTab extends AppCompatActivity {
 
         progressBar2 = findViewById(R.id.progressBar2);
 
+        mediaPlayer = MediaPlayer.create(this, R.raw.ting);
+
         homeTab.setOnClickListener(view -> {
             startActivity(new Intent(FocusTab.this, MainActivity.class));
         });
@@ -96,7 +100,8 @@ public class FocusTab extends AppCompatActivity {
                 playLayout.setVisibility(View.GONE);
             }
 
-            int totalSecond = Integer.parseInt(focusTime.getText().toString().substring(0, 2)) * 60;
+//            int totalSecond = Integer.parseInt(focusTime.getText().toString().substring(0, 2)) * 60;
+            int totalSecond = 2;
             timeLeftInMillis = totalSecond * 1000;
 
             progressBar2.setMax(totalSecond);
@@ -237,8 +242,39 @@ public class FocusTab extends AppCompatActivity {
             }
 
             public void onFinish() {
-                btnEnd.performClick();
+                if (mediaPlayer != null) {
+                    mediaPlayer.setLooping(true);
+                    mediaPlayer.start();
+                }
+                showEndFocusDialog();
             }
         }.start();
+    }
+
+    private void showEndFocusDialog() {
+        View endFocusView = getLayoutInflater().inflate(R.layout.notification_dialog, null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(FocusTab.this);
+        builder.setView(endFocusView);
+
+        TextView title = endFocusView.findViewById(R.id.title);
+        TextView content = endFocusView.findViewById(R.id.content);
+        TextView btnConfirm = endFocusView.findViewById(R.id.btnConfirm);
+
+        title.setText("Hoàn thành tập trung");
+        content.setText("Hãy nghỉ ngơi một chút trước khi bắt đầu lại!");
+        btnConfirm.setText("Ok");
+
+        AlertDialog dialog = builder.create();
+        btnConfirm.setOnClickListener(v -> {
+            if (mediaPlayer != null) {
+                mediaPlayer.stop();
+                mediaPlayer.release();
+                mediaPlayer = null;
+            }
+            dialog.dismiss();
+            btnEnd.performClick();
+        });
+
+        dialog.show();
     }
 }
