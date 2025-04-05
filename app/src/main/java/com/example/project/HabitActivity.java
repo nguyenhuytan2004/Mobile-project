@@ -8,8 +8,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageButton;
@@ -26,7 +24,7 @@ public class HabitActivity extends AppCompatActivity {
 
     private static final String TAG = "HabitActivity";
     private GridView gridView;
-    private Button btnAll, btnCompleted, btnPending, btnAddHabit;
+    private Button btnAll, btnDailyLife, btnSport, btnAddHabit, btnLearning;
     private ImageButton btnBack;
     ImageView focusTab, calendarTab, homeTab, matrixTab;
     private ArrayList<Habit> habitList;
@@ -61,8 +59,9 @@ public class HabitActivity extends AppCompatActivity {
     private void initializeUI() {
         gridView = findViewById(R.id.gridView);
         btnAll = findViewById(R.id.btnAll);
-        btnCompleted = findViewById(R.id.btnCompleted);
-        btnPending = findViewById(R.id.btnPending);
+        btnDailyLife = findViewById(R.id.btnDailyLife);
+        btnSport = findViewById(R.id.btnSport);
+        btnLearning = findViewById(R.id.btnLearning);
         btnAddHabit = findViewById(R.id.button);
         btnBack = findViewById(R.id.imageButton4);
         calendarTab = findViewById(R.id.calendarTab2);
@@ -104,8 +103,9 @@ public class HabitActivity extends AppCompatActivity {
 
         // Filter buttons listeners
         btnAll.setOnClickListener(v -> filterHabits("all"));
-        btnCompleted.setOnClickListener(v -> filterHabits("life"));
-        btnPending.setOnClickListener(v -> filterHabits("sport"));
+        btnDailyLife.setOnClickListener(v -> filterHabits("Daily life"));
+        btnSport.setOnClickListener(v -> filterHabits("Sport"));
+        btnLearning.setOnClickListener(v -> filterHabits("Learning"));
 
         // GridView item click listener
         gridView.setOnItemClickListener((parent, view, position, id) -> {
@@ -130,7 +130,6 @@ public class HabitActivity extends AppCompatActivity {
 
         // If no habits found, add sample habits
         if (habitList.isEmpty()) {
-            addSampleHabitsToDatabase();
             habitList.addAll(getAllHabits());
         }
 
@@ -144,47 +143,10 @@ public class HabitActivity extends AppCompatActivity {
         }
     }
 
-    private void addSampleHabitsToDatabase() {
-        Log.d(TAG, "Adding sample habits to database");
-        
-        Habit habit1 = new Habit();
-        habit1.setName("Reading");
-        habit1.setQuote("A reader lives a thousand lives");
-        habit1.setFrequency("Daily");
-        habit1.setGoal("10 pages daily");
-        habit1.setGoalDays("Forever");
-        habit1.setSection("life");
-        habit1.setWeekDays(new boolean[]{true, true, true, true, true, true, true});
-        habit1.setReminder("08:00");
-        saveHabit(habit1);
-
-        Habit habit2 = new Habit();
-        habit2.setName("Running");
-        habit2.setQuote("Every step counts");
-        habit2.setFrequency("Weekly");
-        habit2.setGoal("5km per run");
-        habit2.setGoalDays("90 days");
-        habit2.setSection("sport");
-        habit2.setWeekDays(new boolean[]{false, true, false, true, false, true, false});
-        habit2.setReminder("17:30");
-        saveHabit(habit2);
-        
-        Habit habit3 = new Habit();
-        habit3.setName("Meditation");
-        habit3.setQuote("Peace comes from within");
-        habit3.setFrequency("Daily");
-        habit3.setGoal("10 minutes daily");
-        habit3.setGoalDays("30 days");
-        habit3.setSection("life");
-        habit3.setWeekDays(new boolean[]{true, true, true, true, true, true, true});
-        habit3.setReminder("06:00");
-        saveHabit(habit3);
-    }
-
     // Save a new habit to the database
     @SuppressLint("RestrictedApi")
     public long saveHabit(Habit habit) {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        SQLiteDatabase db = DatabaseHelper.getInstance(this).openDatabase();
         long newId = -1;
 
         try {

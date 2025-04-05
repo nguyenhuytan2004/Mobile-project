@@ -115,7 +115,7 @@ public class NewHabitAimActivity extends AppCompatActivity {
         spinnerGoalDays.setAdapter(goalDaysAdapter);
         spinnerGoalDays.setSelection(4);
         
-        String[] sectionOptions = {"Health", "Productivity", "Learning", "Others"};
+        String[] sectionOptions = {"Sport", "Daily life", "Learning", "Others"};
         ArrayAdapter<String> sectionAdapter = new ArrayAdapter<>(this, 
                 android.R.layout.simple_spinner_item, sectionOptions);
         sectionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

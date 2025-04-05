@@ -100,7 +100,7 @@
                 android:text="Tất cả" />
 
             <Button
-                android:id="@+id/btnCompleted"
+                android:id="@+id/btnDailyLife"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -108,12 +108,20 @@
                 android:text="Cuộc sống" />
 
             <Button
-                android:id="@+id/btnPending"
+                android:id="@+id/btnSport"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_weight="1"
                 android:text="Thể thao" />
+
+            <Button
+                android:id="@+id/btnLearning"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:text="Học tập" />
         </LinearLayout>
 
 
