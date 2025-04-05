@@ -1,6 +1,5 @@
 package com.example.project;
 
-
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -8,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 
@@ -16,17 +16,19 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 
-public class SingleMatrix extends AppCompatActivity implements TaskAdapter.TaskCompletionListener {
-
+public class TaskByCategory extends AppCompatActivity implements TaskAdapter.TaskCompletionListener {
 
     private FloatingActionButton fabAdd;
-    private ImageButton backBtn;
+    private ImageView sidebarView, focusTab, calendarTab, sideBarView, matrixView, habitTab;
     private RecyclerView rvTaskList;
     private ArrayList<Task> taskList;
     private TaskAdapter taskAdapter;
-    private int currentPriority;
+    private String currentCategory;
+    private int defaultPriority = 1; // Default priority
     private String currentTitle;
     private TextView titleTextView;
 
@@ -34,56 +36,95 @@ public class SingleMatrix extends AppCompatActivity implements TaskAdapter.TaskC
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.single_matrix);  // Set layout
+        setContentView(R.layout.task_by_category);  // Set layout
 
 
         // Get priority information from intent
         Intent intent = getIntent();
-        currentPriority = intent.getIntExtra("priority", 1); // Default to priority 1 if not specified
+        currentCategory = intent.getStringExtra("category");
         currentTitle = intent.getStringExtra("title");
 
 
         // Initialize views
         fabAdd = findViewById(R.id.floatingActionButton2);
         rvTaskList = findViewById(R.id.recyclerView);
-        backBtn = findViewById(R.id.backBtn);
-        titleTextView = findViewById(R.id.textView3);
+        sidebarView = findViewById(R.id.sidebarView);
+        focusTab = findViewById(R.id.focusTab);
+        calendarTab = findViewById(R.id.calendarTab);
+        matrixView = findViewById(R.id.matrixView);
+        habitTab = findViewById(R.id.habitTab);
+        titleTextView = findViewById(R.id.tvCategory);
 
+        matrixView.setOnClickListener(new View.OnClickListener() {
+              @Override
+              public void onClick(View v) {
+                  Intent intent = new Intent(TaskByCategory.this, Matrix_Eisenhower.class);
+                  startActivity(intent);
+              }
+          }
+        );
+
+        focusTab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(TaskByCategory.this, FocusTab.class);
+                startActivity(intent);
+            }
+        });
+
+        calendarTab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(TaskByCategory.this, CalendarTab.class);
+                startActivity(intent);
+            }
+        });
+
+        habitTab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(TaskByCategory.this, HabitActivity.class);
+                startActivity(intent);
+            }
+        });
 
         // Set the title based on the passed priority
         if (currentTitle != null) {
             titleTextView.setText(currentTitle);
         }
 
-
         // Set up RecyclerView
         rvTaskList.setLayoutManager(new LinearLayoutManager(this));
-
 
         // Initialize task list and adapter
         taskList = new ArrayList<>();
         taskAdapter = new TaskAdapter(taskList, this);
         rvTaskList.setAdapter(taskAdapter);
 
-
         // Load tasks from database for the current priority
-        loadTasksForPriority(currentPriority);
-
+        loadTasksByCategory(currentCategory);
 
         // backBtn click listener
-        backBtn.setOnClickListener(new View.OnClickListener(){
+        sidebarView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick (View v){
-                Intent intent = new Intent(SingleMatrix.this, Matrix_Eisenhower.class);
-                startActivity(intent);
-                finish(); // Close this activity and return to the previous one
+            public void onClick(View v) {
+                sidebarView.setOnClickListener(p -> {
+                    SideBarHelper.showSideBar(TaskByCategory.this, category -> {
+                        // Handle category selection
+                        if (category.equals("Tất cả công việc")) {
+                            loadAllTasks();
+                        } else {
+                            loadTasksByCategory(category);
+                        }
+                    }, () -> getAllTasksFromDatabase());
+                });
             }
         });
 
 
         // FloatingActionButton click listener
         fabAdd.setOnClickListener(v -> {
-            TaskDialogHelper.showInputDialog(SingleMatrix.this, currentPriority, new TaskDialogHelper.TaskDialogCallback() {
+            TaskDialogHelper.showInputDialog(TaskByCategory.this, defaultPriority, new TaskDialogHelper.TaskDialogCallback() {
                 @Override
                 public void onTaskAdded(Task task) {
                     // Save the task to the database
@@ -95,6 +136,43 @@ public class SingleMatrix extends AppCompatActivity implements TaskAdapter.TaskC
                 }
             });
         });
+    }
+
+    private void loadAllTasks() {
+        taskList.clear(); // Clear the current list
+        loadTasksByCategory("Tất cả công việc"); // Load all tasks
+        taskAdapter.notifyDataSetChanged(); // Notify the adapter
+    }
+
+    // Load all tasks from the database
+    private List<Task> getAllTasksFromDatabase() {
+        List<Task> categories = new ArrayList<>();
+        SQLiteDatabase db = null;
+        Cursor cursor = null;
+
+        try {
+            db = DatabaseHelper.getInstance(this).openDatabase();
+
+            // Get unique categories from tbl_task
+            String query = "SELECT DISTINCT category FROM tbl_task WHERE category IS NOT NULL AND category != ''";
+            cursor = db.rawQuery(query, null);
+
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    String categoryName = cursor.getString(0);
+                    Task categoryTask = new Task();
+                    categoryTask.setCategory(categoryName);
+                    categories.add(categoryTask);
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            Log.e("MainActivity", "Error getting categories", e);
+        } finally {
+            if (cursor != null) cursor.close();
+            if (db != null) DatabaseHelper.getInstance(this).closeDatabase();
+        }
+
+        return categories;
     }
 
     private void saveTaskToDatabase(Task task) {
@@ -129,17 +207,21 @@ public class SingleMatrix extends AppCompatActivity implements TaskAdapter.TaskC
     }
 
     // Load tasks for the selected priority from the database
-    private void loadTasksForPriority(int priority) {
+    private void loadTasksByCategory(String category) {
         SQLiteDatabase db = DatabaseHelper.getInstance(this).openDatabase();
         if (db == null) {
             Log.e("SingleMatrix", "Database không tồn tại hoặc không thể mở");
             return;
         }
 
-
         try {
-            Cursor cursor = db.rawQuery("SELECT * FROM tbl_task WHERE priority = ?",
-                    new String[]{String.valueOf(priority)});
+            Cursor cursor;
+            if(Objects.equals(category, "Tất cả công việc")){
+                 cursor = db.rawQuery("SELECT * FROM tbl_task ", null);
+            }else {
+                 cursor = db.rawQuery("SELECT * FROM tbl_task WHERE category = ?",
+                        new String[]{category});
+            }
             if (cursor.moveToFirst()) {
                 do {
                     int titleIndex = cursor.getColumnIndex("title");
@@ -149,6 +231,8 @@ public class SingleMatrix extends AppCompatActivity implements TaskAdapter.TaskC
                     int descriptionIndex = cursor.getColumnIndex("description");
                     String description = (descriptionIndex >= 0) ? cursor.getString(descriptionIndex) : "";
 
+                    int priorityIndex = cursor.getColumnIndex("priority");
+                    int priority = (priorityIndex >= 0) ? cursor.getInt(priorityIndex) : defaultPriority;
 
                     int reminderDateIndex = cursor.getColumnIndex("reminder_date");
                     String reminderDate = (reminderDateIndex >= 0) ? cursor.getString(reminderDateIndex) : "";
@@ -158,7 +242,7 @@ public class SingleMatrix extends AppCompatActivity implements TaskAdapter.TaskC
                     boolean isCompleted = (completeIndex >= 0) && cursor.getInt(completeIndex) == 1;
 
 
-                    Task task = new Task(title, description, priority);
+                    Task task = new Task(title, description, priority, category);
                     task.setReminderDate(reminderDate);
                     task.setCompleted(isCompleted);
 
