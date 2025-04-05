@@ -2,8 +2,8 @@ package com.example.project;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -13,9 +13,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -31,41 +28,25 @@ public class SideBarHelper {
         void onTaskCategorySelected(String category);
     }
 
-    // Interface to get tasks
     public interface TaskProvider {
         List<Task> getAllTasks();
     }
 
     public static void showSideBar(Context context, SideBarCallback callback, TaskProvider taskProvider) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        View dialogView = LayoutInflater.from(context).inflate(R.layout.sidde_bar, null);
+        View dialogView = LayoutInflater.from(context).inflate(R.layout.side_bar, null);
 
-        RecyclerView rvTaskTitles = dialogView.findViewById(R.id.rv_task_titles);
         LinearLayout btnAddList = dialogView.findViewById(R.id.btn_add_list);
+        LinearLayout categorySection = dialogView.findViewById(R.id.category_section); // Lấy đúng view
 
-        // Set up RecyclerView
-        rvTaskTitles.setLayoutManager(new LinearLayoutManager(context));
-
-        // Get unique categories from tasks
         List<String> taskCategories = getUniqueCategories(taskProvider.getAllTasks());
-
-        // Add a "All Tasks" option
         if (!taskCategories.contains("Tất cả công việc")) {
             taskCategories.add(0, "Tất cả công việc");
         }
+        Log.d("TAG", "Task Categories: " + taskCategories);
+        // ✅ Gọi hàm addCategoryItems với context + categorySection
+        addCategoryItems(context, categorySection, taskCategories, callback);
 
-        // Set the adapter with custom layout
-        TaskCategoryAdapter adapter = new TaskCategoryAdapter(taskCategories, taskCategory -> {
-            if (callback != null) {
-                callback.onTaskCategorySelected(taskCategory);
-            }
-            // Dismiss the dialog when a category is selected
-            if (dialog != null) dialog.dismiss();
-        });
-
-        rvTaskTitles.setAdapter(adapter);
-
-        // Set up the add button
         btnAddList.setOnClickListener(v -> {
             showAddCategoryDialog(context);
         });
@@ -73,10 +54,8 @@ public class SideBarHelper {
         builder.setView(dialogView);
         dialog = builder.create();
 
-        // Show the dialog
         dialog.show();
 
-        // Configure the dialog window
         WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
         params.gravity = Gravity.START | Gravity.TOP;
         params.height = WindowManager.LayoutParams.MATCH_PARENT;
@@ -86,81 +65,63 @@ public class SideBarHelper {
         dialog.getWindow().setAttributes(params);
     }
 
-    // Get unique categories from all tasks
     private static List<String> getUniqueCategories(List<Task> allTasks) {
         Set<String> uniqueCategories = new HashSet<>();
-
         for (Task task : allTasks) {
             String category = task.getCategory();
             if (category != null && !category.isEmpty()) {
                 uniqueCategories.add(category);
             }
         }
-
         return new ArrayList<>(uniqueCategories);
     }
 
-    // Show dialog to add a new category
     private static void showAddCategoryDialog(Context context) {
-        // This would allow users to create a new category without a task
         Toast.makeText(context, "Chức năng thêm danh mục mới", Toast.LENGTH_SHORT).show();
     }
 
-    // Adapter using the custom layout
-    private static class TaskCategoryAdapter extends RecyclerView.Adapter<TaskCategoryAdapter.ViewHolder> {
+    // ✅ Hàm static để thêm các category
+    private static void addCategoryItems(Context context, LinearLayout categorySection, List<String> categories, SideBarCallback callback) {
+        categorySection.removeAllViews();
 
-        private final List<String> categories;
-        private final OnCategoryClickListener listener;
+        for (String categoryName : categories) {
+            LinearLayout itemLayout = new LinearLayout(context);
+            itemLayout.setOrientation(LinearLayout.HORIZONTAL);
+            itemLayout.setPadding(0, dpToPx(context, 12), 0, dpToPx(context, 12));
+            itemLayout.setClickable(true);
 
-        public interface OnCategoryClickListener {
-            void onCategoryClick(String category);
-        }
+            // Icon
+            ImageView icon = new ImageView(context);
+            LinearLayout.LayoutParams iconParams = new LinearLayout.LayoutParams(
+                    dpToPx(context, 24), dpToPx(context, 24));
+            iconParams.setMarginEnd(dpToPx(context, 16));
+            icon.setLayoutParams(iconParams);
+            icon.setImageResource(R.drawable.ic_task_list);
 
-        public TaskCategoryAdapter(List<String> categories, OnCategoryClickListener listener) {
-            this.categories = categories;
-            this.listener = listener;
-        }
+            // Text
+            TextView text = new TextView(context);
+            LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(
+                    0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
+            text.setLayoutParams(textParams);
+            text.setText(categoryName);
+            text.setTextSize(16);
+            text.setTextColor(Color.WHITE);
+            text.setEllipsize(TextUtils.TruncateAt.END);
+            text.setMaxLines(1);
 
-        @NonNull
-        @Override
-        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            // Use custom layout for categories
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_task_category, parent, false);
-            return new ViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(ViewHolder holder, int position) {
-            String category = categories.get(position);
-            holder.tvCategoryName.setText(category);
-
-            // Set icon tint based on position
-            int[] colors = {0xFF3498DB, 0xFFE74C3C, 0xFF2ECC71, 0xFFF39C12, 0xFF9B59B6, 0xFF1ABC9C};
-            int colorIndex = position % colors.length;
-            holder.ivCategoryIcon.setColorFilter(colors[colorIndex]);
-
-            holder.itemView.setOnClickListener(v -> {
-                if (listener != null) {
-                    listener.onCategoryClick(category);
-                }
+            // Click listener
+            itemLayout.setOnClickListener(v -> {
+                callback.onTaskCategorySelected(categoryName);
+                dialog.dismiss();
             });
-        }
 
-        @Override
-        public int getItemCount() {
-            return categories.size();
+            itemLayout.addView(icon);
+            itemLayout.addView(text);
+            categorySection.addView(itemLayout);
         }
+    }
 
-        static class ViewHolder extends RecyclerView.ViewHolder {
-            TextView tvCategoryName;
-            ImageView ivCategoryIcon;
-
-            ViewHolder(View itemView) {
-                super(itemView);
-                tvCategoryName = itemView.findViewById(R.id.tv_category_name);
-                ivCategoryIcon = itemView.findViewById(R.id.iv_category_icon);
-            }
-        }
+    private static int dpToPx(Context context, int dp) {
+        return Math.round(dp * context.getResources().getDisplayMetrics().density);
     }
 }

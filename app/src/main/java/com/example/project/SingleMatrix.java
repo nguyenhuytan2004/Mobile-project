@@ -86,13 +86,47 @@ public class SingleMatrix extends AppCompatActivity implements TaskAdapter.TaskC
             TaskDialogHelper.showInputDialog(SingleMatrix.this, currentPriority, new TaskDialogHelper.TaskDialogCallback() {
                 @Override
                 public void onTaskAdded(Task task) {
+                    // Save the task to the database
+                    saveTaskToDatabase(task);
+
+                    // Add the task to the list and notify the adapter
                     taskList.add(task);
-                    taskAdapter.notifyItemInserted(taskList.size() - 1);
+                    taskAdapter.notifyDataSetChanged();
                 }
             });
         });
     }
 
+    private void saveTaskToDatabase(Task task) {
+        SQLiteDatabase db = DatabaseHelper.getInstance(this).openDatabase();
+        if (db == null) {
+            Log.e("Matrix_Eisenhower", "Database không tồn tại hoặc không thể mở");
+            return;
+        }
+
+        try {
+            // Create ContentValues to store task data
+            android.content.ContentValues values = new android.content.ContentValues();
+            values.put("title", task.getTitle());
+            values.put("description", task.getDescription());
+            values.put("priority", task.getPriority());
+            values.put("reminder_date", task.hasReminder() ? task.getReminderDate() : "");
+            values.put("category", task.getCategory());
+
+            // Insert into database
+            long result = db.insert("tbl_task", null, values);
+
+            if (result == -1) {
+                Log.e("Matrix_Eisenhower", "Lỗi khi lưu task vào database");
+            } else {
+                Log.d("Matrix_Eisenhower", "Task đã được lưu vào database thành công");
+            }
+        } catch (Exception e) {
+            Log.e("Matrix_Eisenhower", "Lỗi: " + e.getMessage());
+        } finally {
+            db.close();
+        }
+    }
 
     // Load tasks for the selected priority from the database
     private void loadTasksForPriority(int priority) {
