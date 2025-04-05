@@ -2,12 +2,19 @@ package com.example.project;
 
 import android.app.AlertDialog;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -25,6 +32,9 @@ import android.widget.SeekBar;
 import androidx.annotation.Nullable;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 public class FocusTab extends AppCompatActivity {
 
@@ -43,6 +53,7 @@ public class FocusTab extends AppCompatActivity {
     private long timeLeftInMillis;
     private boolean isPaused = false;
     private String focusNotesText = "";
+    private int prefFocusTime;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -73,7 +84,9 @@ public class FocusTab extends AppCompatActivity {
 
         progressBar2 = findViewById(R.id.progressBar2);
 
-        mediaPlayer = MediaPlayer.create(this, R.raw.ting);
+        SharedPreferences sharedPreferences = getSharedPreferences("FocusTabPrefs", MODE_PRIVATE);
+        prefFocusTime = sharedPreferences.getInt("focusTime", 5);
+        focusTime.setText(String.format("%02d:00", prefFocusTime));
 
         homeTab.setOnClickListener(view -> {
             startActivity(new Intent(FocusTab.this, MainActivity.class));
@@ -100,12 +113,13 @@ public class FocusTab extends AppCompatActivity {
                 playLayout.setVisibility(View.GONE);
             }
 
-//            int totalSecond = Integer.parseInt(focusTime.getText().toString().substring(0, 2)) * 60;
-            int totalSecond = 2;
-            timeLeftInMillis = totalSecond * 1000;
+            int totalSecond = Integer.parseInt(focusTime.getText().toString().substring(0, 2)) * 60;
+            timeLeftInMillis = totalSecond * 1000L;
 
             progressBar2.setMax(totalSecond);
             progressBar2.setProgress(0);
+
+            mediaPlayer = MediaPlayer.create(this, R.raw.ting);
 
             startTimer();
         });
@@ -225,11 +239,79 @@ public class FocusTab extends AppCompatActivity {
             btnSave.setOnClickListener(v2 -> {
                 int newTime = seekBar.getProgress() + 5;
                 focusTime.setText(String.format("%02d:00", newTime));
+                prefFocusTime = newTime;
+
                 dialog.dismiss();
             });
 
             dialog.show();
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // Check if the activity was launched from the widget
+        if (getIntent() != null && getIntent().hasExtra("fromWidget")) {
+            // Auto-start the focus timer
+            front.setVisibility(View.GONE);
+            behind.setVisibility(View.VISIBLE);
+            pauseLayout.setVisibility(View.VISIBLE);
+            playLayout.setVisibility(View.GONE);
+
+            int totalSecond = Integer.parseInt(focusTime.getText().toString().substring(0, 2)) * 60;
+            timeLeftInMillis = totalSecond * 1000L; // Use the actual time instead of hardcoded 15 seconds
+
+            progressBar2.setMax(totalSecond);
+            progressBar2.setProgress(0);
+
+            mediaPlayer = MediaPlayer.create(this, R.raw.ting);
+            startTimer();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        SharedPreferences sharedPreferences = getSharedPreferences("FocusTabPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("focusTime", prefFocusTime);
+        editor.apply();
+    }
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "Focus Time Ended";
+            String description = "Notifications for when focus time ends";
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel channel = new NotificationChannel("focus_time_channel", name, importance);
+            channel.setDescription(description);
+
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+    private void showEndFocusNotification() {
+        createNotificationChannel();
+
+        Intent intent = new Intent(this, FocusTab.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "focus_time_channel")
+                .setSmallIcon(R.drawable.ticktick_icon)
+                .setContentTitle("Focus Time Ended")
+                .setContentText("Your focus session has ended. Take a break!")
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        notificationManager.notify(1, builder.build());
     }
 
     private void startTimer() {
@@ -242,11 +324,11 @@ public class FocusTab extends AppCompatActivity {
             }
 
             public void onFinish() {
-                if (mediaPlayer != null) {
-                    mediaPlayer.setLooping(true);
-                    mediaPlayer.start();
-                }
+                mediaPlayer.setLooping(true);
+                mediaPlayer.start();
+
                 showEndFocusDialog();
+                showEndFocusNotification();
             }
         }.start();
     }
@@ -265,16 +347,24 @@ public class FocusTab extends AppCompatActivity {
         btnConfirm.setText("Ok");
 
         AlertDialog dialog = builder.create();
+        dialog.setOnDismissListener(dialogInterface -> {
+            stopMusicAndDismiss(dialog);
+        });
+
         btnConfirm.setOnClickListener(v -> {
-            if (mediaPlayer != null) {
-                mediaPlayer.stop();
-                mediaPlayer.release();
-                mediaPlayer = null;
-            }
-            dialog.dismiss();
-            btnEnd.performClick();
+            stopMusicAndDismiss(dialog);
         });
 
         dialog.show();
+    }
+
+    private void stopMusicAndDismiss(AlertDialog dialog) {
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
+        dialog.dismiss();
+        btnEnd.performClick();
     }
 }

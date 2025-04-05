@@ -2,9 +2,7 @@ package com.example.project;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
+import android.content.Intent;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,6 +40,12 @@ public class SideBarHelper {
 
         RecyclerView rvTaskTitles = dialogView.findViewById(R.id.rv_task_titles);
         LinearLayout btnAddList = dialogView.findViewById(R.id.btn_add_list);
+        ImageView btnSetting = dialogView.findViewById(R.id.btnSetting);
+
+        btnSetting.setOnClickListener(v -> {
+            Intent intent = new Intent(context, Setting.class);
+            context.startActivity(intent);
+        });
 
         // Set up RecyclerView
         rvTaskTitles.setLayoutManager(new LinearLayoutManager(context));
@@ -80,7 +84,7 @@ public class SideBarHelper {
         WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
         params.gravity = Gravity.START | Gravity.TOP;
         params.height = WindowManager.LayoutParams.MATCH_PARENT;
-        params.width = (int)(context.getResources().getDisplayMetrics().widthPixels * 0.85);
+        params.width = (int)(context.getResources().getDisplayMetrics().widthPixels * 0.9);
         params.y = 0;
         params.x = 0;
         dialog.getWindow().setAttributes(params);

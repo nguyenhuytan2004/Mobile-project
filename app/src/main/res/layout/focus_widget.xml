@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#2C2C2C"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <ImageView
+        android:id="@+id/widget_icon"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/widget_apple_icon"
+        android:layout_gravity="center" />
+
+    <TextView
+        android:id="@+id/widget_timer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Today: 5m"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:gravity="center"
+        android:layout_marginTop="12dp" />
+
+    <Button
+        android:id="@+id/widget_start_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Start"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/button_round_full"
+        android:textSize="18sp"
+        android:textColor="#FFFFFF" />
+</LinearLayout>

@@ -179,7 +179,7 @@ public class ReminderService extends BroadcastReceiver {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ticktick_icon)
-                .setContentTitle("TickTick Reminder")
+                .setContentTitle("Reminder")
                 .setContentText(noteTitle)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentIntent(pendingIntent)

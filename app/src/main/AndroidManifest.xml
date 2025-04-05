@@ -27,6 +27,16 @@
             </intent-filter>
         </receiver>
 
+        <receiver android:name=".FocusWidgetProvider"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/focus_widget_info" />
+        </receiver>
+
         <!--Set main activity-->
         <activity
             android:name=".MainActivity"
@@ -47,6 +57,8 @@
         <activity android:name=".HabitActivity"/>
         <activity android:name=".NewHabitActivity" />
         <activity android:name=".NewHabitAimActivity" />
+        <activity android:name=".Setting" />
+        <activity android:name=".Widget" />
 
     </application>
 
