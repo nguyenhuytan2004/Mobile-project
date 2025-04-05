@@ -40,6 +40,12 @@ public class SideBarHelper {
         LinearLayout btnAddList = dialogView.findViewById(R.id.btn_add_list);
         LinearLayout categorySection = dialogView.findViewById(R.id.category_section); // Lấy đúng view
 
+        ImageView btnSetting = dialogView.findViewById(R.id.btnSetting);
+        btnSetting.setOnClickListener(v -> {
+            Intent intent = new Intent(context, Setting.class);
+            context.startActivity(intent);
+        });
+
         List<String> taskCategories = getUniqueCategories(taskProvider.getAllTasks());
         if (!taskCategories.contains("Tất cả công việc")) {
             taskCategories.add(0, "Tất cả công việc");
