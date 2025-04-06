@@ -92,6 +92,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Bắt đầu"
+                android:textColor="@color/white"
                 android:backgroundTint="@color/blue"
                 android:layout_weight="1"
                 android:paddingVertical="15dp"
@@ -158,43 +159,6 @@
         android:layout_height="match_parent"
         android:visibility="gone">
 
-<!--        <LinearLayout-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:orientation="horizontal"-->
-<!--            android:gravity="center"-->
-<!--            android:layout_marginTop="20dp"-->
-<!--            android:paddingHorizontal="20dp">-->
-
-<!--            <ImageView-->
-<!--                android:layout_width="40dp"-->
-<!--                android:layout_height="40dp"-->
-<!--                android:src="@drawable/down_arrow_icon"-->
-<!--                android:tint="#D3D3D3" />-->
-
-<!--            <View-->
-<!--                android:layout_width="0dp"-->
-<!--                android:layout_height="0dp"-->
-<!--                android:layout_weight="1" />-->
-
-<!--            <ImageView-->
-<!--                android:layout_width="30dp"-->
-<!--                android:layout_height="30dp"-->
-<!--                android:src="@drawable/sun_icon"-->
-<!--                android:tint="#D3D3D3" />-->
-
-<!--            <TextView-->
-<!--                android:id="@+id/textView2"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:gravity="center_vertical"-->
-<!--                android:text="⋮"-->
-<!--                android:textColor="#FFFFFF"-->
-<!--                android:textSize="30sp"-->
-<!--                android:paddingLeft="40dp"-->
-<!--                android:paddingBottom="6dp"/>-->
-<!--        </LinearLayout>-->
-
         <TextView
             android:id="@+id/focus_text2"
             android:layout_width="wrap_content"
@@ -259,6 +223,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
+                    android:textSize="12sp"
                     android:text="White Noise"
                     android:textColor="#888888" />
             </LinearLayout>
@@ -281,6 +246,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Pause"
+                    android:textSize="12sp"
                     android:textColor="#888888" />
             </LinearLayout>
 
@@ -303,6 +269,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Continue"
+                    android:textSize="12sp"
                     android:textColor="#888888" />
             </LinearLayout>
 
@@ -326,6 +293,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:text="End"
+                    android:textSize="12sp"
                     android:textColor="#888888" />
 
             </LinearLayout>

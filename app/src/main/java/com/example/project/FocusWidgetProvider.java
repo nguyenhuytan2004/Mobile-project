@@ -22,15 +22,16 @@ public class FocusWidgetProvider extends AppWidgetProvider {
         // Create the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.focus_widget);
 
-        // Set up the intent to open FocusTab activity when the widget is clicked
+        // Intent mở FocusTab bình thường
         Intent openIntent = new Intent(context, FocusTab.class);
+        openIntent.setAction("OPEN_FOCUS");
         openIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent openPendingIntent = PendingIntent.getActivity(context, 0, openIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
-        // Set up intent for start button with auto-start flag
+        // Intent để auto start từ widget
         Intent startIntent = new Intent(context, FocusTab.class);
-        startIntent.putExtra("fromWidget", true);
+        startIntent.setAction("START_FOCUS");
         startIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent startPendingIntent = PendingIntent.getActivity(context, 1, startIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
