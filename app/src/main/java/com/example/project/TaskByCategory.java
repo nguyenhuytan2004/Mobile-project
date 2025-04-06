@@ -5,16 +5,22 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -23,7 +29,7 @@ import java.util.Objects;
 public class TaskByCategory extends AppCompatActivity implements TaskAdapter.TaskCompletionListener {
 
     private FloatingActionButton fabAdd;
-    private ImageView sidebarView, focusTab, calendarTab, sideBarView, matrixView, habitTab;
+    private ImageView sidebarView, focusTab, calendarTab, matrixView, habitTab, ivMore;
     private RecyclerView rvTaskList;
     private ArrayList<Task> taskList;
     private TaskAdapter taskAdapter;
@@ -31,6 +37,9 @@ public class TaskByCategory extends AppCompatActivity implements TaskAdapter.Tas
     private int defaultPriority = 1; // Default priority
     private String currentTitle;
     private TextView titleTextView;
+    LocalDateTime now = LocalDateTime.now();
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    String formattedCurrentDate = now.format(formatter);
 
 
     @Override
@@ -54,6 +63,7 @@ public class TaskByCategory extends AppCompatActivity implements TaskAdapter.Tas
         matrixView = findViewById(R.id.matrixView);
         habitTab = findViewById(R.id.habitTab);
         titleTextView = findViewById(R.id.tvCategory);
+        ivMore = findViewById(R.id.ivMore);
 
         matrixView.setOnClickListener(new View.OnClickListener() {
               @Override
@@ -93,6 +103,39 @@ public class TaskByCategory extends AppCompatActivity implements TaskAdapter.Tas
             titleTextView.setText(currentTitle);
         }
 
+        ivMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PopupMenu popupMenu = new PopupMenu(v.getContext(), v);
+                popupMenu.getMenu().add("Xoá");
+                popupMenu.getMenu().add("Chia sẻ");
+
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        String title = item.getTitle().toString();
+                        switch (title) {
+                            case "Xoá":
+                                // TODO: Thêm logic xoá
+                                deleteTasksByCategory(currentCategory);
+                                Intent intent = new Intent(TaskByCategory.this, MainActivity.class);
+                                startActivity(intent);
+                                finish(); // Close this activity and return to the previous one
+                                return true;
+                            case "Chia sẻ":
+                                // TODO: Thêm logic chia sẻ
+                                Toast.makeText(v.getContext(), "Đã chọn Chia sẻ", Toast.LENGTH_SHORT).show();
+                                return true;
+                            default:
+                                return false;
+                        }
+                    }
+                });
+
+                popupMenu.show();
+            }
+        });
+
         // Set up RecyclerView
         rvTaskList.setLayoutManager(new LinearLayoutManager(this));
 
@@ -113,6 +156,8 @@ public class TaskByCategory extends AppCompatActivity implements TaskAdapter.Tas
                         // Handle category selection
                         if (category.equals("Tất cả công việc")) {
                             loadAllTasks();
+                        } else if (category.equals("Hôm nay")) {
+                            loadTasksByCategory("Hôm nay");
                         } else {
                             loadTasksByCategory(category);
                         }
@@ -218,7 +263,13 @@ public class TaskByCategory extends AppCompatActivity implements TaskAdapter.Tas
             Cursor cursor;
             if(Objects.equals(category, "Tất cả công việc")){
                  cursor = db.rawQuery("SELECT * FROM tbl_task ", null);
-            }else {
+            } else if (Objects.equals(category, "Hôm nay")) {
+                // Get today's date
+                String todayDate = formattedCurrentDate;
+                Log.d("TAG", "Today date: " + todayDate);
+                cursor = db.rawQuery("SELECT * FROM tbl_task WHERE reminder_date = ?",
+                        new String[]{todayDate});
+            } else {
                  cursor = db.rawQuery("SELECT * FROM tbl_task WHERE category = ?",
                         new String[]{category});
             }
@@ -261,6 +312,37 @@ public class TaskByCategory extends AppCompatActivity implements TaskAdapter.Tas
         // Notify the adapter that data has changed
         taskAdapter.notifyDataSetChanged();
     }
+
+    private void deleteTasksByCategory(String category) {
+        SQLiteDatabase db = DatabaseHelper.getInstance(this).openDatabase();
+        if (db == null) {
+            Log.e("TaskByCategory", "Database không tồn tại hoặc không thể mở");
+            return;
+        }
+
+        try {
+            int deletedRows;
+            if (Objects.equals(category, "Tất cả công việc")) {
+                deletedRows = db.delete("tbl_task", null, null); // Xoá toàn bộ
+            } else if (Objects.equals(category, "Hôm nay")) {
+                String todayDate = formattedCurrentDate;
+                deletedRows = db.delete("tbl_task", "reminder_date = ?", new String[]{todayDate});
+            } else {
+                deletedRows = db.delete("tbl_task", "category = ?", new String[]{category});
+            }
+
+            Log.d("TaskByCategory", "Đã xoá " + deletedRows + " task trong category: " + category);
+        } catch (Exception e) {
+            Log.e("TaskByCategory", "Lỗi khi xoá task: " + e.getMessage(), e);
+        } finally {
+            DatabaseHelper.getInstance(this).closeDatabase();
+        }
+
+        // Cập nhật danh sách sau khi xoá
+        taskList.clear();
+        taskAdapter.notifyDataSetChanged();
+    }
+
 
     @Override
     public void onTaskCompletionChanged(Task task, boolean isCompleted) {

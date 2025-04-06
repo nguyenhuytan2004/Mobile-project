@@ -18,6 +18,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -30,6 +32,10 @@ public class MainActivity extends AppCompatActivity {
     ImageView focusTab, calendarTab, sideBarView, matrixView, habitTab;
     private LoginSessionManager loginSessionManager;
     private SQLiteDatabase db;
+
+    LocalDateTime now = LocalDateTime.now();
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    String formattedCurrentDate = now.format(formatter);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
         matrixView = findViewById(R.id.matrixView);
         habitTab = findViewById(R.id.habitTab);
 
+
         sideBarView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -65,6 +72,8 @@ public class MainActivity extends AppCompatActivity {
                         // Handle category selection
                         if (category.equals("Tất cả công việc")) {
                             loadAllTasks();
+                        } else if (category.equals("Hôm nay")) {
+                            loadTaskByDate(formattedCurrentDate);
                         } else {
                             loadTasksByCategory(category);
                         }
@@ -86,12 +95,12 @@ public class MainActivity extends AppCompatActivity {
         });
 
         matrixView.setOnClickListener(new View.OnClickListener() {
-                                          @Override
-                                          public void onClick(View v) {
-                                              Intent intent = new Intent(MainActivity.this, Matrix_Eisenhower.class);
-                                              startActivity(intent);
-                                          }
-                                      }
+              @Override
+              public void onClick(View v) {
+                  Intent intent = new Intent(MainActivity.this, Matrix_Eisenhower.class);
+                  startActivity(intent);
+              }
+          }
         );
 
         focusTab.setOnClickListener(new View.OnClickListener() {
@@ -332,6 +341,45 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private List<Task> loadTaskByDate(String date){
+        List<Task> tasks = new ArrayList<>();
+        SQLiteDatabase db = null;
+        Cursor cursor = null;
+
+        try {
+            db = DatabaseHelper.getInstance(this).openDatabase();
+
+            String query = "SELECT id, title, description, priority, reminder_date " +
+                    "FROM tbl_task WHERE reminder_date = ? " +
+                    "ORDER BY priority ASC";
+
+            cursor = db.rawQuery(query, new String[]{date});
+
+            if (cursor != null && cursor.getCount() > 0) {
+                while (cursor.moveToNext()) {
+                    int priority = cursor.getInt(cursor.getColumnIndexOrThrow("priority"));
+                    String title = cursor.getString(cursor.getColumnIndexOrThrow("title"));
+
+                    String description = "";
+                    int descColumnIndex = cursor.getColumnIndexOrThrow("description");
+                    if (!cursor.isNull(descColumnIndex)) {
+                        description = cursor.getString(descColumnIndex);
+                    }
+
+                    Task task = new Task( title, description, priority);
+                    tasks.add(task);
+                }
+            }
+        } catch (Exception e) {
+            Log.e("MainActivity", "Error loading tasks by date", e);
+        } finally {
+            if (cursor != null) cursor.close();
+            if (db != null) DatabaseHelper.getInstance(this).closeDatabase();
+        }
+
+        return tasks;
+    }
+
     // Method 3: Get categories from database for the sidebar
     private List<Task> getAllTasksFromDatabase() {
         List<Task> categories = new ArrayList<>();
@@ -362,4 +410,5 @@ public class MainActivity extends AppCompatActivity {
 
         return categories;
     }
+
 }

@@ -47,8 +47,9 @@ public class SideBarHelper {
         });
 
         List<String> taskCategories = getUniqueCategories(taskProvider.getAllTasks());
-        if (!taskCategories.contains("Tất cả công việc")) {
+        if (!taskCategories.contains("Tất cả công việc") && !taskCategories.contains("Hôm nay")) {
             taskCategories.add(0, "Tất cả công việc");
+            taskCategories.add(1, "Hôm nay");
         }
         Log.d("TAG", "Task Categories: " + taskCategories);
         // ✅ Gọi hàm addCategoryItems với context + categorySection
