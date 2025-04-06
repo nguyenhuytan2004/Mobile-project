@@ -223,7 +223,7 @@ public class TaskByCategory extends AppCompatActivity implements TaskAdapter.Tas
     private void saveTaskToDatabase(Task task) {
         SQLiteDatabase db = DatabaseHelper.getInstance(this).openDatabase();
         if (db == null) {
-            Log.e("Matrix_Eisenhower", "Database không tồn tại hoặc không thể mở");
+            Log.e("Database", "Database không tồn tại hoặc không thể mở");
             return;
         }
 
@@ -255,7 +255,7 @@ public class TaskByCategory extends AppCompatActivity implements TaskAdapter.Tas
     private void loadTasksByCategory(String category) {
         SQLiteDatabase db = DatabaseHelper.getInstance(this).openDatabase();
         if (db == null) {
-            Log.e("SingleMatrix", "Database không tồn tại hoặc không thể mở");
+            Log.e("Database", "Database không tồn tại hoặc không thể mở");
             return;
         }
 

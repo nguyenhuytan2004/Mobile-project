@@ -1,6 +1,7 @@
 package com.example.project;
 
 import android.annotation.SuppressLint;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -9,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.CalendarView;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -19,6 +21,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -32,8 +36,12 @@ import java.util.regex.Pattern;
 public class CalendarTab extends AppCompatActivity {
     ImageView homeTab, focusTab, matrixTab, habitTab;
     CalendarView calendarView;
-    LinearLayout notesContainer;
+    LinearLayout notesContainer, taskContainer;
     private Map<String, List<NoteInfo>> dateToNotesMap = new HashMap<>();
+    LocalDateTime now = LocalDateTime.now();
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    String formattedCurrentDate = now.format(formatter);
+
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
 
     @Override
@@ -47,9 +55,11 @@ public class CalendarTab extends AppCompatActivity {
         calendarView = findViewById(R.id.calendarView);
         habitTab = findViewById(R.id.habitTabCalender);
         notesContainer = findViewById(R.id.notesContainer);
+        taskContainer = findViewById(R.id.taskContainer);
 
         // Tải tất cả các ghi chú từ cơ sở dữ liệu
         loadNotesFromDatabase();
+        displayTaskForDate(formattedCurrentDate);
 
         // Thiết lập lịch để đánh dấu ngày có ghi chú
         setupCalendarEvents();
@@ -59,6 +69,7 @@ public class CalendarTab extends AppCompatActivity {
             String selectedDate = String.format(Locale.getDefault(), "%02d/%02d/%d",
                     dayOfMonth, (month + 1), year);
             displayNotesForDate(selectedDate);
+            displayTaskForDate(selectedDate);
         });
 
         homeTab.setOnClickListener(view -> {
@@ -129,6 +140,46 @@ public class CalendarTab extends AppCompatActivity {
         } finally {
             DatabaseHelper.getInstance(this).closeDatabase();
         }
+    }
+
+    private List<Task> loadTaskByDate(String date){
+        List<Task> tasks = new ArrayList<>();
+        SQLiteDatabase db = null;
+        Cursor cursor = null;
+
+        try {
+            db = DatabaseHelper.getInstance(this).openDatabase();
+
+            String query = "SELECT id, title, description, priority, reminder_date, complete " +
+                    "FROM tbl_task WHERE reminder_date = ? " +
+                    "ORDER BY priority ASC";
+
+            cursor = db.rawQuery(query, new String[]{date});
+
+            if (cursor != null && cursor.getCount() > 0) {
+                while (cursor.moveToNext()) {
+                    int priority = cursor.getInt(cursor.getColumnIndexOrThrow("priority"));
+                    String title = cursor.getString(cursor.getColumnIndexOrThrow("title"));
+
+                    String description = "";
+                    int descColumnIndex = cursor.getColumnIndexOrThrow("description");
+                    if (!cursor.isNull(descColumnIndex)) {
+                        description = cursor.getString(descColumnIndex);
+                    }
+                    boolean completed = cursor.getInt(cursor.getColumnIndexOrThrow("complete")) == 1;
+
+                    Task task = new Task( title, description, priority, completed);
+                    tasks.add(task);
+                }
+            }
+        } catch (Exception e) {
+            Log.e("MainActivity", "Error loading tasks by date", e);
+        } finally {
+            if (cursor != null) cursor.close();
+            if (db != null) DatabaseHelper.getInstance(this).closeDatabase();
+        }
+
+        return tasks;
     }
 
     private String formatDateString(String dateStr) {
@@ -241,6 +292,99 @@ public class CalendarTab extends AppCompatActivity {
         }
     }
 
+    private void displayTaskForDate(String date) {
+        taskContainer.removeAllViews();
+
+        List<Task> tasks = loadTaskByDate(date);
+        if (tasks != null && !tasks.isEmpty()) {
+            TextView title = new TextView(this);
+            title.setText("Nhiệm vụ");
+            title.setTextColor(Color.parseColor("#d5d5d5"));
+            title.setTextSize(20);
+            title.setPadding(20, 20, 0, 30);
+            taskContainer.addView(title);
+
+            for (Task task : tasks) {
+                LinearLayout taskRow = new LinearLayout(this);
+                taskRow.setOrientation(LinearLayout.HORIZONTAL);
+                taskRow.setPadding(20, 10, 20, 10);
+                taskRow.setLayoutParams(new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT));
+
+                // Tạo CheckBox
+                android.widget.CheckBox checkBox = new android.widget.CheckBox(this);
+
+                // Set trạng thái ban đầu (đã hoàn thành hay chưa)
+                checkBox.setChecked(task.isCompleted());
+
+                // Tùy chỉnh màu tic
+                checkBox.setButtonTintList(getColorStateList(R.color.statistics_blue));
+
+                // Lắng nghe sự kiện tick hoặc bỏ tick
+                checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        // Update task completion status
+                        task.setCompleted(isChecked);
+                        updateTaskCompletionStatus(task, isChecked);
+                    }
+                });
+
+                // TextView
+                TextView taskTitle = new TextView(this);
+                taskTitle.setText(task.getTitle());
+                taskTitle.setTextSize(18);
+                taskTitle.setTextColor(Color.parseColor("#d5d5d5"));
+                taskTitle.setPadding(16, 0, 0, 0);
+
+                taskRow.addView(checkBox);
+                taskRow.addView(taskTitle);
+                taskContainer.addView(taskRow);
+            }
+        } else {
+            TextView emptyText = new TextView(this);
+            emptyText.setText("Không có nhiệm vụ cho ngày này");
+            emptyText.setTextColor(Color.parseColor("#d5d5d5"));
+            emptyText.setTextSize(16);
+            emptyText.setPadding(20, 20, 20, 20);
+            taskContainer.addView(emptyText);
+        }
+    }
+
+    private void updateTaskCompletionStatus(Task task, boolean isCompleted) {
+        SQLiteDatabase db = DatabaseHelper.getInstance(this).openDatabase();
+        if (db == null) {
+            Log.e("CalendarTab", "Database không tồn tại hoặc không thể mở");
+            return;
+        }
+
+        try {
+            // Update the Task object's completion status
+            task.setCompleted(isCompleted);
+
+            // Create ContentValues to store task data
+            ContentValues values = new ContentValues();
+            values.put("complete", isCompleted ? 1 : 0);
+
+            // Update database - using both title and description for more precise matching
+            String whereClause = "title = ? AND description = ?";
+            String[] whereArgs = {task.getTitle(), task.getDescription()};
+
+            long result = db.update("tbl_task", values, whereClause, whereArgs);
+
+            if (result == -1) {
+                Log.e("CalendarTab", "Lỗi khi cập nhật trạng thái task vào database");
+            } else {
+                Log.d("CalendarTab", "Task đã được cập nhật trạng thái thành công: " +
+                        (isCompleted ? "đã hoàn thành" : "chưa hoàn thành"));
+            }
+        } catch (Exception e) {
+            Log.e("CalendarTab", "Lỗi: " + e.getMessage(), e);
+        } finally {
+            DatabaseHelper.getInstance(this).closeDatabase();
+        }
+    }
     // Lớp để lưu trữ thông tin ghi chú
     private static class NoteInfo {
         String id;

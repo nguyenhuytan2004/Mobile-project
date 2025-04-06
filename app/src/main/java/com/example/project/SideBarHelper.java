@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Set;
 import android.view.ViewGroup;
 
+import androidx.fragment.app.FragmentActivity;
+
 public class SideBarHelper {
 
     private static AlertDialog dialog;
@@ -38,6 +40,7 @@ public class SideBarHelper {
         View dialogView = LayoutInflater.from(context).inflate(R.layout.side_bar, null);
 
         LinearLayout btnAddList = dialogView.findViewById(R.id.btn_add_list);
+        ImageView userAvatar = dialogView.findViewById(R.id.img_user_profile);
         LinearLayout categorySection = dialogView.findViewById(R.id.category_section); // Lấy đúng view
 
         ImageView btnSetting = dialogView.findViewById(R.id.btnSetting);
@@ -56,7 +59,12 @@ public class SideBarHelper {
         addCategoryItems(context, categorySection, taskCategories, callback);
 
         btnAddList.setOnClickListener(v -> {
-            showAddCategoryDialog(context);
+            Toast.makeText(context, "Thêm danh sách công việc", Toast.LENGTH_SHORT).show();
+        });
+
+        userAvatar.setOnClickListener(v -> {
+            Intent intent = new Intent(context, Setting.class);
+            context.startActivity(intent);
         });
 
         builder.setView(dialogView);
@@ -84,9 +92,6 @@ public class SideBarHelper {
         return new ArrayList<>(uniqueCategories);
     }
 
-    private static void showAddCategoryDialog(Context context) {
-        Toast.makeText(context, "Chức năng thêm danh mục mới", Toast.LENGTH_SHORT).show();
-    }
 
     // ✅ Hàm static để thêm các category
     private static void addCategoryItems(Context context, LinearLayout categorySection, List<String> categories, SideBarCallback callback) {

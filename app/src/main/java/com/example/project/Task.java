@@ -26,6 +26,13 @@ public class Task {
         this.category = category;
     }
 
+    public Task(String title, String description, int priority, boolean isCompleted) {
+        this.title = title;
+        this.description = description;
+        this.priority = priority;
+        this.isCompleted = isCompleted;
+    }
+
 
     public Task() {
 
