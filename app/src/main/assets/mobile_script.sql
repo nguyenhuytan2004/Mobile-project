@@ -7,53 +7,55 @@ CREATE TABLE "android_metadata" (
 
 DROP TABLE IF EXISTS "tbl_note";
 CREATE TABLE "tbl_note" (
-	"id"	INTEGER,
-	"user_id"	INTEGER NOT NULL,
-	"title"	TEXT NOT NULL,
-	"content"	TEXT,
+	id INTEGER,
+	user_id	INTEGER NOT NULL,
+	title TEXT NOT NULL,
+	content TEXT,
+	category_id INTEGER NOT NULL,
 	PRIMARY KEY("id" AUTOINCREMENT),
 	FOREIGN KEY("user_id") REFERENCES "tbl_user"("id") ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS "tbl_note_photo";
 CREATE TABLE "tbl_note_photo" (
-	"id"	INTEGER,
-	"note_id"	INTEGER NOT NULL,
-	"photo_uri"	TEXT NOT NULL,
+	id INTEGER,
+	note_id INTEGER NOT NULL,
+	photo_uri TEXT NOT NULL,
 	PRIMARY KEY("id" AUTOINCREMENT),
 	FOREIGN KEY("note_id") REFERENCES "tbl_note"("id") ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS "tbl_note_reminder";
 CREATE TABLE "tbl_note_reminder" (
-	"id"	INTEGER,
-	"note_id"	INTEGER NOT NULL,
-	"date"	TEXT,
-	"time"	TEXT,
-	"days_before"	INTEGER DEFAULT 0,
-	"is_repeat"	BOOLEAN DEFAULT 0,
+	id INTEGER,
+	note_id INTEGER NOT NULL,
+	date TEXT,
+	time TEXT,
+	days_before INTEGER DEFAULT 0,
+	is_repeat BOOLEAN DEFAULT 0,
 	PRIMARY KEY("id" AUTOINCREMENT),
 	FOREIGN KEY("note_id") REFERENCES "tbl_note"("id") ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS "tbl_note_tag";
 CREATE TABLE "tbl_note_tag" (
-	"id"	INTEGER,
-	"note_id"	INTEGER NOT NULL,
-	"tag_text"	TEXT NOT NULL,
-	"tag_color"	TEXT NOT NULL,
+	id INTEGER,
+	note_id	INTEGER NOT NULL,
+	tag_text TEXT NOT NULL,
+	tag_color TEXT NOT NULL,
 	PRIMARY KEY("id" AUTOINCREMENT),
 	FOREIGN KEY("note_id") REFERENCES "tbl_note"("id") ON DELETE CASCADE
 );
 DROP TABLE IF EXISTS "tbl_user";
 CREATE TABLE "tbl_user" (
-	"id"	INTEGER,
-	"email"	TEXT NOT NULL,
-	"password_hash"	TEXT,
-	"isGoogle"	INTEGER DEFAULT 0,
+	id INTEGER,
+	email TEXT NOT NULL,
+	password_hash TEXT,
+	isGoogle INTEGER DEFAULT 0,
 	PRIMARY KEY("id" AUTOINCREMENT)
 );
--- 🏷 Tạo bảng lưu trữ task
+
+
 DROP TABLE IF EXISTS "tbl_task";
 CREATE TABLE tbl_task (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -61,7 +63,23 @@ CREATE TABLE tbl_task (
     description TEXT,
     priority INTEGER NOT NULL,  -- 1-4 representing quadrants
     reminder_date TEXT,          -- Date for reminder (optional)
-	category TEXT DEFAULT ''
+	category_id INTEGER NOT NULL,
+	FOREIGN KEY (category_id) REFERENCES tbl_category(id)
+);
+
+DROP TABLE IF EXISTS "tbl_category";
+CREATE TABLE tbl_category (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	name TEXT NOT NULL UNIQUE,
+	list_id INTEGER NOT NULL,
+	FOREIGN KEY (list_id) REFERENCES tbl_list(id)
+);
+
+DROP TABLE IF EXISTS "tbl_list";
+CREATE TABLE tbl_list (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	name TEXT NOT NULL UNIQUE,
+	icon TEXT
 );
 
 DROP TABLE IF EXISTS "tbl_habit";
@@ -84,24 +102,32 @@ INSERT INTO "tbl_user" VALUES (1,'alice@example.com','hashed_password_123',0);
 INSERT INTO "tbl_user" VALUES (2,'bob@example.com','hashed_password_456',0);
 INSERT INTO "tbl_user" VALUES (3,'alice@example.com',NULL,1);
 
+INSERT INTO tbl_list VALUES
+(1, 'Hôm nay', NULL),
+(2, 'Welcome', NULL);
+
+INSERT INTO tbl_category VALUES
+(1, 'Weekend', 2),
+(2, 'Daily work', 2);
+
 INSERT INTO "tbl_note" VALUES (1,1,'Tourism','Da Nang
 Nha Trang
-Phan Thiet');
+Phan Thiet', 1);
 INSERT INTO "tbl_note" VALUES (2,1,'Haha','ascnaocwnaocwnoawncoanwcaoiamacnon
-caoihwdohawdhaowdihoasdjpdsjapdwmawdpo');
+caoihwdohawdhaowdihoasdjpdsjapdwmawdpo', 2);
 
 INSERT INTO "tbl_note_photo" VALUES (13,1,'file:///data/user/0/com.example.project/files/note_img_1743490583956.jpg');
 
-INSERT INTO "tbl_note_reminder" VALUES (21,2,'Ngày 1, tháng 4','15:14',0,0);
-INSERT INTO "tbl_note_reminder" VALUES (22,1,'Ngày 1, tháng 4','15:15',0,0);
+INSERT INTO "tbl_note_reminder" VALUES (21,2,'Ngày 1, tháng 4','15:15',0,0);
+INSERT INTO "tbl_note_reminder" VALUES (22,1,'Ngày 30, tháng 4','09:00',0,0);
 
 INSERT INTO "tbl_note_tag" VALUES (25,1,'excited ','#8E44AD');
 INSERT INTO "tbl_note_tag" VALUES (26,1,'😊','#E67E22');
 
-INSERT INTO tbl_task (title, description, priority, reminder_date, category)
+INSERT INTO tbl_task (title, description, priority, reminder_date, category_id)
 VALUES
-    ('Hoàn thành báo cáo', 'Báo cáo tài chính quý 1', 1, '2025-04-05', 'Công việc'),
-    ('Mua sách mới', 'Sách về lập trình Android', 3, '2025-04-10', 'Cá nhân');
+    ('Hoàn thành báo cáo', 'Báo cáo tài chính quý 1', 1, '2025-04-05', 1),
+    ('Mua sách mới', 'Sách về lập trình Android', 3, '2025-04-10', 2);
 
 	INSERT INTO tbl_habit (name, quote, frequency, week_days, goal, start_date, goal_days, section, reminder, auto_popup) VALUES
 ('Morning Jog', 'Start your day with energy!', 'daily', '[true, true, true, true, true, false, false]', 'Run 3km', '2024-04-01', '30', 'Health', '07:00 AM', 1),

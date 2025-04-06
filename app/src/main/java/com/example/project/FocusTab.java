@@ -36,6 +36,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import java.util.Objects;
+
 public class FocusTab extends AppCompatActivity {
 
     // Variable from layout
@@ -87,6 +89,10 @@ public class FocusTab extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("FocusTabPrefs", MODE_PRIVATE);
         prefFocusTime = sharedPreferences.getInt("focusTime", 5);
         focusTime.setText(String.format("%02d:00", prefFocusTime));
+
+        if (getIntent().getAction() != null && getIntent().getAction().equals("START_FOCUS")) {
+            startFocus();
+        }
 
         homeTab.setOnClickListener(view -> {
             startActivity(new Intent(FocusTab.this, MainActivity.class));
@@ -249,24 +255,12 @@ public class FocusTab extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        // Check if the activity was launched from the widget
-        if (getIntent() != null && getIntent().hasExtra("fromWidget")) {
-            // Auto-start the focus timer
-            front.setVisibility(View.GONE);
-            behind.setVisibility(View.VISIBLE);
-            pauseLayout.setVisibility(View.VISIBLE);
-            playLayout.setVisibility(View.GONE);
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
 
-            int totalSecond = Integer.parseInt(focusTime.getText().toString().substring(0, 2)) * 60;
-            timeLeftInMillis = totalSecond * 1000L; // Use the actual time instead of hardcoded 15 seconds
-
-            progressBar2.setMax(totalSecond);
-            progressBar2.setProgress(0);
-
-            mediaPlayer = MediaPlayer.create(this, R.raw.ting);
-            startTimer();
+        if (Objects.equals(intent.getAction(), "START_FOCUS") && countDownTimer == null) {
+            startFocus();
         }
     }
 
@@ -277,6 +271,22 @@ public class FocusTab extends AppCompatActivity {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt("focusTime", prefFocusTime);
         editor.apply();
+    }
+
+    private void startFocus() {
+        front.setVisibility(View.GONE);
+        behind.setVisibility(View.VISIBLE);
+        pauseLayout.setVisibility(View.VISIBLE);
+        playLayout.setVisibility(View.GONE);
+
+        int totalSecond = Integer.parseInt(focusTime.getText().toString().substring(0, 2)) * 60;
+        timeLeftInMillis = totalSecond * 1000L;
+
+        progressBar2.setMax(totalSecond);
+        progressBar2.setProgress(0);
+
+        mediaPlayer = MediaPlayer.create(this, R.raw.ting);
+        startTimer();
     }
 
     private void createNotificationChannel() {
