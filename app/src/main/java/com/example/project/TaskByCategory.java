@@ -117,7 +117,6 @@ public class TaskByCategory extends AppCompatActivity implements TaskAdapter.Tas
                         switch (title) {
                             case "Xoá":
                                 // TODO: Thêm logic xoá
-                                deleteTasksByCategory(currentCategory);
                                 Intent intent = new Intent(TaskByCategory.this, MainActivity.class);
                                 startActivity(intent);
                                 finish(); // Close this activity and return to the previous one
@@ -148,24 +147,13 @@ public class TaskByCategory extends AppCompatActivity implements TaskAdapter.Tas
         taskAdapter = new TaskAdapter(taskList, this);
         rvTaskList.setAdapter(taskAdapter);
 
-        // Load tasks from database for the current priority
-        loadTasksByCategory(currentCategory);
 
         // backBtn click listener
         sidebarView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 sidebarView.setOnClickListener(p -> {
-                    SideBarHelper.showSideBar(TaskByCategory.this, category -> {
-                        // Handle category selection
-                        if (category.equals("Tất cả công việc")) {
-                            loadAllTasks();
-                        } else if (category.equals("Hôm nay")) {
-                            loadTasksByCategory("Hôm nay");
-                        } else {
-                            loadTasksByCategory(category);
-                        }
-                    }, () -> getAllTasksFromDatabase());
+                    Toast.makeText(TaskByCategory.this, "Sidebar clicked", Toast.LENGTH_SHORT).show();
                 });
             }
         });
@@ -177,8 +165,6 @@ public class TaskByCategory extends AppCompatActivity implements TaskAdapter.Tas
                 @Override
                 public void onTaskAdded(Task task) {
                     // Save the task to the database
-                    saveTaskToDatabase(task);
-
                     // Add the task to the list and notify the adapter
                     taskList.add(task);
                     taskAdapter.notifyDataSetChanged();
@@ -186,167 +172,6 @@ public class TaskByCategory extends AppCompatActivity implements TaskAdapter.Tas
             });
         });
     }
-
-    private void loadAllTasks() {
-        taskList.clear(); // Clear the current list
-        loadTasksByCategory("Tất cả công việc"); // Load all tasks
-        taskAdapter.notifyDataSetChanged(); // Notify the adapter
-    }
-
-    // Load all tasks from the database
-    private List<Task> getAllTasksFromDatabase() {
-        List<Task> categories = new ArrayList<>();
-        SQLiteDatabase db = null;
-        Cursor cursor = null;
-
-        try {
-            db = DatabaseHelper.getInstance(this).openDatabase();
-
-            // Get unique categories from tbl_task
-            String query = "SELECT DISTINCT category FROM tbl_task WHERE category IS NOT NULL AND category != ''";
-            cursor = db.rawQuery(query, null);
-
-            if (cursor != null && cursor.moveToFirst()) {
-                do {
-                    String categoryName = cursor.getString(0);
-                    Task categoryTask = new Task();
-                    categoryTask.setCategory(categoryName);
-                    categories.add(categoryTask);
-                } while (cursor.moveToNext());
-            }
-        } catch (Exception e) {
-            Log.e("MainActivity", "Error getting categories", e);
-        } finally {
-            if (cursor != null) cursor.close();
-            if (db != null) DatabaseHelper.getInstance(this).closeDatabase();
-        }
-
-        return categories;
-    }
-
-    private void saveTaskToDatabase(Task task) {
-        SQLiteDatabase db = DatabaseHelper.getInstance(this).openDatabase();
-        if (db == null) {
-            Log.e("Database", "Database không tồn tại hoặc không thể mở");
-            return;
-        }
-
-        try {
-            // Create ContentValues to store task data
-            android.content.ContentValues values = new android.content.ContentValues();
-            values.put("title", task.getTitle());
-            values.put("description", task.getDescription());
-            values.put("priority", task.getPriority());
-            values.put("reminder_date", task.hasReminder() ? task.getReminderDate() : "");
-            values.put("category", task.getCategory());
-
-            // Insert into database
-            long result = db.insert("tbl_task", null, values);
-
-            if (result == -1) {
-                Log.e("Matrix_Eisenhower", "Lỗi khi lưu task vào database");
-            } else {
-                Log.d("Matrix_Eisenhower", "Task đã được lưu vào database thành công");
-            }
-        } catch (Exception e) {
-            Log.e("Matrix_Eisenhower", "Lỗi: " + e.getMessage());
-        } finally {
-            db.close();
-        }
-    }
-
-    // Load tasks for the selected priority from the database
-    private void loadTasksByCategory(String category) {
-        SQLiteDatabase db = DatabaseHelper.getInstance(this).openDatabase();
-        if (db == null) {
-            Log.e("Database", "Database không tồn tại hoặc không thể mở");
-            return;
-        }
-
-        try {
-            Cursor cursor;
-            if(Objects.equals(category, "Tất cả công việc")){
-                 cursor = db.rawQuery("SELECT * FROM tbl_task ", null);
-            } else if (Objects.equals(category, "Hôm nay")) {
-                // Get today's date
-                String todayDate = formattedCurrentDate;
-                Log.d("TAG", "Today date: " + todayDate);
-                cursor = db.rawQuery("SELECT * FROM tbl_task WHERE reminder_date = ?",
-                        new String[]{todayDate});
-            } else {
-                 cursor = db.rawQuery("SELECT * FROM tbl_task WHERE category = ?",
-                        new String[]{category});
-            }
-            if (cursor.moveToFirst()) {
-                do {
-                    int titleIndex = cursor.getColumnIndex("title");
-                    String title = (titleIndex >= 0) ? cursor.getString(titleIndex) : "";
-
-
-                    int descriptionIndex = cursor.getColumnIndex("description");
-                    String description = (descriptionIndex >= 0) ? cursor.getString(descriptionIndex) : "";
-
-                    int priorityIndex = cursor.getColumnIndex("priority");
-                    int priority = (priorityIndex >= 0) ? cursor.getInt(priorityIndex) : defaultPriority;
-
-                    int reminderDateIndex = cursor.getColumnIndex("reminder_date");
-                    String reminderDate = (reminderDateIndex >= 0) ? cursor.getString(reminderDateIndex) : "";
-
-
-                    int completeIndex = cursor.getColumnIndex("complete");
-                    boolean isCompleted = (completeIndex >= 0) && cursor.getInt(completeIndex) == 1;
-
-
-                    Task task = new Task(title, description, priority, category);
-                    task.setReminderDate(reminderDate);
-                    task.setCompleted(isCompleted);
-
-
-                    taskList.add(task);
-                } while (cursor.moveToNext());
-            }
-            cursor.close();
-        } catch (Exception e) {
-            Log.e("SingleMatrix", "Error loading tasks: " + e.getMessage(), e);
-        } finally {
-            DatabaseHelper.getInstance(this).closeDatabase();
-        }
-
-
-        // Notify the adapter that data has changed
-        taskAdapter.notifyDataSetChanged();
-    }
-
-    private void deleteTasksByCategory(String category) {
-        SQLiteDatabase db = DatabaseHelper.getInstance(this).openDatabase();
-        if (db == null) {
-            Log.e("TaskByCategory", "Database không tồn tại hoặc không thể mở");
-            return;
-        }
-
-        try {
-            int deletedRows;
-            if (Objects.equals(category, "Tất cả công việc")) {
-                deletedRows = db.delete("tbl_task", null, null); // Xoá toàn bộ
-            } else if (Objects.equals(category, "Hôm nay")) {
-                String todayDate = formattedCurrentDate;
-                deletedRows = db.delete("tbl_task", "reminder_date = ?", new String[]{todayDate});
-            } else {
-                deletedRows = db.delete("tbl_task", "category = ?", new String[]{category});
-            }
-
-            Log.d("TaskByCategory", "Đã xoá " + deletedRows + " task trong category: " + category);
-        } catch (Exception e) {
-            Log.e("TaskByCategory", "Lỗi khi xoá task: " + e.getMessage(), e);
-        } finally {
-            DatabaseHelper.getInstance(this).closeDatabase();
-        }
-
-        // Cập nhật danh sách sau khi xoá
-        taskList.clear();
-        taskAdapter.notifyDataSetChanged();
-    }
-
 
     @Override
     public void onTaskCompletionChanged(Task task, boolean isCompleted) {
@@ -369,7 +194,7 @@ public class TaskByCategory extends AppCompatActivity implements TaskAdapter.Tas
 
             // Create ContentValues to store task data
             android.content.ContentValues values = new android.content.ContentValues();
-            values.put("complete", isCompleted ? 1 : 0);
+            values.put("is_completed", isCompleted ? 1 : 0);
 
 
             // Update database - using both title and description for more precise matching

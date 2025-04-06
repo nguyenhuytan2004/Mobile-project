@@ -100,7 +100,7 @@ public class TaskDialogHelper {
                 return;
             }
 
-            Task newTask = new Task(title, description, priority, category);
+            Task newTask = new Task(title, description, priority);
             if (!reminderDate.isEmpty()) {
                 newTask.setReminderDate(reminderDate);
             }
