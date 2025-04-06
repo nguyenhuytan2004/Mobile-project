@@ -10,15 +10,40 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Tiêu đề -->
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Thông báo hàng ngày"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="16dp"/>
+            android:orientation="horizontal"
+            android:layout_marginBottom="40dp">
+
+            <TextView
+                android:id="@+id/btnBack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="&lt;"
+                android:textColor="#CCE9E9E8"
+                android:textSize="30sp"
+                android:paddingBottom="3dp"/>
+
+            <!-- Tiêu đề -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Thông báo hàng ngày"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="16dp" />
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="30dp"
+                android:layout_weight="1"
+                android:layout_gravity="center"/>
+        </LinearLayout>
+
+
 
         <!-- Toggle Thông báo hàng ngày -->
         <LinearLayout
@@ -41,20 +66,21 @@
                     android:text="Thông báo hàng ngày"
                     android:textColor="#FFFFFF"
                     android:textSize="16sp"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Tổng quan về các nhiệm vụ Hôm nay vào một thời điểm cố định hàng ngày (bao gồm các nhiệm vụ quá hạn và cả ngày)."
                     android:textColor="#AAAAAA"
-                    android:textSize="14sp"/>
+                    android:textSize="14sp" />
             </LinearLayout>
 
             <Switch
+                android:id="@+id/switchDailyNotify"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:checked="true"/>
+                android:checked="true" />
         </LinearLayout>
 
         <!-- Cài đặt thông báo -->
@@ -73,7 +99,7 @@
                 android:textColor="#FFFFFF"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="8dp"/>
+                android:layout_marginBottom="8dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -81,6 +107,7 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    android:id="@+id/timeTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="09:00"
@@ -90,14 +117,15 @@
                     android:textSize="16sp"
                     android:layout_marginEnd="8dp"
                     android:gravity="center"
-                    android:paddingHorizontal="16dp"/>
+                    android:paddingHorizontal="16dp" />
 
                 <TextView
+                    android:id="@+id/addTimeTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="+ Thêm"
                     android:textColor="#FF8800"
-                    android:textSize="16sp"/>
+                    android:textSize="16sp" />
             </LinearLayout>
         </LinearLayout>
 
@@ -108,7 +136,7 @@
             android:text="Loại của nhiệm vụ thông báo"
             android:textColor="#AAAAAA"
             android:textSize="14sp"
-            android:layout_marginBottom="8dp"/>
+            android:layout_marginBottom="8dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -130,12 +158,13 @@
                     android:layout_weight="1"
                     android:text="Nhiệm vụ quá hạn"
                     android:textColor="#FFFFFF"
-                    android:textSize="16sp"/>
+                    android:textSize="16sp" />
 
                 <Switch
+                    android:id="@+id/switchOverdueTasks"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:checked="true"/>
+                    android:checked="true" />
             </LinearLayout>
 
             <LinearLayout
@@ -150,12 +179,13 @@
                     android:layout_weight="1"
                     android:text="Nhiệm vụ cả ngày"
                     android:textColor="#FFFFFF"
-                    android:textSize="16sp"/>
+                    android:textSize="16sp" />
 
                 <Switch
+                    android:id="@+id/switchAllDayTasks"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:checked="true"/>
+                    android:checked="true" />
             </LinearLayout>
         </LinearLayout>
 
@@ -166,7 +196,7 @@
             android:text="Ngày kích hoạt hàng tuần"
             android:textColor="#AAAAAA"
             android:textSize="14sp"
-            android:layout_marginBottom="8dp"/>
+            android:layout_marginBottom="8dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -177,6 +207,7 @@
             android:gravity="center_vertical">
 
             <TextView
+                android:id="@+id/daySunday"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="CN"
@@ -186,9 +217,10 @@
                 android:background="#333333"
                 android:gravity="center"
                 android:paddingHorizontal="12dp"
-                android:layout_marginEnd="4dp"/>
+                android:layout_marginEnd="4dp" />
 
             <TextView
+                android:id="@+id/dayMonday"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="T2"
@@ -198,9 +230,10 @@
                 android:background="#FF8800"
                 android:gravity="center"
                 android:paddingHorizontal="12dp"
-                android:layout_marginEnd="4dp"/>
+                android:layout_marginEnd="4dp" />
 
             <TextView
+                android:id="@+id/dayTuesday"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="T3"
@@ -210,9 +243,10 @@
                 android:background="#FF8800"
                 android:gravity="center"
                 android:paddingHorizontal="12dp"
-                android:layout_marginEnd="4dp"/>
+                android:layout_marginEnd="4dp" />
 
             <TextView
+                android:id="@+id/dayWednesday"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="T4"
@@ -222,9 +256,10 @@
                 android:background="#FF8800"
                 android:gravity="center"
                 android:paddingHorizontal="12dp"
-                android:layout_marginEnd="4dp"/>
+                android:layout_marginEnd="4dp" />
 
             <TextView
+                android:id="@+id/dayThursday"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="T5"
@@ -234,9 +269,10 @@
                 android:background="#FF8800"
                 android:gravity="center"
                 android:paddingHorizontal="12dp"
-                android:layout_marginEnd="4dp"/>
+                android:layout_marginEnd="4dp" />
 
             <TextView
+                android:id="@+id/dayFriday"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="T6"
@@ -246,9 +282,10 @@
                 android:background="#FF8800"
                 android:gravity="center"
                 android:paddingHorizontal="12dp"
-                android:layout_marginEnd="4dp"/>
+                android:layout_marginEnd="4dp" />
 
             <TextView
+                android:id="@+id/daySaturday"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="T7"
@@ -257,7 +294,7 @@
                 android:textSize="14sp"
                 android:background="#333333"
                 android:gravity="center"
-                android:paddingHorizontal="12dp"/>
+                android:paddingHorizontal="12dp" />
         </LinearLayout>
 
     </LinearLayout>
