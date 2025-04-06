@@ -15,8 +15,6 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.*;
 import com.google.android.gms.tasks.Task;
 
-
-
 public class MainActivity extends AppCompatActivity {
 
     FirebaseAuth auth;
