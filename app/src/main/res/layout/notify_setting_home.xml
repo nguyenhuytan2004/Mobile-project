@@ -11,15 +11,40 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Tiêu đề -->
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:text="Âm thanh và Thông báo"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:orientation="horizontal"
+            android:layout_marginBottom="40dp">
+
+            <TextView
+                android:id="@+id/btnBack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="&lt;"
+                android:textColor="#CCE9E9E8"
+                android:textSize="30sp"
+                android:paddingBottom="3dp"/>
+
+            <!-- Tiêu đề -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:text="Âm thanh và Thông báo"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/imageView8"
+                android:layout_width="20dp"
+                android:layout_height="30dp"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:src="@drawable/question_mark_icon" />
+        </LinearLayout>
 
         <!-- Cảnh báo -->
         <LinearLayout
@@ -38,6 +63,7 @@
 
         <!-- Thông báo hàng ngày -->
         <LinearLayout
+            android:id="@+id/dailyNotifyLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -56,6 +82,7 @@
 
         <!-- Các tùy chọn âm thanh -->
         <LinearLayout
+            android:id="@+id/reminderSoundLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -85,6 +112,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/setReminderSoundLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#222222"
@@ -123,6 +151,7 @@
                     android:textSize="16sp" />
 
                 <Switch
+                    android:id="@+id/switchRepeatReminder"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </LinearLayout>
@@ -130,6 +159,7 @@
 
         <!-- Thông báo email -->
         <LinearLayout
+            android:id="@+id/emailNotifyLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -155,6 +185,7 @@
 
         <!-- Ứng dụng Haptics -->
         <LinearLayout
+            android:id="@+id/hapticsAppLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -171,6 +202,7 @@
                 android:textSize="16sp"/>
 
             <Switch
+                android:id="@+id/switchHaptics"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="true"/>

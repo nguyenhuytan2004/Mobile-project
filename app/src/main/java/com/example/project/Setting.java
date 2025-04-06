@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 public class Setting extends Activity {
     LinearLayout btnWidget;
+    LinearLayout btnMusic_Notify;
     TextView btnBack;
 
     @Override
@@ -17,6 +18,7 @@ public class Setting extends Activity {
 
         btnWidget = findViewById(R.id.btnWidget);
         btnBack = findViewById(R.id.btnBack);
+        btnMusic_Notify = findViewById(R.id.btnMusicNotify);
 
         btnWidget.setOnClickListener(v -> {
             Intent intent = new Intent(Setting.this, Widget.class);
@@ -24,6 +26,11 @@ public class Setting extends Activity {
         });
         btnBack.setOnClickListener(v -> {
             finish();
+        });
+
+        btnMusic_Notify.setOnClickListener(v -> {
+            Intent intent = new Intent(Setting.this, NotificationSettingHome.class);
+            startActivity(intent);
         });
     }
 }

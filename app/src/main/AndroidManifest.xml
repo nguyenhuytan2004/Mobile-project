@@ -61,6 +61,8 @@
         <activity android:name=".NewHabitAimActivity" />
         <activity android:name=".Setting" />
         <activity android:name=".Widget" />
+        <activity android:name=".HomeActivity" />
+        <activity android:name=".NotificationSettingHome" />
 
     </application>
 
