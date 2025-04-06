@@ -104,12 +104,14 @@ INSERT INTO "tbl_user" VALUES (2,'bob@example.com','hashed_password_456',0);
 INSERT INTO "tbl_user" VALUES (3,'alice@example.com',NULL,1);
 
 INSERT INTO tbl_list VALUES
-(1, 'Hôm nay', NULL),
-(2, 'Welcome', NULL);
+(1, 'none' , NULL),
+(2, 'Hôm nay', NULL),
+(3, 'Welcome', NULL);
 
 INSERT INTO tbl_category VALUES
-(1, 'Weekend', 2),
-(2, 'Daily work', 2);
+(1, 'none', 1),
+(2, 'Weekend', 3),
+(3, 'Daily work', 3);
 
 INSERT INTO "tbl_note" VALUES (1,1,'Tourism','Da Nang
 Nha Trang
