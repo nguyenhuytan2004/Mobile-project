@@ -124,6 +124,10 @@ public class TaskByCategory extends AppCompatActivity implements TaskAdapter.Tas
                                 return true;
                             case "Chia sẻ":
                                 // TODO: Thêm logic chia sẻ
+                                Log.d("TAG", "Task list: " + taskList);
+                                Intent shareIntent = new Intent(TaskByCategory.this, ShareTaskActivity.class);
+                                shareIntent.putExtra("task_list", taskList); // tasks phải là ArrayList, không phải List
+                                startActivity(shareIntent);
                                 Toast.makeText(v.getContext(), "Đã chọn Chia sẻ", Toast.LENGTH_SHORT).show();
                                 return true;
                             default:

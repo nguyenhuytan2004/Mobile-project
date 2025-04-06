@@ -1,7 +1,7 @@
 package com.example.project;
 
 
-public class Task {
+public class Task implements java.io.Serializable {
     private String title;
     private String description;
     private int priority; // 1-4 representing quadrants
@@ -39,11 +39,17 @@ public class Task {
 
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
     public String getTitle() {
         return title;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     public String getDescription() {
         return description;
