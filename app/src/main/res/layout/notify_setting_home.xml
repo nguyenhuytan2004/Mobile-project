@@ -38,12 +38,10 @@
                 android:textStyle="bold" />
 
             <ImageView
-                android:id="@+id/imageView8"
                 android:layout_width="20dp"
                 android:layout_height="30dp"
                 android:layout_weight="1"
-                android:layout_gravity="center"
-                android:src="@drawable/question_mark_icon" />
+                android:layout_gravity="center"/>.
         </LinearLayout>
 
         <!-- Cảnh báo -->

@@ -63,6 +63,7 @@
         <activity android:name=".Widget" />
         <activity android:name=".HomeActivity" />
         <activity android:name=".NotificationSettingHome" />
+        <activity android:name=".NotificationSettingDaily" />
 
     </application>
 
