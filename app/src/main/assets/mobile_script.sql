@@ -63,6 +63,7 @@ CREATE TABLE tbl_task (
     description TEXT,
     priority INTEGER NOT NULL,  -- 1-4 representing quadrants
     reminder_date TEXT,          -- Date for reminder (optional)
+	is_completed BOOL DEFAULT FALSE,
 	category_id INTEGER NOT NULL,
 	FOREIGN KEY (category_id) REFERENCES tbl_category(id)
 );
@@ -126,8 +127,8 @@ INSERT INTO "tbl_note_tag" VALUES (26,1,'😊','#E67E22');
 
 INSERT INTO tbl_task (title, description, priority, reminder_date, category_id)
 VALUES
-    ('Hoàn thành báo cáo', 'Báo cáo tài chính quý 1', 1, '2025-04-05', 1),
-    ('Mua sách mới', 'Sách về lập trình Android', 3, '2025-04-10', 2);
+    ('Hoàn thành báo cáo', 'Báo cáo tài chính quý 1', 1, '04/05/2025', 1),
+    ('Mua sách mới', 'Sách về lập trình Android', 3, '04/10/2025', 2);
 
 	INSERT INTO tbl_habit (name, quote, frequency, week_days, goal, start_date, goal_days, section, reminder, auto_popup) VALUES
 ('Morning Jog', 'Start your day with energy!', 'daily', '[true, true, true, true, true, false, false]', 'Run 3km', '2024-04-01', '30', 'Health', '07:00 AM', 1),
