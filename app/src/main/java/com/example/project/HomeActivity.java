@@ -6,13 +6,17 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.PopupMenu;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -24,8 +28,12 @@ import java.util.regex.*;
 
 public class HomeActivity extends AppCompatActivity implements SideBarHelper.SideBarCallback, SideBarHelper.TaskProvider {
 
+    public interface TaskCompletionListener {
+        void onTaskCompletionChanged(Task task, boolean isCompleted);
+    }
+
     private FloatingActionButton fabAdd;
-    ImageView focusTab, calendarTab, sideBarView, matrixView, habitTab;
+    ImageView focusTab, calendarTab, sideBarView, matrixView, habitTab, ivMoreHome;
     private SQLiteDatabase db;
     private LoginSessionManager loginSessionManager;
 
@@ -56,6 +64,7 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
         sideBarView = findViewById(R.id.sidebarView);
         matrixView = findViewById(R.id.matrixView);
         habitTab = findViewById(R.id.habitTab);
+        ivMoreHome = findViewById(R.id.ivMoreHome);
 
         tvWelcome = findViewById(R.id.tv_welcome);
         categoryContainer = findViewById(R.id.category_container);
@@ -85,11 +94,191 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
             SideBarHelper.showSideBar(this, this, this);
         });
 
+        // Set up the more options menu
+        ivMoreHome.setOnClickListener(v -> {
+            PopupMenu popupMenu = new PopupMenu(this, v);
+            popupMenu.getMenu().add("Xoá");
+            popupMenu.getMenu().add("Chia sẻ");
+
+            popupMenu.setOnMenuItemClickListener(item -> {
+                String title = item.getTitle().toString();
+                switch (title) {
+                    case "Xoá":
+                        // Show confirmation dialog
+                        showDeleteConfirmationDialog();
+                        return true;
+                    case "Chia sẻ":
+                        // Get all tasks from current list for sharing
+                        shareCurrentList();
+                        return true;
+                    default:
+                        return false;
+                }
+            });
+
+            popupMenu.show();
+        });
+
         // Tab
         focusTab.setOnClickListener(v -> startActivity(new Intent(this, FocusTab.class)));
         calendarTab.setOnClickListener(v -> startActivity(new Intent(this, CalendarTab.class)));
         matrixView.setOnClickListener(v -> startActivity(new Intent(this, Matrix_Eisenhower.class)));
         habitTab.setOnClickListener(v -> startActivity(new Intent(this, HabitActivity.class)));
+    }
+
+    private void showDeleteConfirmationDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Xác nhận xóa");
+        builder.setMessage("Bạn có chắc chắn muốn xóa danh sách này không?");
+        
+        builder.setPositiveButton("Xóa", (dialog, which) -> {
+            // Only delete if not the default Welcome list (id 3)
+            if (currentListId != 2 && currentListId != 1) {
+                deleteCurrentList();
+            } else {
+                Toast.makeText(this, "Không thể xóa danh sách mặc định", Toast.LENGTH_SHORT).show();
+            }
+        });
+        
+        builder.setNegativeButton("Hủy", (dialog, which) -> dialog.dismiss());
+        
+        builder.show();
+    }
+
+    private void deleteCurrentList() {
+        try {
+            db = DatabaseHelper.getInstance(this).openDatabase();
+            
+            // First get the list name for notification
+            String listName = "";
+            Cursor cursor = db.rawQuery(
+                    "SELECT name FROM tbl_list WHERE id = ?",
+                    new String[]{String.valueOf(currentListId)}
+            );
+            
+            if (cursor.moveToFirst()) {
+                listName = cursor.getString(0);
+            }
+            cursor.close();
+            
+            // Delete the list - this should cascade and delete related categories and tasks
+            db.execSQL("DELETE FROM tbl_list WHERE id = ?", new String[]{String.valueOf(currentListId)});
+            
+            Toast.makeText(this, "Đã xóa danh sách: " + listName, Toast.LENGTH_SHORT).show();
+            
+            // Navigate back to the Welcome list
+            currentListId = 3;
+            loadWelcomeCategoriesAndTasks(currentListId);
+            tvWelcome.setText("👋 Welcome");
+            
+        } catch (Exception e) {
+            Log.e("HomeActivity", "Error deleting list", e);
+            Toast.makeText(this, "Lỗi khi xóa danh sách", Toast.LENGTH_SHORT).show();
+        } finally {
+            if (db != null) {
+                DatabaseHelper.getInstance(this).closeDatabase();
+            }
+        }
+    }
+
+    private void shareCurrentList() {
+        // Get list name
+        String listName = tvWelcome.getText().toString().replace("📋 ", "");
+        
+        try {
+            db = DatabaseHelper.getInstance(this).openDatabase();
+            
+            ArrayList<Task> tasksToShare = new ArrayList<>();
+            
+            Cursor categoryCursor = db.rawQuery(
+                    "SELECT c.id, c.name FROM tbl_category c WHERE c.list_id = ?",
+                    new String[]{String.valueOf(currentListId)}
+            );
+            
+            int userId = loginSessionManager.getUserId();
+            
+            while (categoryCursor.moveToNext()) {
+                int categoryId = categoryCursor.getInt(0);
+                String categoryName = categoryCursor.getString(1);
+                
+                // 1. Get notes from this category and convert to Task objects
+                Cursor noteCursor = db.rawQuery(
+                        "SELECT n.id, n.title, n.content, r.date " +
+                        "FROM tbl_note n " +
+                        "LEFT JOIN tbl_note_reminder r ON n.id = r.note_id " +
+                        "WHERE n.user_id = ? AND n.category_id = ?",
+                        new String[]{String.valueOf(userId), String.valueOf(categoryId)}
+                );
+                
+                while (noteCursor.moveToNext()) {
+                    int noteId = noteCursor.getInt(0);
+                    String title = noteCursor.getString(1);
+                    String content = noteCursor.isNull(2) ? "" : noteCursor.getString(2);
+                    String date = noteCursor.isNull(3) ? null : noteCursor.getString(3);
+                    
+                    // Create a Task object and set type to "note"
+                    Task task = new Task(noteId, title, categoryId);
+                    task.setDescription(content);
+                    if (date != null) {
+                        task.setReminderDate(date);
+                    }
+                    task.setType("note"); // Add a type marker
+                    
+                    tasksToShare.add(task);
+                }
+                noteCursor.close();
+                
+                // 2. Get actual tasks from this category
+                Cursor taskCursor = db.rawQuery(
+                        "SELECT id, title, description, priority, reminder_date, is_completed " +
+                        "FROM tbl_task " +
+                        "WHERE category_id = ?",
+                        new String[]{String.valueOf(categoryId)}
+                );
+                
+                while (taskCursor.moveToNext()) {
+                    int taskId = taskCursor.getInt(0);
+                    String title = taskCursor.getString(1);
+                    String description = taskCursor.isNull(2) ? "" : taskCursor.getString(2);
+                    int priority = taskCursor.getInt(3);
+                    String reminderDate = taskCursor.isNull(4) ? null : taskCursor.getString(4);
+                    boolean isCompleted = taskCursor.getInt(5) > 0;
+                    
+                    // Create a Task object
+                    Task task = new Task(taskId, title, categoryId);
+                    task.setDescription(description);
+                    task.setPriority(priority);
+                    task.setCompleted(isCompleted);
+                    if (reminderDate != null) {
+                        task.setReminderDate(reminderDate);
+                    }
+                    task.setType("task"); // Add a type marker
+                    
+                    tasksToShare.add(task);
+                }
+                taskCursor.close();
+            }
+            
+            categoryCursor.close();
+            
+            // Launch ShareTaskActivity with the tasks
+            if (!tasksToShare.isEmpty()) {
+                Intent shareIntent = new Intent(this, ShareTaskActivity.class);
+                shareIntent.putExtra("task_list", tasksToShare);
+                shareIntent.putExtra("list_name", listName);
+                startActivity(shareIntent);
+            } else {
+                Toast.makeText(this, "Không có ghi chú hoặc công việc nào để chia sẻ", Toast.LENGTH_SHORT).show();
+            }
+            
+        } catch (Exception e) {
+            Log.e("HomeActivity", "Error preparing tasks for sharing", e);
+            Toast.makeText(this, "Lỗi khi chia sẻ danh sách", Toast.LENGTH_SHORT).show();
+        } finally {
+            if (db != null) {
+                DatabaseHelper.getInstance(this).closeDatabase();
+            }
+        }
     }
 
     @Override
@@ -155,8 +344,28 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
                     // Sử dụng lại hàm addNoteView đã có
                     addNoteView(taskListLayout, noteId, title, content, date);
                 }
-
                 noteCursor.close();
+                
+                // Query tasks for this category
+                Cursor taskCursor = db.rawQuery(
+                        "SELECT id, title, description, priority, reminder_date, is_completed " +
+                        "FROM tbl_task " +
+                        "WHERE category_id = ?",
+                        new String[]{String.valueOf(categoryId)}
+                );
+                
+                while (taskCursor.moveToNext()) {
+                    int taskId = taskCursor.getInt(0);
+                    String title = taskCursor.getString(1);
+                    String description = taskCursor.isNull(2) ? "" : taskCursor.getString(2);
+                    int priority = taskCursor.getInt(3);
+                    String reminderDate = taskCursor.isNull(4) ? "" : taskCursor.getString(4);
+                    boolean isCompleted = taskCursor.getInt(5) > 0;
+                    
+                    // Add task view to layout
+                    addTaskView(taskListLayout, taskId, title, description, priority, reminderDate, isCompleted);
+                }
+                taskCursor.close();
 
                 // Thêm categoryView vào container
                 categoryContainer.addView(categoryView);
@@ -212,5 +421,61 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
         });
 
         targetLayout.addView(noteView);
+    }
+
+    private void addTaskView(LinearLayout targetLayout, int taskId, String title, String description, 
+                             int priority, String reminderDate, boolean isCompleted) {
+        // Inflate task view layout
+        View taskView = LayoutInflater.from(this).inflate(R.layout.note_item_in_main, targetLayout, false);
+        
+        // Find views in layout
+        TextView titleTextView = taskView.findViewById(R.id.note_title);
+        TextView contentTextView = taskView.findViewById(R.id.note_content);
+        TextView dateTextView = taskView.findViewById(R.id.note_date);
+        
+        // Set title with appropriate indicators
+        titleTextView.setText(title);
+        
+        // Apply strikethrough if task is completed
+        if (isCompleted) {
+            titleTextView.setPaintFlags(titleTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+        }
+        
+        // Set description/content
+        if (description.isEmpty()) {
+            contentTextView.setVisibility(View.GONE);
+        } else {
+            int numLines = description.split("\n").length;
+            if (description.length() > 33) {
+                description = description.substring(0, 33) + "...";
+            } else if (numLines > 2) {
+                description = description.split("\n")[0] + "\n" + description.split("\n")[1] + "...";
+            }
+            contentTextView.setText(description);
+        }
+        
+        // Set reminder date
+        if (reminderDate.isEmpty()) {
+            dateTextView.setVisibility(View.GONE);
+        } else {
+            dateTextView.setText(reminderDate);
+            
+            try {
+                LocalDate taskDate = LocalDate.parse(reminderDate, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+                dateTextView.setTextColor(getResources().getColor(
+                        taskDate.isBefore(LocalDate.now()) ? R.color.red : R.color.statistics_blue));
+            } catch (Exception e) {
+                // If date parsing fails, use default color
+                dateTextView.setTextColor(getResources().getColor(R.color.statistics_blue));
+            }
+        }
+        
+        // Set click listener to open task detail activity
+        taskView.setOnClickListener(v -> {
+            Toast.makeText(this, "Task ID: " + taskId, Toast.LENGTH_SHORT).show();
+        });
+        
+        // Add to target layout
+        targetLayout.addView(taskView);
     }
 }
