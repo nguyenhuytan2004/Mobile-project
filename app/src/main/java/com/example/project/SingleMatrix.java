@@ -82,18 +82,38 @@ public class SingleMatrix extends AppCompatActivity implements TaskAdapter.TaskC
         });
 
         // FloatingActionButton click listener
-        fabAdd.setOnClickListener(v -> {
-            TaskDialogHelper.showInputDialog(SingleMatrix.this, currentPriority, new TaskDialogHelper.TaskDialogCallback() {
-                @Override
-                public void onTaskAdded(Task task) {
-                    // Save the task to the database
-                    Toast.makeText(SingleMatrix.this, "Thêm thành công", Toast.LENGTH_SHORT).show();
-                    // Add the task to the list and notify the adapter
-                    taskList.add(task);
-                    taskAdapter.notifyDataSetChanged();
-                }
-            });
+        fabAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Adding the missing defaultPriority parameter (using 1 as default)
+                TaskDialogHelper.showInputDialog(SingleMatrix.this, currentPriority, new TaskDialogHelper.TaskDialogCallback() {
+                    @Override
+                    public void onTaskAdded(Task task) {
+                        SingleMatrix.this.onTaskAdded(task);
+                    }
+                });
+            }
         });
+    }
+
+    public void onTaskAdded(Task task) {
+        // Add the task to database
+        addTaskToDatabase(task);
+
+        // Set the task's priority to match the current matrix quadrant
+        task.setPriority(currentPriority);
+
+        // Add to task list
+        taskList.add(task);
+
+        // Notify adapter to refresh the UI
+        taskAdapter.notifyDataSetChanged();
+
+        // Optional: Scroll to the bottom to show the new task
+        rvTaskList.smoothScrollToPosition(taskList.size() - 1);
+
+        // Show confirmation to user
+        Toast.makeText(this, "Đã thêm nhiệm vụ mới", Toast.LENGTH_SHORT).show();
     }
 
     // Load tasks for the selected priority from the database
@@ -158,6 +178,47 @@ public class SingleMatrix extends AppCompatActivity implements TaskAdapter.TaskC
 
         // Notify the adapter that data has changed
         taskAdapter.notifyDataSetChanged();
+    }
+
+    private void addTaskToDatabase(Task task) {
+        SQLiteDatabase db = DatabaseHelper.getInstance(this).openDatabase();
+        try {
+            LoginSessionManager loginSessionManager = LoginSessionManager.getInstance(this);
+            int userId = loginSessionManager.getUserId();
+
+            ContentValues values = new ContentValues();
+            values.put("user_id", userId);
+            values.put("title", task.getTitle());
+            values.put("content", task.getDescription());  // Note: uses content field in DB
+            values.put("priority", task.getPriority());
+            values.put("is_completed", task.isCompleted() ? 1 : 0);
+            values.put("category_id", task.getCategoryId() > 0 ? task.getCategoryId() : 1); // Default to 1 if not set
+
+            long taskId = db.insert("tbl_task", null, values);
+
+            if (taskId == -1) {
+                Log.e("Matrix_Eisenhower", "Error adding task to database");
+            } else {
+                // If task has a reminder date, add it to the reminder table
+                if (task.hasReminder()) {
+                    ContentValues reminderValues = new ContentValues();
+                    reminderValues.put("task_id", taskId);
+                    reminderValues.put("date", task.getReminderDate());
+
+                    long reminderId = db.insert("tbl_task_reminder", null, reminderValues);
+
+                    if (reminderId == -1) {
+                        Log.e("Matrix_Eisenhower", "Error adding task reminder to database");
+                    }
+                }
+
+                Log.d("Matrix_Eisenhower", "Task added successfully to database with ID: " + taskId);
+            }
+        } catch (Exception e) {
+            Log.e("Matrix_Eisenhower", "Error: " + e.getMessage(), e);
+        } finally {
+            DatabaseHelper.getInstance(this).closeDatabase();
+        }
     }
 
     @Override
