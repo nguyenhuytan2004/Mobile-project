@@ -129,7 +129,7 @@ public class TaskActivity extends  AppCompatActivity{
         // Trong btnOption.setOnClickListener
         btnOption.setOnClickListener(view -> {
             BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(TaskActivity.this);
-            View sheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_in_note, null);
+            View sheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_in_task, null);
             bottomSheetDialog.setContentView(sheetView);
             bottomSheetDialog.show();
 
@@ -426,7 +426,7 @@ public class TaskActivity extends  AppCompatActivity{
             taskValues.put("user_id", LoginSessionManager.getInstance(this).getUserId());
             taskValues.put("priority", 1); // mặc định priority = 1, bạn có thể thay đổi
             taskValues.put("is_completed", 0);
-            taskValues.put("category_id", 1); // mặc định category = 1
+            taskValues.put("category_id", 3);
 
             if (Integer.parseInt(taskId) != -1) {
                 taskExists = true;
