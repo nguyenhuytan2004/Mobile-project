@@ -2,12 +2,14 @@ package com.example.project;
 
 
 public class Task implements java.io.Serializable {
+    private int id;
     private String title;
     private String description;
     private int priority; // 1-4 representing quadrants
     private String reminderDate; // To store date for reminder
     private int categoryId;
     private boolean isCompleted;
+    private String type; // "note" or "task"
 
 
     public Task(String title, String description, int priority) {
@@ -32,6 +34,13 @@ public class Task implements java.io.Serializable {
         this.isCompleted = isCompleted;
     }
 
+    // Constructor for converting from Note data
+    public Task(int id, String title, int categoryId) {
+        this.id = id;
+        this.title = title;
+        this.categoryId = categoryId;
+        this.isCompleted = false;
+    }
 
     public Task() {
 
@@ -43,6 +52,9 @@ public class Task implements java.io.Serializable {
         this.categoryId = categoryId;
     }
 
+    public int getId() {
+        return id;
+    }
 
     public void setTitle(String title) {
         this.title = title;
@@ -60,6 +72,9 @@ public class Task implements java.io.Serializable {
         return description;
     }
 
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
 
     public int getPriority() {
         return priority;
@@ -94,5 +109,17 @@ public class Task implements java.io.Serializable {
     }
     public void setCompleted(boolean completed) {
         isCompleted = completed;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getType() {
+        return type != null ? type : "task"; // Default is task
+    }
+
+    public boolean isNote() {
+        return "note".equals(type);
     }
 }
