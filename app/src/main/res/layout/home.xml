@@ -64,12 +64,15 @@
         android:layout_marginTop="5dp" />
 
     <ScrollView
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         app:layout_constraintTop_toBottomOf="@id/search_bar"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/footer"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="16dp">
+        android:layout_margin="16dp"
+        android:orientation="vertical"
+        >
 
         <LinearLayout
             android:id="@+id/category_container"
@@ -81,64 +84,53 @@
         </LinearLayout>
     </ScrollView>
 
-
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/bottom_nav"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:id="@+id/footer"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginBottom="20dp">
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="20dp"
+        >
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <ImageView
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/main_icon_1_blue"
+            android:layout_weight="1"
+            />
+
+        <ImageView
+            android:id="@+id/calendarTab"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_weight="1"
+            android:src="@drawable/main_icon_2" />
+
+        <ImageView
+            android:id="@+id/matrixView"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            >
+            android:layout_weight="1"
+            app:srcCompat="@drawable/icons8_matrix_32" />
 
-            <ImageView
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:src="@drawable/main_icon_1_blue"
-                android:layout_weight="1"
-                />
+        <ImageView
+            android:id="@+id/focusTab"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/main_icon_3"
+            android:layout_weight="1" />
 
-            <ImageView
-                android:id="@+id/calendarTab"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_weight="1"
-                android:src="@drawable/main_icon_2" />
+        <ImageView
+            android:id="@+id/habitTab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/ic_healthy_lifestyle" />
+    </LinearLayout>
 
-            <ImageView
-                android:id="@+id/matrixView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                app:srcCompat="@drawable/icons8_matrix_32" />
-
-            <ImageView
-                android:id="@+id/focusTab"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:src="@drawable/main_icon_3"
-                android:layout_weight="1" />
-
-            <ImageView
-                android:id="@+id/habitTab"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                app:srcCompat="@drawable/ic_healthy_lifestyle" />
-        </LinearLayout>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add"
@@ -155,57 +147,5 @@
         android:layout_marginEnd="20dp"
         android:contentDescription="Add a new item" />
 
-    <!-- Form nhập công việc -->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/task_input_layout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="#2C2C2C"
-        android:padding="16dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <!-- EditText for Task Name -->
-        <EditText
-            android:id="@+id/et_task_name"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:hint="Bạn thích làm gì?"
-            android:padding="12dp"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#AAAAAA"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <!-- EditText for Task Description -->
-        <EditText
-            android:id="@+id/et_task_description"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:hint="Thêm mô tả công việc"
-            android:padding="12dp"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#AAAAAA"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/et_task_name" />
-
-        <!-- Button to Add Task -->
-        <Button
-            android:id="@+id/btn_add_task"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="#FFA500"
-            android:text="Thêm"
-            android:textColor="#FFFFFF"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/et_task_description" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
