@@ -352,23 +352,23 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
                 LocalDate today = LocalDate.now();
                 String todayFormatted = today.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
                 String todayPattern = "Ngày " + today.getDayOfMonth() + ", tháng " + today.getMonthValue();
-                
+
                 Log.d("HomeActivity", "Today's date formats: " + todayFormatted + " and " + todayPattern);
-                
+
                 // Create a special category view for today's items
                 View categoryView = LayoutInflater.from(this).inflate(R.layout.item_category_block, categoryContainer, false);
                 TextView categoryTitle = categoryView.findViewById(R.id.category_title);
                 LinearLayout taskListLayout = categoryView.findViewById(R.id.task_list_layout);
-                
+
                 categoryTitle.setText("Hôm nay: " + todayFormatted);
-                
+
                 // Count total tasks and notes in database for debugging
                 Cursor countCursor = db.rawQuery("SELECT COUNT(*) FROM tbl_note", null);
                 if (countCursor.moveToFirst()) {
                     Log.d("HomeActivity", "Total notes in database: " + countCursor.getInt(0));
                 }
                 countCursor.close();
-                
+
                 countCursor = db.rawQuery("SELECT COUNT(*) FROM tbl_task", null);
                 if (countCursor.moveToFirst()) {
                     Log.d("HomeActivity", "Total tasks in database: " + countCursor.getInt(0));
@@ -409,9 +409,9 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
 
                     // Add category name to the title for clarity
                     title = "📝 [" + categoryName + "] " + title;
-                    
+
                     Log.d("HomeActivity", "Adding note: " + title + " with date: " + date);
-                    
+
                     // Use existing addNoteView function
                     addNoteView(taskListLayout, 0, noteId, title, content, date);
                 }
@@ -440,7 +440,7 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
                 Cursor taskCursor = db.rawQuery(taskQuery, argsList.toArray(new String[0]));
 
                 Log.d("HomeActivity", "Found " + taskCursor.getCount() + " tasks for today");
-                
+
                 while (taskCursor.moveToNext()) {
                     int taskId = taskCursor.getInt(0);
                     String title = taskCursor.getString(1);
@@ -449,12 +449,12 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
                     String reminderDate = taskCursor.isNull(4) ? "" : taskCursor.getString(4);
                     boolean isCompleted = taskCursor.getInt(5) > 0;
                     String categoryName = taskCursor.getString(6);
-                    
+
                     // Add category name to the title for clarity
                     title = "✓ [" + categoryName + "] " + title;
-                    
+
                     Log.d("HomeActivity", "Adding task: " + title + " with date: " + reminderDate);
-                    
+
                     addTaskView(taskListLayout, taskId, title, description, priority, reminderDate, isCompleted);
                 }
                 taskCursor.close();
@@ -467,10 +467,10 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
                     emptyView.setPadding(16, 16, 16, 16);
                     taskListLayout.addView(emptyView);
                 }
-                
+
                 // Add the category view to the container
                 categoryContainer.addView(categoryView);
-            } 
+            }
             // Normal list handling 
             else {
                 Cursor categoryCursor = db.rawQuery(
@@ -488,7 +488,7 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
 
                     categoryTitle.setText(categoryName);
 
-                    // --- Query Note có searchKeyword ---
+                    // --- Query Note ---
                     String noteQuery = "SELECT n.id, n.title, n.content, r.date " +
                             "FROM tbl_note n " +
                             "LEFT JOIN tbl_note_reminder r ON n.id = r.note_id " +
@@ -517,12 +517,12 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
                     }
                     noteCursor.close();
 
-                    // --- Query Task có searchKeyword ---
+                    // --- Query Task chưa hoàn thành ---
                     String taskQuery = "SELECT t.id, t.title, t.content, t.priority, " +
                             "r.date, t.is_completed " +
                             "FROM tbl_task t " +
                             "LEFT JOIN tbl_task_reminder r ON t.id = r.task_id " +
-                            "WHERE t.category_id = ?";
+                            "WHERE t.category_id = ? AND t.is_completed = 0";
 
                     List<String> taskArgs = new ArrayList<>();
                     taskArgs.add(String.valueOf(categoryId));
@@ -538,16 +538,17 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
                     while (taskCursor.moveToNext()) {
                         int taskId = taskCursor.getInt(0);
                         String title = taskCursor.getString(1);
-                        String description = taskCursor.isNull(2) ? "" : taskCursor.getString(2);
+                        String content = taskCursor.isNull(2) ? "" : taskCursor.getString(2);
                         int priority = taskCursor.getInt(3);
                         String reminderDate = taskCursor.isNull(4) ? "" : taskCursor.getString(4);
                         boolean isCompleted = taskCursor.getInt(5) > 0;
 
                         Log.d("SearchFilter", "Task title: " + title);
-                        addTaskView(taskListLayout, taskId, title, description, priority, reminderDate, isCompleted);
+                        addTaskView(taskListLayout, taskId, title, content, priority, reminderDate, isCompleted);
                     }
                     taskCursor.close();
 
+                    // Nếu không có note/task thì thêm dòng "Không có nội dung"
                     if (taskListLayout.getChildCount() == 0) {
                         TextView emptyView = new TextView(this);
                         emptyView.setText("Không có nội dung");
@@ -559,8 +560,59 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
                     categoryContainer.addView(categoryView);
                 }
 
+                // ✅ Thêm category "Đã hoàn thành"
+                View completedView = LayoutInflater.from(this).inflate(R.layout.item_category_block, categoryContainer, false);
+                TextView completedTitle = completedView.findViewById(R.id.category_title);
+                LinearLayout completedTaskLayout = completedView.findViewById(R.id.task_list_layout);
+
+                completedTitle.setText("Đã hoàn thành");
+
+                // --- Query các task đã hoàn thành ---
+                String completedQuery = "SELECT t.id, t.title, t.content, t.priority, " +
+                        "r.date, t.is_completed " +
+                        "FROM tbl_task t " +
+                        "JOIN tbl_category c ON t.category_id = c.id " +
+                        "LEFT JOIN tbl_task_reminder r ON t.id = r.task_id " +
+                        "WHERE c.list_id = ? AND t.user_id = ? AND t.is_completed = 1";
+
+                List<String> completedArgs = new ArrayList<>();
+                completedArgs.add(String.valueOf(listId));
+                completedArgs.add(String.valueOf(userId));
+
+                if (!searchKeyword.isEmpty()) {
+                    completedQuery += " AND (t.title LIKE ? OR t.content LIKE ?)";
+                    completedArgs.add("%" + searchKeyword + "%");
+                    completedArgs.add("%" + searchKeyword + "%");
+                }
+
+                Cursor completedCursor = db.rawQuery(completedQuery, completedArgs.toArray(new String[0]));
+
+                while (completedCursor.moveToNext()) {
+                    int taskId = completedCursor.getInt(0);
+                    String title = completedCursor.getString(1);
+                    String content = completedCursor.isNull(2) ? "" : completedCursor.getString(2);
+                    int priority = completedCursor.getInt(3);
+                    String reminderDate = completedCursor.isNull(4) ? "" : completedCursor.getString(4);
+                    boolean isCompleted = completedCursor.getInt(5) > 0;
+
+                    Log.d("SearchFilter", "Completed Task: " + title);
+                    addTaskView(completedTaskLayout, taskId, title, content, priority, reminderDate, isCompleted);
+                }
+
+                completedCursor.close();
+
+                if (completedTaskLayout.getChildCount() == 0) {
+                    TextView emptyView = new TextView(this);
+                    emptyView.setText("Không có nhiệm vụ đã hoàn thành");
+                    emptyView.setTextColor(Color.WHITE);
+                    emptyView.setPadding(16, 16, 16, 16);
+                    completedTaskLayout.addView(emptyView);
+                }
+
+                categoryContainer.addView(completedView);
+
                 categoryCursor.close();
-            }
+        }
 
         } catch (Exception e) {
             Log.e("HomeActivity", "Lỗi load category/note: " + e.getMessage(), e);
@@ -616,43 +668,42 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
         targetLayout.addView(noteView);
     }
 
-    private void addTaskView(LinearLayout targetLayout, int taskId, String title, String description, 
+    private void addTaskView(LinearLayout targetLayout, int taskId, String title, String content,
                              int priority, String reminderDate, boolean isCompleted) {
-        // Inflate task view layout
-        View taskView = LayoutInflater.from(this).inflate(R.layout.note_item_in_main, targetLayout, false);
-        
-        // Find views in layout
-        TextView titleTextView = taskView.findViewById(R.id.note_title);
-        TextView contentTextView = taskView.findViewById(R.id.note_content);
-        TextView dateTextView = taskView.findViewById(R.id.note_date);
-        
-        // Set title with appropriate indicators
+
+        View taskView = LayoutInflater.from(this).inflate(R.layout.task_item_in_main, targetLayout, false);
+
+        TextView titleTextView = taskView.findViewById(R.id.task_title);
+        TextView contentTextView = taskView.findViewById(R.id.task_content);
+        TextView dateTextView = taskView.findViewById(R.id.task_date);
+        CheckBox taskCheckBox = taskView.findViewById(R.id.taskCheckBox);
+
         titleTextView.setText(title);
-        
-        // Apply strikethrough if task is completed
+        taskCheckBox.setChecked(isCompleted);
+
         if (isCompleted) {
             titleTextView.setPaintFlags(titleTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         }
-        
+
         // Set description/content
-        if (description.isEmpty()) {
+        if (content.isEmpty()) {
             contentTextView.setVisibility(View.GONE);
         } else {
-            int numLines = description.split("\n").length;
-            if (description.length() > 33) {
-                description = description.substring(0, 33) + "...";
+            int numLines = content.split("\n").length;
+            if (content.length() > 33) {
+                content = content.substring(0, 33) + "...";
             } else if (numLines > 2) {
-                description = description.split("\n")[0] + "\n" + description.split("\n")[1] + "...";
+                content = content.split("\n")[0] + "\n" + content.split("\n")[1] + "...";
             }
-            contentTextView.setText(description);
+            contentTextView.setText(content);
         }
-        
+
         // Set reminder date
         if (reminderDate.isEmpty()) {
             dateTextView.setVisibility(View.GONE);
         } else {
             dateTextView.setText(reminderDate);
-            
+
             try {
                 LocalDate taskDate = LocalDate.parse(reminderDate, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
                 dateTextView.setTextColor(getResources().getColor(
@@ -662,14 +713,26 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
                 dateTextView.setTextColor(getResources().getColor(R.color.statistics_blue));
             }
         }
-        
+
         // Set click listener to open task detail activity
         taskView.setOnClickListener(v -> {
             Intent intent = new Intent(this, TaskActivity.class);
             intent.putExtra("taskId", String.valueOf(taskId));
             startActivity(intent);
         });
-        
+
+
+        taskCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            db = DatabaseHelper.getInstance(this).openDatabase();
+
+            String updateQuery = "UPDATE tbl_task SET is_completed = ? WHERE id = ?";
+            Object[] args = new Object[]{ isChecked ? 1 : 0, taskId };
+
+            db.execSQL(updateQuery, args);
+
+            loadCategoriesAndTasks(currentListId);
+        });
+
         // Add to target layout
         targetLayout.addView(taskView);
     }

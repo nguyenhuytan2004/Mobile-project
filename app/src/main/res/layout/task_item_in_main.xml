@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_marginBottom="20dp"
+    android:background="@drawable/search_bar_background"
+    android:layout_gravity="center">
+
+    <CheckBox
+        android:id="@+id/taskCheckBox"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:button="@drawable/ic_checkbox"
+        android:buttonTint="@color/gray"
+        android:layout_marginTop="3dp"
+        />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginLeft="10dp"
+        >
+
+        <TextView
+            android:id="@+id/task_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textColor="#EFEFEF"
+            android:text="Title"
+            />
+
+        <TextView
+            android:id="@+id/task_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textColor="#A4A4A4"
+            android:layout_marginTop="5dp"
+            android:text="Content"
+            android:maxLines="2"
+            />
+
+        <TextView
+            android:id="@+id/task_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="13sp"
+            android:textColor="#888888"
+            android:layout_marginTop="5dp"
+            android:text="date"
+            />
+
+    </LinearLayout>
+
+</LinearLayout>
