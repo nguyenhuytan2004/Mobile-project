@@ -33,15 +33,15 @@ import java.util.Date;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+public class TaskActivity extends  AppCompatActivity{
 
-public class NoteActivity extends AppCompatActivity {
     ImageView btnDate, btnTag, btnImage;
     TextView txtDate, btnBack, btnOption, btnSave;
     EditText titleInput, contentInput;
     FlexboxLayout tagContainer, attachmentContainer;
 
     SQLiteDatabase db;
-    String noteId;
+    String taskId;
 
     private String reminderTime = "";
     private int reminderDaysBefore = 0;
@@ -50,7 +50,7 @@ public class NoteActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.note);
+        setContentView(R.layout.task);
 
         txtDate = findViewById(R.id.txtDate);
         btnBack = findViewById(R.id.textView);
@@ -67,14 +67,27 @@ public class NoteActivity extends AppCompatActivity {
         tagContainer = findViewById(R.id.tagContainer);
         attachmentContainer = findViewById(R.id.attachmentContainer);
 
-        noteId = getIntent().getStringExtra("noteId");
-        Log.d("NoteActivity", "Note ID: " + noteId);
-        if (noteId != null && !noteId.equals("-1")) {
-            loadNote();
+        String title = getIntent().getStringExtra("title");
+        String content = getIntent().getStringExtra("content");
+        taskId = getIntent().getStringExtra("taskId");
+
+        if (title != null || content != null) {
+            // Mở từ NoteActivity → dùng dữ liệu từ intent
+            if (title != null) titleInput.setText(title);
+            if (content != null) contentInput.setText(content);
+        } else {
+            // Mở từ danh sách note + task → lấy từ database
+            taskId = getIntent().getStringExtra("taskId");
+            Log.d("TaskActivity", "Mở từ danh sách, taskId: " + taskId);
+            if (taskId != null) {
+                loadTask(taskId);
+            } else {
+                Log.e("TaskActivity", "Không có dữ liệu để hiển thị task!");
+            }
         }
 
         btnDate.setOnClickListener(view -> {
-            SetReminderDialog dialog = new SetReminderDialog(noteId);
+            SetReminderDialog dialog = new SetReminderDialog(taskId);
             dialog.setOnDateSelectedListener(new SetReminderDialog.OnReminderSettingsListener() {
                 @Override
                 public void onReminderSet(String date, String time, int daysBefore, boolean isRepeat) {
@@ -113,54 +126,48 @@ public class NoteActivity extends AppCompatActivity {
             finish();
         });
 
+        // Trong btnOption.setOnClickListener
         btnOption.setOnClickListener(view -> {
-            BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(NoteActivity.this);
+            BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(TaskActivity.this);
             View sheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_in_note, null);
             bottomSheetDialog.setContentView(sheetView);
             bottomSheetDialog.show();
 
             // Lấy các phần tử trong BottomSheet
-            TextView pinNote = sheetView.findViewById(R.id.pinTxt);
-            TextView convertNote = sheetView.findViewById(R.id.convertTxt);
-            TextView deleteNote = sheetView.findViewById(R.id.deleteTxt);
+            TextView pinTask = sheetView.findViewById(R.id.pinTxt);
+            TextView convertTask = sheetView.findViewById(R.id.convertTxt);
+            TextView deleteTask = sheetView.findViewById(R.id.deleteTxt);
 
             // Xử lý sự kiện
-            pinNote.setOnClickListener(v -> {
-                Toast.makeText(NoteActivity.this, "Ghi chú đã được ghim!", Toast.LENGTH_SHORT).show();
+            pinTask.setOnClickListener(v -> {
+                Toast.makeText(TaskActivity.this, "Nhiệm vụ đã được ghim!", Toast.LENGTH_SHORT).show();
                 bottomSheetDialog.dismiss();
             });
 
-            convertNote.setOnClickListener(v -> {
-
-                Intent intent = new Intent(NoteActivity.this, TaskActivity.class);
-                intent.putExtra("title", titleInput.getText().toString());
-                intent.putExtra("content", contentInput.getText().toString());
-                intent.putExtra("taskId", noteId);
-                startActivity(intent);
-
-                Toast.makeText(NoteActivity.this, "Ghi chú đã được chuyển đổi thành nhiệm vụ!", Toast.LENGTH_SHORT).show();
+            convertTask.setOnClickListener(v -> {
+                Toast.makeText(TaskActivity.this, "Nhiệm vụ đã được chuyển thành ghi chú!", Toast.LENGTH_SHORT).show();
                 bottomSheetDialog.dismiss();
             });
 
-            deleteNote.setOnClickListener(v -> {
-                db = DatabaseHelper.getInstance(NoteActivity.this).openDatabase();
+            deleteTask.setOnClickListener(v -> {
+                db = DatabaseHelper.getInstance(TaskActivity.this).openDatabase();
                 db.beginTransaction();
                 try {
-                    db.delete("tbl_note_reminder", "note_id = ?", new String[]{noteId});
-                    db.delete("tbl_note_photo", "note_id = ?", new String[]{noteId});
-                    db.delete("tbl_note_tag", "note_id = ?", new String[]{noteId});
-
-                    db.delete("tbl_note", "id = ?", new String[]{noteId});
+                    // Xóa các dữ liệu liên quan đến task
+                    db.delete("tbl_task_reminder", "task_id = ?", new String[]{taskId});
+                    db.delete("tbl_task_photo", "task_id = ?", new String[]{taskId});
+                    db.delete("tbl_task_tag", "task_id = ?", new String[]{taskId});
+                    db.delete("tbl_task", "id = ?", new String[]{taskId});
 
                     db.setTransactionSuccessful();
-                    Log.d("NoteActivity", "Note deleted successfully");
+                    Log.d("TaskActivity", "Task deleted successfully");
 
-                    ReminderService.cancelReminder(NoteActivity.this, noteId);
+                    ReminderService.cancelReminder(TaskActivity.this, taskId);
                 } catch (Exception e) {
-                    Log.e("NoteActivity", "Error deleting note", e);
+                    Log.e("TaskActivity", "Error deleting task", e);
                 } finally {
                     db.endTransaction();
-                    DatabaseHelper.getInstance(NoteActivity.this).closeDatabase();
+                    DatabaseHelper.getInstance(TaskActivity.this).closeDatabase();
                 }
 
                 bottomSheetDialog.dismiss();
@@ -168,40 +175,42 @@ public class NoteActivity extends AppCompatActivity {
             });
         });
 
+
         btnTag.setOnClickListener(view -> {
-            BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(NoteActivity.this);
+            BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(TaskActivity.this);
             View sheetView = getLayoutInflater().inflate(R.layout.add_card_bottom_sheet_in_note, null);
             bottomSheetDialog.setContentView(sheetView);
             bottomSheetDialog.show();
 
-            EditText cardInput = sheetView.findViewById(R.id.cardInputetxt);
-            cardInput.requestFocus();
+            EditText tagInput = sheetView.findViewById(R.id.cardInputetxt);
+            tagInput.requestFocus();
 
             TextView doneBtn = sheetView.findViewById(R.id.doneTxt);
             tagContainer.setFlexWrap(FlexWrap.WRAP);
 
             doneBtn.setOnClickListener(v -> {
-                String cardContent = cardInput.getText().toString();
+                String tagText = tagInput.getText().toString();
 
-                if (!cardContent.isEmpty()) {
-                    TextView tag = new TextView(NoteActivity.this);
-                    tag.setText(cardContent);
+                if (!tagText.isEmpty()) {
+                    TextView tag = new TextView(TaskActivity.this);
+                    tag.setText(tagText);
                     tag.setTextSize(18);
                     tag.setTextColor(Color.WHITE);
 
                     int[] colors = {
-                            Color.rgb(52, 152, 219),   // Blue
-                            Color.rgb(46, 204, 113),   // Green
-                            Color.rgb(231, 76, 60),    // Red
-                            Color.rgb(155, 89, 182),   // Purple
-                            Color.rgb(241, 196, 15),   // Yellow Dark
-                            Color.rgb(26, 188, 156),   // Teal
-                            Color.rgb(230, 126, 34),   // Orange
-                            Color.rgb(22, 160, 133),   // Dark Teal
-                            Color.rgb(142, 68, 173),   // Dark Purple
-                            Color.rgb(192, 57, 43),    // Dark Red
-                            Color.rgb(44, 62, 80),     // Dark Blue
-                            Color.rgb(127, 140, 141)};  // Gray Blue
+                            Color.rgb(52, 152, 219),
+                            Color.rgb(46, 204, 113),
+                            Color.rgb(231, 76, 60),
+                            Color.rgb(155, 89, 182),
+                            Color.rgb(241, 196, 15),
+                            Color.rgb(26, 188, 156),
+                            Color.rgb(230, 126, 34),
+                            Color.rgb(22, 160, 133),
+                            Color.rgb(142, 68, 173),
+                            Color.rgb(192, 57, 43),
+                            Color.rgb(44, 62, 80),
+                            Color.rgb(127, 140, 141)
+                    };
                     int randomColor = colors[new Random().nextInt(colors.length)];
 
                     GradientDrawable drawable = new GradientDrawable();
@@ -218,24 +227,24 @@ public class NoteActivity extends AppCompatActivity {
                     tag.setLayoutParams(params);
 
                     tag.setPadding(30, 10, 25, 10);
-
                     tagContainer.addView(tag);
+
                     bottomSheetDialog.dismiss();
                 } else {
-                    Toast.makeText(NoteActivity.this, "Vui lòng nhập nội dung!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(TaskActivity.this, "Vui lòng nhập nội dung!", Toast.LENGTH_SHORT).show();
                 }
             });
         });
+
 
         btnImage.setOnClickListener(view -> {
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(intent, 100);
         });
 
-        btnSave.setOnClickListener(view -> saveNote());
+        btnSave.setOnClickListener(view -> saveTask());
     }
 
-    // When selecting an image (in onActivityResult)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -283,27 +292,27 @@ public class NoteActivity extends AppCompatActivity {
         return Uri.fromFile(destFile);
     }
 
-    private void loadNote() {
-        Bundle bundle = getIntent().getExtras();
-        String noteId = bundle.getString("noteId");
-
+    private void loadTask(String taskId) {
         db = DatabaseHelper.getInstance(this).openDatabase();
-        String query = "SELECT n.id, n.title, n.content, r.date " +
-                        "FROM tbl_note n " +
-                        "LEFT JOIN tbl_note_reminder r ON n.id = r.note_id " +
-                        "WHERE n.id = ? " +
-                        "ORDER BY n.id DESC";
-        Cursor cursor = db.rawQuery(query, new String[]{noteId});
 
+        String query = "SELECT t.id, t.title, t.content, r.date " +
+                "FROM tbl_task t " +
+                "LEFT JOIN tbl_task_reminder r ON t.id = r.task_id " +
+                "WHERE t.id = ? " +
+                "ORDER BY t.id DESC";
+
+        Cursor cursor = db.rawQuery(query, new String[]{taskId});
         if (cursor != null && cursor.moveToFirst()) {
             titleInput.setText(cursor.getString(cursor.getColumnIndexOrThrow("title")));
             contentInput.setText(cursor.getString(cursor.getColumnIndexOrThrow("content")));
+
             String date = "";
             int dateColumnIndex = cursor.getColumnIndexOrThrow("date");
             if (!cursor.isNull(dateColumnIndex)) {
                 date = cursor.getString(dateColumnIndex);
             }
             txtDate.setText(date);
+
             if (!date.isEmpty()) {
                 Pattern pattern = Pattern.compile("(\\d+)");
                 Matcher matcher = pattern.matcher(date);
@@ -316,18 +325,16 @@ public class NoteActivity extends AppCompatActivity {
                     month = Integer.parseInt(matcher.group(1));
                 }
 
-                LocalDate noteDate = LocalDate.of(LocalDate.now().getYear(), month, day);
-
-                if (noteDate.isBefore(LocalDate.now())) {
+                LocalDate taskDate = LocalDate.of(LocalDate.now().getYear(), month, day);
+                if (taskDate.isBefore(LocalDate.now())) {
                     txtDate.setTextColor(getResources().getColor(R.color.red));
-                }
-                else {
+                } else {
                     txtDate.setTextColor(getResources().getColor(R.color.statistics_blue));
                 }
             }
 
             // Load tags
-            Cursor tagCursor = db.rawQuery("SELECT * FROM tbl_note_tag WHERE note_id = ?", new String[]{noteId});
+            Cursor tagCursor = db.rawQuery("SELECT * FROM tbl_task_tag WHERE task_id = ?", new String[]{taskId});
             if (tagCursor != null) {
                 while (tagCursor.moveToNext()) {
                     TextView tag = new TextView(this);
@@ -347,36 +354,32 @@ public class NoteActivity extends AppCompatActivity {
                     );
                     params.setMargins(0, 0, 10, 10);
                     tag.setLayoutParams(params);
-
                     tag.setPadding(30, 10, 25, 10);
+
                     tagContainer.addView(tag);
                 }
                 tagCursor.close();
             }
 
             // Load photos
-            Cursor photoCursor = db.rawQuery("SELECT * FROM tbl_note_photo WHERE note_id = ?", new String[]{noteId});
+            Cursor photoCursor = db.rawQuery("SELECT * FROM tbl_task_photo WHERE task_id = ?", new String[]{taskId});
             if (photoCursor != null && photoCursor.getCount() > 0) {
                 while (photoCursor.moveToNext()) {
                     ImageView attachedPhoto = new ImageView(this);
                     try {
                         Uri photoUri = Uri.parse(photoCursor.getString(photoCursor.getColumnIndexOrThrow("photo_uri")));
 
-                        // Check if it's a file URI (our app storage)
                         if (photoUri.getScheme().equals("file")) {
                             attachedPhoto.setImageURI(photoUri);
-                            attachedPhoto.setTag(photoUri.toString()); // Store local URI for saving
+                            attachedPhoto.setTag(photoUri.toString());
                         } else {
-                            // For older content:// URIs, try to load with permission
                             attachedPhoto.setImageBitmap(MediaStore.Images.Media.getBitmap(getContentResolver(), photoUri));
                         }
                     } catch (Exception e) {
-                        Log.e("NoteActivity", "Error loading image: " + e.getMessage());
+                        Log.e("TaskActivity", "Error loading image: " + e.getMessage());
                     }
 
-                    FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams(
-                            300,
-                            300);
+                    FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams(300, 300);
                     params.setMargins(0, 0, 10, 10);
                     attachedPhoto.setLayoutParams(params);
 
@@ -386,7 +389,7 @@ public class NoteActivity extends AppCompatActivity {
             }
 
             // Load reminder settings
-            Cursor reminderCursor = db.rawQuery("SELECT * FROM tbl_note_reminder WHERE note_id = ?", new String[]{noteId});
+            Cursor reminderCursor = db.rawQuery("SELECT * FROM tbl_task_reminder WHERE task_id = ?", new String[]{taskId});
             if (reminderCursor != null && reminderCursor.moveToFirst()) {
                 String timeReminder = reminderCursor.getString(reminderCursor.getColumnIndexOrThrow("time"));
                 int daysBefore = reminderCursor.getInt(reminderCursor.getColumnIndexOrThrow("days_before"));
@@ -396,14 +399,18 @@ public class NoteActivity extends AppCompatActivity {
                 reminderDaysBefore = daysBefore;
                 reminderRepeatEnabled = isRepeat == 1;
             }
+
+            if (reminderCursor != null) reminderCursor.close();
         }
+
+        if (cursor != null) cursor.close();
         DatabaseHelper.getInstance(this).closeDatabase();
     }
 
-    private void saveNote() {
+    private void saveTask() {
         String title = titleInput.getText().toString();
         if (title.isEmpty()) {
-            Toast.makeText(NoteActivity.this, "Vui lòng nhập tiêu đề!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(TaskActivity.this, "Vui lòng nhập tiêu đề!", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -411,34 +418,33 @@ public class NoteActivity extends AppCompatActivity {
         db.beginTransaction();
 
         try {
-            boolean noteExists = false;
+            boolean taskExists = false;
 
-            ContentValues noteValues = new ContentValues();
-            noteValues.put("title", title);
-            noteValues.put("content", contentInput.getText().toString());
-            noteValues.put("user_id", LoginSessionManager.getInstance(this).getUserId());
+            ContentValues taskValues = new ContentValues();
+            taskValues.put("title", title);
+            taskValues.put("content", contentInput.getText().toString());
+            taskValues.put("user_id", LoginSessionManager.getInstance(this).getUserId());
+            taskValues.put("priority", 1); // mặc định priority = 1, bạn có thể thay đổi
+            taskValues.put("is_completed", 0);
+            taskValues.put("category_id", 1); // mặc định category = 1
 
-            if (Integer.parseInt(noteId) != -1) {
-                noteExists = true;
+            if (Integer.parseInt(taskId) != -1) {
+                taskExists = true;
 
-                // Update existing note
-                db.update("tbl_note", noteValues, "id = ?",
-                        new String[]{noteId});
+                // Cập nhật task
+                db.update("tbl_task", taskValues, "id = ?", new String[]{taskId});
 
-                // Delete existing related data to avoid duplicates
-                db.delete("tbl_note_tag", "note_id = ?",
-                        new String[]{String.valueOf(noteId)});
-                db.delete("tbl_note_photo", "note_id = ?",
-                        new String[]{String.valueOf(noteId)});
-                db.delete("tbl_note_reminder", "note_id = ?",
-                        new String[]{String.valueOf(noteId)});
+                // Xoá dữ liệu liên quan
+                db.delete("tbl_task_tag", "task_id = ?", new String[]{taskId});
+                db.delete("tbl_task_photo", "task_id = ?", new String[]{taskId});
+                db.delete("tbl_task_reminder", "task_id = ?", new String[]{taskId});
             } else {
-                // Insert new note
-                noteId = String.valueOf(db.insert("tbl_note", null, noteValues));
+                // Tạo mới
+                taskId = String.valueOf(db.insert("tbl_task", null, taskValues));
             }
 
-            if (Integer.parseInt(noteId) != -1) {
-                // Save tags
+            if (Integer.parseInt(taskId) != -1) {
+                // Lưu tag
                 for (int i = 0; i < tagContainer.getChildCount(); i++) {
                     View child = tagContainer.getChildAt(i);
                     if (child instanceof TextView) {
@@ -446,15 +452,15 @@ public class NoteActivity extends AppCompatActivity {
                         GradientDrawable background = (GradientDrawable) tag.getBackground();
 
                         ContentValues tagValues = new ContentValues();
-                        tagValues.put("note_id", noteId);
+                        tagValues.put("task_id", taskId);
                         tagValues.put("tag_text", tag.getText().toString());
                         tagValues.put("tag_color", String.format("#%06X", background.getColor().getDefaultColor() & 0xFFFFFF));
 
-                        db.insert("tbl_note_tag", null, tagValues);
+                        db.insert("tbl_task_tag", null, tagValues);
                     }
                 }
 
-                // Save photos
+                // Lưu ảnh đính kèm
                 for (int i = 0; i < attachmentContainer.getChildCount(); i++) {
                     View child = attachmentContainer.getChildAt(i);
                     if (child instanceof ImageView) {
@@ -462,20 +468,20 @@ public class NoteActivity extends AppCompatActivity {
                         String uriString = (String) imageView.getTag();
                         if (uriString != null) {
                             ContentValues photoValues = new ContentValues();
-                            photoValues.put("note_id", noteId);
+                            photoValues.put("task_id", taskId);
                             photoValues.put("photo_uri", uriString);
-                            db.insert("tbl_note_photo", null, photoValues);
+                            db.insert("tbl_task_photo", null, photoValues);
                         }
                     }
                 }
 
-                // Save reminder setting
+                // Lưu cài đặt nhắc nhở
                 String reminderDate = txtDate.getText().toString();
                 if (!reminderDate.isEmpty()) {
                     ContentValues reminderValues = new ContentValues();
-                    reminderValues.put("note_id", noteId);
+                    reminderValues.put("task_id", taskId);
 
-                    // Parse date from "Ngày X, tháng Y" format
+                    // Parse date từ "Ngày X, tháng Y"
                     String[] parts = reminderDate.split(", ");
                     if (parts.length == 2) {
                         String day = parts[0].replace("Ngày ", "");
@@ -484,31 +490,30 @@ public class NoteActivity extends AppCompatActivity {
                                 Integer.parseInt(day), Integer.parseInt(month)));
                     }
 
-                    // Save time, days before, and repeat settings
                     reminderValues.put("time", reminderTime);
                     reminderValues.put("days_before", reminderDaysBefore);
                     reminderValues.put("is_repeat", reminderRepeatEnabled ? 1 : 0);
 
-                    db.insert("tbl_note_reminder", null, reminderValues);
-                }
+                    db.insert("tbl_task_reminder", null, reminderValues);
 
-                db.setTransactionSuccessful();
-                Log.d("NoteActivity", noteExists ? "Note updated successfully" : "Note created successfully");
-
-                if (!reminderDate.isEmpty()) {
+                    // Nếu bạn có ReminderService riêng cho Task thì đặt ở đây
                     ReminderService.scheduleNoteReminder(
                             this,
-                            noteId,
+                            taskId,
                             title,
                             reminderDate,
                             reminderTime,
                             reminderDaysBefore,
                             reminderRepeatEnabled
                     );
+
                 }
+
+                db.setTransactionSuccessful();
+                Log.d("TaskActivity", taskExists ? "Task updated successfully" : "Task created successfully");
             }
         } catch (Exception e) {
-            Log.e("NoteActivity", "Error saving note", e);
+            Log.e("TaskActivity", "Error saving task", e);
         } finally {
             db.endTransaction();
             DatabaseHelper.getInstance(this).closeDatabase();
