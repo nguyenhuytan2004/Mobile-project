@@ -150,7 +150,7 @@ INSERT INTO tbl_category VALUES
 
 INSERT INTO "tbl_note" VALUES (1,1,'Tourism','Da Nang
 Nha Trang
-Phan Thiet', 2);
+Phan Thiet', 1);
 INSERT INTO "tbl_note" VALUES (2,1,'Haha','ascnaocwnaocwnoawncoanwcaoiamacnon
 caoihwdohawdhaowdihoasdjpdsjapdwmawdpo', 2);
 
