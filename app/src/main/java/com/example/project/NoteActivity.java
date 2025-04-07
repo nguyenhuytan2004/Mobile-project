@@ -138,6 +138,8 @@ public class NoteActivity extends AppCompatActivity {
                 intent.putExtra("title", titleInput.getText().toString());
                 intent.putExtra("content", contentInput.getText().toString());
                 intent.putExtra("taskId", noteId);
+                intent.putExtra("listId", listId);
+                intent.putExtra("categoryId", categoryId);
                 startActivity(intent);
 
                 Toast.makeText(NoteActivity.this, "Ghi chú đã được chuyển đổi thành nhiệm vụ!", Toast.LENGTH_SHORT).show();

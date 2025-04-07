@@ -10,9 +10,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,12 +38,12 @@ import java.util.regex.Pattern;
 public class TaskActivity extends  AppCompatActivity{
 
     ImageView btnDate, btnTag, btnImage;
-    TextView txtDate, btnBack, btnOption, btnSave;
+    TextView txtDate, btnBack, btnOption, btnSave, btnlistName, btnDropDownList;
     EditText titleInput, contentInput;
     FlexboxLayout tagContainer, attachmentContainer;
 
     SQLiteDatabase db;
-    String taskId;
+    String taskId, listId, categoryId;
 
     private String reminderTime = "";
     private int reminderDaysBefore = 0;
@@ -63,6 +65,8 @@ public class TaskActivity extends  AppCompatActivity{
         btnDate = findViewById(R.id.icon4);
         btnTag = findViewById(R.id.cardIcon);
         btnImage = findViewById(R.id.imageIcon);
+        btnlistName = findViewById(R.id.listNameText);
+        btnDropDownList = findViewById(R.id.dropDownList);
 
         tagContainer = findViewById(R.id.tagContainer);
         attachmentContainer = findViewById(R.id.attachmentContainer);
@@ -70,6 +74,8 @@ public class TaskActivity extends  AppCompatActivity{
         String title = getIntent().getStringExtra("title");
         String content = getIntent().getStringExtra("content");
         taskId = getIntent().getStringExtra("taskId");
+        categoryId = getIntent().getStringExtra("categoryId");
+        listId = getIntent().getStringExtra("listId");
 
         if (title != null || content != null) {
             // Mở từ NoteActivity → dùng dữ liệu từ intent
@@ -83,6 +89,90 @@ public class TaskActivity extends  AppCompatActivity{
                 Log.e("TaskActivity", "Không có dữ liệu để hiển thị task!");
             }
         }
+
+        // lấy list name
+        if (listId != null) {
+            db = DatabaseHelper.getInstance(this).openDatabase();
+            Cursor cursor = db.rawQuery("SELECT name FROM tbl_list WHERE id = ?", new String[]{listId});
+
+            if (cursor.moveToFirst()) {
+                String listName = cursor.getString(0);
+                btnlistName.setText(listName);
+            } else {
+                btnlistName.setText("(Không tìm thấy)");
+            }
+
+            cursor.close();
+            DatabaseHelper.getInstance(this).closeDatabase();
+        }
+
+        btnDropDownList.setOnClickListener(v -> {
+            BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(TaskActivity.this);
+            View view = getLayoutInflater().inflate(R.layout.popup_move_to, null);
+            bottomSheetDialog.setContentView(view);
+            bottomSheetDialog.show();
+
+            LinearLayout container = view.findViewById(R.id.listCategoryContainer);
+            TextView btnCancel = view.findViewById(R.id.btnCancel);
+            btnCancel.setOnClickListener(v1 -> bottomSheetDialog.dismiss());
+
+            db = DatabaseHelper.getInstance(this).openDatabase();
+
+            Cursor listCursor = db.rawQuery("SELECT id, name FROM tbl_list", null);
+
+            if (listCursor != null && listCursor.moveToFirst()) {
+                do {
+                    int listIdFromDB = listCursor.getInt(0);
+                    String listName = listCursor.getString(1);
+
+                    // Inflate layout block cho từng list
+                    View listBlockView = LayoutInflater.from(this).inflate(R.layout.item_list_block, container, false);
+                    TextView listTitle = listBlockView.findViewById(R.id.list_title);
+                    LinearLayout categoryListLayout = listBlockView.findViewById(R.id.category_list_layout);
+
+                    listTitle.setText(listName);
+
+                    // Truy vấn category thuộc list đó
+                    Cursor categoryCursor = db.rawQuery(
+                            "SELECT id, name FROM tbl_category WHERE list_id = ?",
+                            new String[]{String.valueOf(listIdFromDB)}
+                    );
+
+                    while (categoryCursor.moveToNext()) {
+                        int categoryIdFromDB = categoryCursor.getInt(0);
+                        String categoryName = categoryCursor.getString(1);
+
+                        // Tạo TextView cho mỗi category
+                        TextView categoryView = new TextView(this);
+                        categoryView.setText("\uD81A\uDD18 " + categoryName);
+                        categoryView.setTextColor(Color.parseColor("#CCCCCC"));
+                        categoryView.setTextSize(16);
+                        categoryView.setPadding(24, 12, 0, 12);
+
+                        // Gắn sự kiện click
+                        categoryView.setOnClickListener(catView -> {
+                            listId = String.valueOf(listIdFromDB);
+                            categoryId = String.valueOf(categoryIdFromDB);
+                            btnlistName.setText(listName);
+
+                            Toast.makeText(this, "Chuyển đến: " + listName + " / " + categoryName, Toast.LENGTH_SHORT).show();
+                            bottomSheetDialog.dismiss();
+                        });
+
+                        categoryListLayout.addView(categoryView);
+                    }
+                    categoryCursor.close();
+
+                    container.addView(listBlockView);
+                } while (listCursor.moveToNext());
+
+                listCursor.close();
+            }
+
+            DatabaseHelper.getInstance(this).closeDatabase();
+        });
+
+
 
         btnDate.setOnClickListener(view -> {
             SetReminderDialog dialog = new SetReminderDialog(taskId);
@@ -173,7 +263,6 @@ public class TaskActivity extends  AppCompatActivity{
             });
         });
 
-
         btnTag.setOnClickListener(view -> {
             BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(TaskActivity.this);
             View sheetView = getLayoutInflater().inflate(R.layout.add_card_bottom_sheet_in_note, null);
@@ -233,7 +322,6 @@ public class TaskActivity extends  AppCompatActivity{
                 }
             });
         });
-
 
         btnImage.setOnClickListener(view -> {
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -426,7 +514,8 @@ public class TaskActivity extends  AppCompatActivity{
             taskValues.put("user_id", LoginSessionManager.getInstance(this).getUserId());
             taskValues.put("priority", 1); // mặc định priority = 1, bạn có thể thay đổi
             taskValues.put("is_completed", 0);
-            taskValues.put("category_id", 3);
+
+            taskValues.put("category_id", Integer.parseInt(categoryId));
 
             if (Integer.parseInt(taskId) != -1) {
                 taskExists = true;
