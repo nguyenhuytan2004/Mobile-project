@@ -2,16 +2,22 @@ package com.example.project;
 
 import com.example.project.Task;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 
 import androidx.appcompat.app.AlertDialog;
@@ -41,9 +47,11 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     TextView tvWelcome;
-
     private LinearLayout categoryContainer;
     private int currentListId = 3; // Default to Welcome list
+
+    private EditText searchBar;
+    private String searchKeyword = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +77,9 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
         tvWelcome = findViewById(R.id.tv_welcome);
         categoryContainer = findViewById(R.id.category_container);
 
+        searchBar = findViewById(R.id.search_bar);
+
+
         // Check for list ID from intent
         if (getIntent().hasExtra("listId")) {
             currentListId = getIntent().getIntExtra("listId", 3);
@@ -78,13 +89,13 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
             }
         }
 
-        loadWelcomeCategoriesAndTasks(currentListId); // Load categories and tasks for current list
-
+        loadCategoriesAndTasks(currentListId);
 
         // FAB
         fabAdd.setOnClickListener(v -> {
             Intent intent = new Intent(this, NoteActivity.class);
             intent.putExtra("noteId", "-1");
+            intent.putExtra("listId", String.valueOf(currentListId));
             startActivity(intent);
         });
 
@@ -117,6 +128,30 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
             });
 
             popupMenu.show();
+        });
+
+        searchBar.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE ||
+                        (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN)) {
+
+                    searchKeyword = searchBar.getText().toString().trim();
+
+                    Log.d("SearchInput", "Search keyword: " + searchKeyword);
+
+                    loadCategoriesAndTasks(currentListId); // Gọi lại hàm load dữ liệu, với filter mới
+
+                    // Ẩn bàn phím
+                    InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if (imm != null) {
+                        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                    }
+
+                    return true;
+                }
+                return false;
+            }
         });
 
         // Tab
@@ -168,7 +203,7 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
             
             // Navigate back to the Welcome list
             currentListId = 3;
-            loadWelcomeCategoriesAndTasks(currentListId);
+            loadCategoriesAndTasks(currentListId);
             tvWelcome.setText("👋 Welcome");
             
         } catch (Exception e) {
@@ -228,25 +263,27 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
                 }
                 noteCursor.close();
                 
-                // 2. Get actual tasks from this category
+                // 2. Get actual tasks from this category - use proper join with task_reminder
                 Cursor taskCursor = db.rawQuery(
-                        "SELECT id, title, description, priority, reminder_date, is_completed " +
-                        "FROM tbl_task " +
-                        "WHERE category_id = ?",
+                        "SELECT t.id, t.title, t.content, t.priority, r.date, " +
+                        "t.is_completed " +
+                        "FROM tbl_task t " +
+                        "LEFT JOIN tbl_task_reminder r ON t.id = r.task_id " +
+                        "WHERE t.category_id = ?",
                         new String[]{String.valueOf(categoryId)}
                 );
                 
                 while (taskCursor.moveToNext()) {
                     int taskId = taskCursor.getInt(0);
                     String title = taskCursor.getString(1);
-                    String description = taskCursor.isNull(2) ? "" : taskCursor.getString(2);
+                    String content = taskCursor.isNull(2) ? "" : taskCursor.getString(2);
                     int priority = taskCursor.getInt(3);
                     String reminderDate = taskCursor.isNull(4) ? null : taskCursor.getString(4);
                     boolean isCompleted = taskCursor.getInt(5) > 0;
                     
                     // Create a Task object
                     Task task = new Task(taskId, title, categoryId);
-                    task.setDescription(description);
+                    task.setDescription(content);
                     task.setPriority(priority);
                     task.setCompleted(isCompleted);
                     if (reminderDate != null) {
@@ -284,14 +321,13 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
     @Override
     protected void onResume() {
         super.onResume();
-        loadWelcomeCategoriesAndTasks(currentListId);
+        loadCategoriesAndTasks(currentListId);
     }
 
     // SideBarCallback implementation
     @Override
     public void onTaskCategorySelected(String category) {
         // This will be handled in SideBarHelper
-        Toast.makeText(this, "Selected category: " + category, Toast.LENGTH_SHORT).show();
     }
 
     // TaskProvider implementation
@@ -299,21 +335,25 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
     public List<Task> getAllTasks() {
         // Implement if needed to provide tasks to the sidebar
         return new ArrayList<>();
+
     }
 
-    private void loadWelcomeCategoriesAndTasks(int listId) {
+    private void loadCategoriesAndTasks(int listId) {
         int userId = loginSessionManager.getUserId();
         categoryContainer.removeAllViews(); // clear UI trước
 
         try {
             db = DatabaseHelper.getInstance(this).openDatabase();
 
+
             // Special handling for "Hôm nay" list (id = 2)
             if (listId == 2) {
-                // Get today's date in the format used in the database
+                // Get today's date in different formats
                 LocalDate today = LocalDate.now();
                 String todayFormatted = today.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
                 String todayPattern = "Ngày " + today.getDayOfMonth() + ", tháng " + today.getMonthValue();
+                
+                Log.d("HomeActivity", "Today's date formats: " + todayFormatted + " and " + todayPattern);
                 
                 // Create a special category view for today's items
                 View categoryView = LayoutInflater.from(this).inflate(R.layout.item_category_block, categoryContainer, false);
@@ -321,16 +361,44 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
                 LinearLayout taskListLayout = categoryView.findViewById(R.id.task_list_layout);
                 
                 categoryTitle.setText("Hôm nay: " + todayFormatted);
+                
+                // Count total tasks and notes in database for debugging
+                Cursor countCursor = db.rawQuery("SELECT COUNT(*) FROM tbl_note", null);
+                if (countCursor.moveToFirst()) {
+                    Log.d("HomeActivity", "Total notes in database: " + countCursor.getInt(0));
+                }
+                countCursor.close();
+                
+                countCursor = db.rawQuery("SELECT COUNT(*) FROM tbl_task", null);
+                if (countCursor.moveToFirst()) {
+                    Log.d("HomeActivity", "Total tasks in database: " + countCursor.getInt(0));
+                }
+                countCursor.close();
 
-                // 1. Get notes with today's date
-                Cursor noteCursor = db.rawQuery(
-                        "SELECT n.id, n.title, n.content, r.date, c.name " +
+                String noteQuery = "SELECT n.id, n.title, n.content, r.date, c.name " +
                         "FROM tbl_note n " +
-                        "JOIN tbl_note_reminder r ON n.id = r.note_id " +
                         "JOIN tbl_category c ON n.category_id = c.id " +
-                        "WHERE n.user_id = ? AND (r.date LIKE ? OR r.date LIKE ?)",
-                        new String[]{String.valueOf(userId), todayFormatted + "%", todayPattern + "%"}
-                );
+                        "LEFT JOIN tbl_note_reminder r ON n.id = r.note_id " +
+                        "WHERE n.user_id = ? AND (r.date LIKE ? OR r.date LIKE ? OR r.date LIKE ?)";
+
+                if (!searchKeyword.isEmpty()) {
+                    noteQuery += " AND (n.title LIKE ? OR n.content LIKE ?)";
+                }
+
+                List<String> noteArgs = new ArrayList<>();
+                noteArgs.add(String.valueOf(userId));
+                noteArgs.add(todayFormatted + "%");
+                noteArgs.add("%" + todayFormatted + "%");
+                noteArgs.add("%" + todayPattern + "%");
+
+                if (!searchKeyword.isEmpty()) {
+                    noteArgs.add("%" + searchKeyword + "%");
+                    noteArgs.add("%" + searchKeyword + "%");
+                }
+
+                Cursor noteCursor = db.rawQuery(noteQuery, noteArgs.toArray(new String[0]));
+
+                Log.d("HomeActivity", "Found " + noteCursor.getCount() + " notes for today");
 
                 while (noteCursor.moveToNext()) {
                     int noteId = noteCursor.getInt(0);
@@ -342,20 +410,36 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
                     // Add category name to the title for clarity
                     title = "📝 [" + categoryName + "] " + title;
                     
+                    Log.d("HomeActivity", "Adding note: " + title + " with date: " + date);
+                    
                     // Use existing addNoteView function
-                    addNoteView(taskListLayout, noteId, title, content, date);
+                    addNoteView(taskListLayout, 0, noteId, title, content, date);
                 }
                 noteCursor.close();
-                
-                // 2. Get tasks with today's date
-                Cursor taskCursor = db.rawQuery(
-                        "SELECT t.id, t.title, t.description, t.priority, t.reminder_date, " +
+
+                String taskQuery = "SELECT t.id, t.title, t.content, t.priority, r.date, " +
                         "t.is_completed, c.name " +
                         "FROM tbl_task t " +
                         "JOIN tbl_category c ON t.category_id = c.id " +
-                        "WHERE t.reminder_date LIKE ?",
-                        new String[]{todayFormatted + "%"}
-                );
+                        "LEFT JOIN tbl_task_reminder r ON t.id = r.task_id " +
+                        "WHERE (r.date LIKE ? OR r.date LIKE ? OR r.date LIKE ?)";
+
+                if (!searchKeyword.isEmpty()) {
+                    taskQuery += " AND (t.title LIKE ? OR t.content LIKE ?)";
+                }
+
+                List<String> argsList = new ArrayList<>();
+                argsList.add(todayFormatted + "%");
+                argsList.add("%" + todayFormatted + "%");
+                argsList.add("%" + todayPattern + "%");
+
+                if (!searchKeyword.isEmpty()) {
+                    argsList.add("%" + searchKeyword + "%");
+                    argsList.add("%" + searchKeyword + "%");
+                }
+                Cursor taskCursor = db.rawQuery(taskQuery, argsList.toArray(new String[0]));
+
+                Log.d("HomeActivity", "Found " + taskCursor.getCount() + " tasks for today");
                 
                 while (taskCursor.moveToNext()) {
                     int taskId = taskCursor.getInt(0);
@@ -369,7 +453,8 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
                     // Add category name to the title for clarity
                     title = "✓ [" + categoryName + "] " + title;
                     
-                    // Use the existing addTaskView function
+                    Log.d("HomeActivity", "Adding task: " + title + " with date: " + reminderDate);
+                    
                     addTaskView(taskListLayout, taskId, title, description, priority, reminderDate, isCompleted);
                 }
                 taskCursor.close();
@@ -386,7 +471,7 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
                 // Add the category view to the container
                 categoryContainer.addView(categoryView);
             } 
-            // Normal list handling (unchanged)
+            // Normal list handling 
             else {
                 Cursor categoryCursor = db.rawQuery(
                         "SELECT c.id, c.name FROM tbl_category c WHERE c.list_id = ?",
@@ -397,22 +482,29 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
                     int categoryId = categoryCursor.getInt(0);
                     String categoryName = categoryCursor.getString(1);
 
-                    // Inflate layout cho từng category
                     View categoryView = LayoutInflater.from(this).inflate(R.layout.item_category_block, categoryContainer, false);
-
                     TextView categoryTitle = categoryView.findViewById(R.id.category_title);
                     LinearLayout taskListLayout = categoryView.findViewById(R.id.task_list_layout);
 
                     categoryTitle.setText(categoryName);
 
-                    // Truy vấn các note trong category đó
-                    Cursor noteCursor = db.rawQuery(
-                            "SELECT n.id, n.title, n.content, r.date " +
-                                    "FROM tbl_note n " +
-                                    "LEFT JOIN tbl_note_reminder r ON n.id = r.note_id " +
-                                    "WHERE n.user_id = ? AND n.category_id = ?",
-                            new String[]{String.valueOf(userId), String.valueOf(categoryId)}
-                    );
+                    // --- Query Note có searchKeyword ---
+                    String noteQuery = "SELECT n.id, n.title, n.content, r.date " +
+                            "FROM tbl_note n " +
+                            "LEFT JOIN tbl_note_reminder r ON n.id = r.note_id " +
+                            "WHERE n.user_id = ? AND n.category_id = ?";
+
+                    List<String> noteArgs = new ArrayList<>();
+                    noteArgs.add(String.valueOf(userId));
+                    noteArgs.add(String.valueOf(categoryId));
+
+                    if (!searchKeyword.isEmpty()) {
+                        noteQuery += " AND (n.title LIKE ? OR n.content LIKE ?)";
+                        noteArgs.add("%" + searchKeyword + "%");
+                        noteArgs.add("%" + searchKeyword + "%");
+                    }
+
+                    Cursor noteCursor = db.rawQuery(noteQuery, noteArgs.toArray(new String[0]));
 
                     while (noteCursor.moveToNext()) {
                         int noteId = noteCursor.getInt(0);
@@ -420,19 +512,29 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
                         String content = noteCursor.isNull(2) ? "" : noteCursor.getString(2);
                         String date = noteCursor.isNull(3) ? "" : noteCursor.getString(3);
 
-                        // Sử dụng lại hàm addNoteView đã có
-                        addNoteView(taskListLayout, noteId, title, content, date);
+                        Log.d("SearchFilter", "Note title: " + title);
+                        addNoteView(taskListLayout, categoryId, noteId, title, content, date);
                     }
                     noteCursor.close();
-                    
-                    // Query tasks for this category
-                    Cursor taskCursor = db.rawQuery(
-                            "SELECT id, title, description, priority, reminder_date, is_completed " +
-                            "FROM tbl_task " +
-                            "WHERE category_id = ?",
-                            new String[]{String.valueOf(categoryId)}
-                    );
-                    
+
+                    // --- Query Task có searchKeyword ---
+                    String taskQuery = "SELECT t.id, t.title, t.content, t.priority, " +
+                            "r.date, t.is_completed " +
+                            "FROM tbl_task t " +
+                            "LEFT JOIN tbl_task_reminder r ON t.id = r.task_id " +
+                            "WHERE t.category_id = ?";
+
+                    List<String> taskArgs = new ArrayList<>();
+                    taskArgs.add(String.valueOf(categoryId));
+
+                    if (!searchKeyword.isEmpty()) {
+                        taskQuery += " AND (t.title LIKE ? OR t.content LIKE ?)";
+                        taskArgs.add("%" + searchKeyword + "%");
+                        taskArgs.add("%" + searchKeyword + "%");
+                    }
+
+                    Cursor taskCursor = db.rawQuery(taskQuery, taskArgs.toArray(new String[0]));
+
                     while (taskCursor.moveToNext()) {
                         int taskId = taskCursor.getInt(0);
                         String title = taskCursor.getString(1);
@@ -440,27 +542,36 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
                         int priority = taskCursor.getInt(3);
                         String reminderDate = taskCursor.isNull(4) ? "" : taskCursor.getString(4);
                         boolean isCompleted = taskCursor.getInt(5) > 0;
-                        
-                        // Add task view to layout
+
+                        Log.d("SearchFilter", "Task title: " + title);
                         addTaskView(taskListLayout, taskId, title, description, priority, reminderDate, isCompleted);
                     }
                     taskCursor.close();
 
-                    // Thêm categoryView vào container
+                    if (taskListLayout.getChildCount() == 0) {
+                        TextView emptyView = new TextView(this);
+                        emptyView.setText("Không có nội dung");
+                        emptyView.setTextColor(Color.WHITE);
+                        emptyView.setPadding(16, 16, 16, 16);
+                        taskListLayout.addView(emptyView);
+                    }
+
                     categoryContainer.addView(categoryView);
                 }
 
                 categoryCursor.close();
             }
+
         } catch (Exception e) {
-            Log.e("HomeActivity", "Lỗi load category/note", e);
+            Log.e("HomeActivity", "Lỗi load category/note: " + e.getMessage(), e);
+            Toast.makeText(this, "Lỗi khi tải dữ liệu", Toast.LENGTH_SHORT).show();
         } finally {
             if (db != null) DatabaseHelper.getInstance(this).closeDatabase();
         }
     }
 
 
-    private void addNoteView(LinearLayout targetLayout, int noteId, String title, String content, String date) {
+    private void addNoteView(LinearLayout targetLayout, int categoryId, int noteId, String title, String content, String date) {
         View noteView = LayoutInflater.from(this).inflate(R.layout.note_item_in_main, targetLayout, false);
         TextView titleTextView = noteView.findViewById(R.id.note_title);
         TextView contentTextView = noteView.findViewById(R.id.note_content);
@@ -497,6 +608,8 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
         noteView.setOnClickListener(v -> {
             Intent intent = new Intent(this, NoteActivity.class);
             intent.putExtra("noteId", String.valueOf(noteId));
+            intent.putExtra("categoryId", String.valueOf(categoryId));
+            intent.putExtra("listId", String.valueOf(currentListId));
             startActivity(intent);
         });
 
@@ -552,7 +665,9 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
         
         // Set click listener to open task detail activity
         taskView.setOnClickListener(v -> {
-            Toast.makeText(this, "Task ID: " + taskId, Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, TaskActivity.class);
+            intent.putExtra("taskId", String.valueOf(taskId));
+            startActivity(intent);
         });
         
         // Add to target layout

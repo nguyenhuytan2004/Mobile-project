@@ -53,6 +53,12 @@ public class SideBarHelper {
             ImageView btnSetting = view.findViewById(R.id.btnSetting);
             LinearLayout categorySection = view.findViewById(R.id.category_section);
             LinearLayout btnAddList = view.findViewById(R.id.btn_add_list);
+
+            btnSetting.setOnClickListener(v -> {
+                // Open settings activity
+                Intent intent = new Intent(context, Setting.class);
+                context.startActivity(intent);
+            });
             
             // Load lists from database
             List<String> lists = getListsFromDatabase(context);

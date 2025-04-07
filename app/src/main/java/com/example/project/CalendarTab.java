@@ -38,6 +38,7 @@ public class CalendarTab extends AppCompatActivity {
     CalendarView calendarView;
     LinearLayout notesContainer, taskContainer;
     private Map<String, List<NoteInfo>> dateToNotesMap = new HashMap<>();
+    private Map<String, List<Task>> dateToTasksMap = new HashMap<>();
     LocalDateTime now = LocalDateTime.now();
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     String formattedCurrentDate = now.format(formatter);
@@ -59,6 +60,7 @@ public class CalendarTab extends AppCompatActivity {
 
         // Tải tất cả các ghi chú từ cơ sở dữ liệu
         loadNotesFromDatabase();
+        loadTasksFromDatabase();
         displayTaskForDate(formattedCurrentDate);
 
         // Thiết lập lịch để đánh dấu ngày có ghi chú
@@ -94,8 +96,12 @@ public class CalendarTab extends AppCompatActivity {
         super.onResume();
         // Tải lại dữ liệu khi quay lại màn hình
         dateToNotesMap.clear();
+        dateToTasksMap.clear();
         loadNotesFromDatabase();
-        displayCurrentDateNotes();
+        loadTasksFromDatabase();
+        String currentDate = dateFormat.format(new Date());
+        displayNotesForDate(currentDate);
+        displayTaskForDate(currentDate);
     }
 
     private void loadNotesFromDatabase() {
@@ -142,68 +148,183 @@ public class CalendarTab extends AppCompatActivity {
         }
     }
 
-    private List<Task> loadTaskByDate(String date){
-        List<Task> tasks = new ArrayList<>();
-        SQLiteDatabase db = null;
-        Cursor cursor = null;
-
+    private void loadTasksFromDatabase() {
+        SQLiteDatabase db = DatabaseHelper.getInstance(this).openDatabase();
         try {
-            db = DatabaseHelper.getInstance(this).openDatabase();
+            // Query all tasks with reminders
+            Cursor cursor = db.rawQuery(
+                    "SELECT t.id, t.title, t.content, t.priority, t.is_completed, " +
+                    "t.category_id, r.date, r.time " +
+                    "FROM tbl_task t " +
+                    "JOIN tbl_task_reminder r ON t.id = r.task_id " +
+                    "WHERE r.date IS NOT NULL AND r.date != '' " +
+                    "ORDER BY t.id",
+                    null);
 
-            String query = "SELECT id, title, description, priority, reminder_date, is_completed " +
-                    "FROM tbl_task WHERE reminder_date = ? " +
-                    "ORDER BY priority ASC";
-
-            cursor = db.rawQuery(query, new String[]{date});
-
-            if (cursor != null && cursor.getCount() > 0) {
-                while (cursor.moveToNext()) {
-                    int priority = cursor.getInt(cursor.getColumnIndexOrThrow("priority"));
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    int id = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
                     String title = cursor.getString(cursor.getColumnIndexOrThrow("title"));
+                    String content = cursor.isNull(cursor.getColumnIndexOrThrow("content")) ? 
+                          "" : cursor.getString(cursor.getColumnIndexOrThrow("content"));
+                    int priority = cursor.getInt(cursor.getColumnIndexOrThrow("priority"));
+                    boolean isCompleted = cursor.getInt(cursor.getColumnIndexOrThrow("is_completed")) > 0;
+                    int categoryId = cursor.getInt(cursor.getColumnIndexOrThrow("category_id"));
+                    
+                    String dateStr = cursor.getString(cursor.getColumnIndexOrThrow("date"));
+                    String timeStr = cursor.isNull(cursor.getColumnIndexOrThrow("time")) ? 
+                          "" : cursor.getString(cursor.getColumnIndexOrThrow("time"));
 
-                    String description = "";
-                    int descColumnIndex = cursor.getColumnIndexOrThrow("description");
-                    if (!cursor.isNull(descColumnIndex)) {
-                        description = cursor.getString(descColumnIndex);
+                    // Format date string to standard format (dd/MM/yyyy)
+                    String formattedDate = formatDateString(dateStr);
+                    
+                    if (formattedDate != null) {
+                        // Create task object
+                        Task task = new Task(id, title, categoryId);
+                        task.setDescription(content);
+                        task.setPriority(priority);
+                        task.setCompleted(isCompleted);
+                        task.setReminderDate(formattedDate);
+                        
+                        // Add to map by date
+                        if (!dateToTasksMap.containsKey(formattedDate)) {
+                            dateToTasksMap.put(formattedDate, new ArrayList<>());
+                        }
+                        dateToTasksMap.get(formattedDate).add(task);
+                        
+                        Log.d("CalendarTab", "Loaded task: " + title + " for date: " + formattedDate);
                     }
-                    boolean completed = cursor.getInt(cursor.getColumnIndexOrThrow("is_completed")) == 1;
-
-                    Task task = new Task( title, description, priority, completed);
-                    tasks.add(task);
-                }
+                } while (cursor.moveToNext());
+                cursor.close();
             }
         } catch (Exception e) {
-            Log.e("MainActivity", "Error loading tasks by date", e);
+            Log.e("CalendarTab", "Error loading tasks: " + e.getMessage(), e);
         } finally {
+            DatabaseHelper.getInstance(this).closeDatabase();
+        }
+    }
+
+    private List<Task> loadTaskByDate(String date) {
+        // First check our cached map - this will be faster if we already loaded the tasks
+        if (dateToTasksMap.containsKey(date)) {
+            return dateToTasksMap.get(date);
+        }
+        
+        // If not in cache, query database directly
+        List<Task> tasks = new ArrayList<>();
+        SQLiteDatabase db = null;
+        
+        try {
+            db = DatabaseHelper.getInstance(this).openDatabase();
+            
+            // Format the date for SQL query - look for exact date or pattern containing the date
+            String formattedDate = date; // Already in dd/MM/yyyy format
+            
+            String query = "SELECT t.id, t.title, t.content, t.priority, " +
+                    "t.is_completed, t.category_id, r.date, r.time " +
+                    "FROM tbl_task t " +
+                    "JOIN tbl_task_reminder r ON t.id = r.task_id " +
+                    "WHERE r.date LIKE ? OR r.date LIKE ?";
+            
+            Cursor cursor = db.rawQuery(query, 
+                    new String[]{ formattedDate + "%", "%" + formattedDate + "%" });
+            
+            if (cursor != null && cursor.getCount() > 0) {
+                while (cursor.moveToNext()) {
+                    int id = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
+                    String title = cursor.getString(cursor.getColumnIndexOrThrow("title"));
+                    String content = cursor.isNull(cursor.getColumnIndexOrThrow("content")) ? 
+                          "" : cursor.getString(cursor.getColumnIndexOrThrow("content"));
+                    int priority = cursor.getInt(cursor.getColumnIndexOrThrow("priority"));
+                    boolean isCompleted = cursor.getInt(cursor.getColumnIndexOrThrow("is_completed")) > 0;
+                    int categoryId = cursor.getInt(cursor.getColumnIndexOrThrow("category_id"));
+                    
+                    // Create task object
+                    Task task = new Task(id, title, categoryId);
+                    task.setDescription(content);
+                    task.setPriority(priority);
+                    task.setCompleted(isCompleted);
+                    task.setReminderDate(date);
+                    
+                    tasks.add(task);
+                    Log.d("CalendarTab", "Found task for date " + date + ": " + title);
+                }
+            } else {
+                Log.d("CalendarTab", "No tasks found for date: " + date);
+            }
+            
             if (cursor != null) cursor.close();
+            
+            // Cache the results for future use
+            if (!tasks.isEmpty()) {
+                dateToTasksMap.put(date, tasks);
+            }
+            
+        } catch (Exception e) {
+            Log.e("CalendarTab", "Error loading tasks by date: " + e.getMessage(), e);
+        } finally {
             if (db != null) DatabaseHelper.getInstance(this).closeDatabase();
         }
-
+        
         return tasks;
     }
 
     private String formatDateString(String dateStr) {
-        Pattern pattern = Pattern.compile("(\\d+)");
-        Matcher matcher = pattern.matcher(dateStr);
-
-        int day = 0, month = 0;
-        if (matcher.find()) {
-            day = Integer.parseInt(matcher.group(1));
+        if (dateStr == null || dateStr.isEmpty()) {
+            return null;
         }
-        if (matcher.find()) {
-            month = Integer.parseInt(matcher.group(1));
-        }
-        int year = Calendar.getInstance().get(Calendar.YEAR);
-
-        String formattedDate = String.format(Locale.getDefault(), "%02d/%02d/%d", day, month, year);
+        
         try {
-            Date date = dateFormat.parse(formattedDate);
-            if (date != null) {
-                return dateFormat.format(date);
+            // First, check if the date is already in dd/MM/yyyy format
+            if (dateStr.matches("\\d{2}/\\d{2}/\\d{4}")) {
+                return dateStr; // Already in the correct format
             }
+            
+            // Handle "Ngày X, tháng Y" format
+            Pattern pattern = Pattern.compile("Ngày (\\d+),? tháng (\\d+)");
+            Matcher matcher = pattern.matcher(dateStr);
+            
+            if (matcher.find()) {
+                int day = Integer.parseInt(matcher.group(1));
+                int month = Integer.parseInt(matcher.group(2));
+                int year = Calendar.getInstance().get(Calendar.YEAR);
+                
+                // Format the date in dd/MM/yyyy
+                return String.format(Locale.getDefault(), "%02d/%02d/%d", day, month, year);
+            }
+            
+            // Handle numeric extraction as fallback
+            pattern = Pattern.compile("(\\d+)");
+            matcher = pattern.matcher(dateStr);
+            
+            int day = 0, month = 0;
+            if (matcher.find()) {
+                day = Integer.parseInt(matcher.group(1));
+            }
+            if (matcher.find()) {
+                month = Integer.parseInt(matcher.group(1));
+            }
+            
+            if (day > 0 && month > 0) {
+                int year = Calendar.getInstance().get(Calendar.YEAR);
+                String formattedDate = String.format(Locale.getDefault(), "%02d/%02d/%d", day, month, year);
+                
+                // Validate the parsed date
+                Date date = dateFormat.parse(formattedDate);
+                if (date != null) {
+                    return dateFormat.format(date);
+                }
+            }
+            
+            // Log the unhandled date format
+            Log.w("CalendarTab", "Unrecognized date format: " + dateStr);
+            
         } catch (ParseException e) {
-            Log.e("CalendarTab", "Error parsing date", e);
+            Log.e("CalendarTab", "Error parsing date: " + dateStr, e);
+        } catch (Exception e) {
+            Log.e("CalendarTab", "Error processing date: " + dateStr, e);
         }
+        
         return null;
     }
 
@@ -367,14 +488,27 @@ public class CalendarTab extends AppCompatActivity {
             ContentValues values = new ContentValues();
             values.put("is_completed", isCompleted ? 1 : 0);
 
-            // Update database - using both title and description for more precise matching
-            String whereClause = "title = ? AND description = ?";
-            String[] whereArgs = {task.getTitle(), task.getDescription()};
+            // First try to update using task ID (most reliable)
+            String whereClause = "id = ?";
+            String[] whereArgs = {String.valueOf(task.getId())};
 
             long result = db.update("tbl_task", values, whereClause, whereArgs);
 
             if (result == -1) {
                 Log.e("CalendarTab", "Lỗi khi cập nhật trạng thái task vào database");
+            } else if (result == 0) {
+                // If no rows updated, try with title and content as fallback
+                Log.w("CalendarTab", "Không tìm thấy task với ID: " + task.getId());
+                whereClause = "title = ? AND content = ?";
+                whereArgs = new String[]{task.getTitle(), task.getDescription()};
+                
+                result = db.update("tbl_task", values, whereClause, whereArgs);
+                
+                if (result > 0) {
+                    Log.d("CalendarTab", "Task đã được cập nhật bằng title và content");
+                } else {
+                    Log.e("CalendarTab", "Không thể cập nhật task");
+                }
             } else {
                 Log.d("CalendarTab", "Task đã được cập nhật trạng thái thành công: " +
                         (isCompleted ? "đã hoàn thành" : "chưa hoàn thành"));
