@@ -59,7 +59,7 @@ public class HomeActivity extends AppCompatActivity {
         tvWelcome = findViewById(R.id.tv_welcome);
         categoryContainer = findViewById(R.id.category_container);
 
-        loadWelcomeCategoriesAndTasks(3); // khởi đầu là danh mục Welcom
+        loadCategoriesAndTasks(3); // khởi đầu là danh mục Welcom
 
 
         // FAB
@@ -87,10 +87,10 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        loadWelcomeCategoriesAndTasks(3);
+        loadCategoriesAndTasks(3);
     }
 
-    private void loadWelcomeCategoriesAndTasks(int listId) {
+    private void loadCategoriesAndTasks(int listId) {
         int userId = loginSessionManager.getUserId();
 
         categoryContainer.removeAllViews(); // clear UI trước
