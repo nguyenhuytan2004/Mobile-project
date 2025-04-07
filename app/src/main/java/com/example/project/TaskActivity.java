@@ -76,8 +76,6 @@ public class TaskActivity extends  AppCompatActivity{
             if (title != null) titleInput.setText(title);
             if (content != null) contentInput.setText(content);
         } else {
-            // Mở từ danh sách note + task → lấy từ database
-            taskId = getIntent().getStringExtra("taskId");
             Log.d("TaskActivity", "Mở từ danh sách, taskId: " + taskId);
             if (taskId != null) {
                 loadTask(taskId);
@@ -300,6 +298,8 @@ public class TaskActivity extends  AppCompatActivity{
                 "LEFT JOIN tbl_task_reminder r ON t.id = r.task_id " +
                 "WHERE t.id = ? " +
                 "ORDER BY t.id DESC";
+
+        Log.d("SQL", "Executing main task query: " + query + " [taskId=" + taskId + "]");
 
         Cursor cursor = db.rawQuery(query, new String[]{taskId});
         if (cursor != null && cursor.moveToFirst()) {

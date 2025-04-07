@@ -608,7 +608,9 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
         
         // Set click listener to open task detail activity
         taskView.setOnClickListener(v -> {
-            Toast.makeText(this, "Task ID: " + taskId, Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, TaskActivity.class);
+            intent.putExtra("taskId", String.valueOf(taskId));
+            startActivity(intent);
         });
         
         // Add to target layout
