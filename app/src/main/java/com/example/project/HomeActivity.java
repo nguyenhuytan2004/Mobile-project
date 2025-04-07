@@ -22,7 +22,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.*;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity implements SideBarHelper.SideBarCallback, SideBarHelper.TaskProvider {
 
     private FloatingActionButton fabAdd;
     ImageView focusTab, calendarTab, sideBarView, matrixView, habitTab;
@@ -35,6 +35,7 @@ public class HomeActivity extends AppCompatActivity {
     TextView tvWelcome;
 
     private LinearLayout categoryContainer;
+    private int currentListId = 3; // Default to Welcome list
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +60,16 @@ public class HomeActivity extends AppCompatActivity {
         tvWelcome = findViewById(R.id.tv_welcome);
         categoryContainer = findViewById(R.id.category_container);
 
-        loadWelcomeCategoriesAndTasks(3); // khởi đầu là danh mục Welcom
+        // Check for list ID from intent
+        if (getIntent().hasExtra("listId")) {
+            currentListId = getIntent().getIntExtra("listId", 3);
+            String listName = getIntent().getStringExtra("listName");
+            if (listName != null) {
+                tvWelcome.setText("📋 " + listName);
+            }
+        }
+
+        loadWelcomeCategoriesAndTasks(currentListId); // Load categories and tasks for current list
 
 
         // FAB
@@ -71,8 +81,8 @@ public class HomeActivity extends AppCompatActivity {
 
         // Sidebar
         sideBarView.setOnClickListener(v -> {
-            Toast.makeText(this, "Sidebar clicked", Toast.LENGTH_SHORT).show();
-
+            // Show sidebar with lists from database
+            SideBarHelper.showSideBar(this, this, this);
         });
 
         // Tab
@@ -80,14 +90,26 @@ public class HomeActivity extends AppCompatActivity {
         calendarTab.setOnClickListener(v -> startActivity(new Intent(this, CalendarTab.class)));
         matrixView.setOnClickListener(v -> startActivity(new Intent(this, Matrix_Eisenhower.class)));
         habitTab.setOnClickListener(v -> startActivity(new Intent(this, HabitActivity.class)));
-
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        loadWelcomeCategoriesAndTasks(3);
+        loadWelcomeCategoriesAndTasks(currentListId);
+    }
+
+    // SideBarCallback implementation
+    @Override
+    public void onTaskCategorySelected(String category) {
+        // This will be handled in SideBarHelper
+        Toast.makeText(this, "Selected category: " + category, Toast.LENGTH_SHORT).show();
+    }
+
+    // TaskProvider implementation
+    @Override
+    public List<Task> getAllTasks() {
+        // Implement if needed to provide tasks to the sidebar
+        return new ArrayList<>();
     }
 
     private void loadWelcomeCategoriesAndTasks(int listId) {
