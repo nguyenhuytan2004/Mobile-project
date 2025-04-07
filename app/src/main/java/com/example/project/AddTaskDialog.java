@@ -78,7 +78,7 @@ public class AddTaskDialog extends BottomSheetDialogFragment {
             String taskCategory = etTaskCategory.getText().toString().trim(); // Get category
 
             if (!taskName.isEmpty()) {
-                Task newTask = new Task(taskName, taskDesc, priority, taskCategory);
+                Task newTask = new Task(taskName, taskDesc, priority);
                 if (!reminderDate.isEmpty()) {
                     newTask.setReminderDate(reminderDate);
                 }

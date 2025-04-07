@@ -36,39 +36,6 @@ public class SideBarHelper {
     }
 
     public static void showSideBar(Context context, SideBarCallback callback, TaskProvider taskProvider) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        View dialogView = LayoutInflater.from(context).inflate(R.layout.side_bar, null);
-
-        LinearLayout btnAddList = dialogView.findViewById(R.id.btn_add_list);
-        ImageView userAvatar = dialogView.findViewById(R.id.img_user_profile);
-        LinearLayout categorySection = dialogView.findViewById(R.id.category_section); // Lấy đúng view
-
-        ImageView btnSetting = dialogView.findViewById(R.id.btnSetting);
-        btnSetting.setOnClickListener(v -> {
-            Intent intent = new Intent(context, Setting.class);
-            context.startActivity(intent);
-        });
-
-        List<String> taskCategories = getUniqueCategories(taskProvider.getAllTasks());
-        if (!taskCategories.contains("Tất cả công việc") && !taskCategories.contains("Hôm nay")) {
-            taskCategories.add(0, "Tất cả công việc");
-            taskCategories.add(1, "Hôm nay");
-        }
-        Log.d("TAG", "Task Categories: " + taskCategories);
-        // ✅ Gọi hàm addCategoryItems với context + categorySection
-        addCategoryItems(context, categorySection, taskCategories, callback);
-
-        btnAddList.setOnClickListener(v -> {
-            Toast.makeText(context, "Thêm danh sách công việc", Toast.LENGTH_SHORT).show();
-        });
-
-        userAvatar.setOnClickListener(v -> {
-            Intent intent = new Intent(context, Setting.class);
-            context.startActivity(intent);
-        });
-
-        builder.setView(dialogView);
-        dialog = builder.create();
 
         dialog.show();
 
@@ -81,16 +48,6 @@ public class SideBarHelper {
         dialog.getWindow().setAttributes(params);
     }
 
-    private static List<String> getUniqueCategories(List<Task> allTasks) {
-        Set<String> uniqueCategories = new HashSet<>();
-        for (Task task : allTasks) {
-            String category = task.getCategory();
-            if (category != null && !category.isEmpty()) {
-                uniqueCategories.add(category);
-            }
-        }
-        return new ArrayList<>(uniqueCategories);
-    }
 
 
     // ✅ Hàm static để thêm các category

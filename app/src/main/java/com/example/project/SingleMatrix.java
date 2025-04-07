@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -69,7 +70,6 @@ public class SingleMatrix extends AppCompatActivity implements TaskAdapter.TaskC
         // Load tasks from database for the current priority
         loadTasksForPriority(currentPriority);
 
-
         // backBtn click listener
         backBtn.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -80,52 +80,19 @@ public class SingleMatrix extends AppCompatActivity implements TaskAdapter.TaskC
             }
         });
 
-
         // FloatingActionButton click listener
         fabAdd.setOnClickListener(v -> {
             TaskDialogHelper.showInputDialog(SingleMatrix.this, currentPriority, new TaskDialogHelper.TaskDialogCallback() {
                 @Override
                 public void onTaskAdded(Task task) {
                     // Save the task to the database
-                    saveTaskToDatabase(task);
-
+                    Toast.makeText(SingleMatrix.this, "Thêm thành công", Toast.LENGTH_SHORT).show();
                     // Add the task to the list and notify the adapter
                     taskList.add(task);
                     taskAdapter.notifyDataSetChanged();
                 }
             });
         });
-    }
-
-    private void saveTaskToDatabase(Task task) {
-        SQLiteDatabase db = DatabaseHelper.getInstance(this).openDatabase();
-        if (db == null) {
-            Log.e("Matrix_Eisenhower", "Database không tồn tại hoặc không thể mở");
-            return;
-        }
-
-        try {
-            // Create ContentValues to store task data
-            android.content.ContentValues values = new android.content.ContentValues();
-            values.put("title", task.getTitle());
-            values.put("description", task.getDescription());
-            values.put("priority", task.getPriority());
-            values.put("reminder_date", task.hasReminder() ? task.getReminderDate() : "");
-            values.put("category", task.getCategory());
-
-            // Insert into database
-            long result = db.insert("tbl_task", null, values);
-
-            if (result == -1) {
-                Log.e("Matrix_Eisenhower", "Lỗi khi lưu task vào database");
-            } else {
-                Log.d("Matrix_Eisenhower", "Task đã được lưu vào database thành công");
-            }
-        } catch (Exception e) {
-            Log.e("Matrix_Eisenhower", "Lỗi: " + e.getMessage());
-        } finally {
-            db.close();
-        }
     }
 
     // Load tasks for the selected priority from the database
@@ -135,7 +102,6 @@ public class SingleMatrix extends AppCompatActivity implements TaskAdapter.TaskC
             Log.e("SingleMatrix", "Database không tồn tại hoặc không thể mở");
             return;
         }
-
 
         try {
             Cursor cursor = db.rawQuery("SELECT * FROM tbl_task WHERE priority = ?",
@@ -154,7 +120,7 @@ public class SingleMatrix extends AppCompatActivity implements TaskAdapter.TaskC
                     String reminderDate = (reminderDateIndex >= 0) ? cursor.getString(reminderDateIndex) : "";
 
 
-                    int completeIndex = cursor.getColumnIndex("complete");
+                    int completeIndex = cursor.getColumnIndex("is_completed");
                     boolean isCompleted = (completeIndex >= 0) && cursor.getInt(completeIndex) == 1;
 
 
@@ -173,7 +139,6 @@ public class SingleMatrix extends AppCompatActivity implements TaskAdapter.TaskC
             DatabaseHelper.getInstance(this).closeDatabase();
         }
 
-
         // Notify the adapter that data has changed
         taskAdapter.notifyDataSetChanged();
     }
@@ -191,27 +156,24 @@ public class SingleMatrix extends AppCompatActivity implements TaskAdapter.TaskC
             return;
         }
 
-
         try {
             // Update the Task object's completion status
             task.setCompleted(isCompleted);
 
-
             // Create ContentValues to store task data
             android.content.ContentValues values = new android.content.ContentValues();
-            values.put("complete", isCompleted ? 1 : 0);
+            values.put("is_completed", isCompleted ? 1 : 0);
 
-
-            // Update database - using both title and description for more precise matching
-            String whereClause = "title = ? AND description = ?";
-            String[] whereArgs = {task.getTitle(), task.getDescription()};
-
+            // Use the correct query based on identifying fields
+            String whereClause = "title = ? AND description = ? AND priority = ?";
+            String[] whereArgs = {task.getTitle(), task.getDescription(), String.valueOf(task.getPriority())};
 
             long result = db.update("tbl_task", values, whereClause, whereArgs);
 
-
             if (result == -1) {
                 Log.e("SingleMatrix", "Lỗi khi cập nhật trạng thái task vào database");
+            } else if (result == 0) {
+                Log.e("SingleMatrix", "Không tìm thấy task để cập nhật");
             } else {
                 Log.d("SingleMatrix", "Task đã được cập nhật trạng thái thành công: " +
                         (isCompleted ? "đã hoàn thành" : "chưa hoàn thành"));

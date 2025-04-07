@@ -20,7 +20,6 @@ import android.graphics.Paint;
 
 public class Matrix_Eisenhower extends AppCompatActivity {
 
-
     private FloatingActionButton addButton;
     private HashMap<Integer, LinearLayout> priorityMap;
 
@@ -104,7 +103,6 @@ public class Matrix_Eisenhower extends AppCompatActivity {
                         // Add task to the list
                         taskList.add(task);
                         // Save task to database
-                        saveTaskToDatabase(task);
                     }
                 });
             }
@@ -114,54 +112,6 @@ public class Matrix_Eisenhower extends AppCompatActivity {
     }
 
 
-    private void loadTasksFromDatabase() {
-        SQLiteDatabase db = DatabaseHelper.getInstance(this).openDatabase();
-        if (db == null) {
-            Log.e("Matrix_Eisenhower", "Database không tồn tại hoặc không thể mở");
-            return;
-        }
-
-
-        try {
-            Cursor cursor = db.rawQuery("SELECT * FROM tbl_task", null);
-            if (cursor.moveToFirst()) {
-                do {
-                    int titleIndex = cursor.getColumnIndex("title");
-                    String title = (titleIndex >= 0) ? cursor.getString(titleIndex) : "";
-
-
-                    int descriptionIndex = cursor.getColumnIndex("description");
-                    String description = (descriptionIndex >= 0) ? cursor.getString(descriptionIndex) : "";
-
-
-                    int priorityIndex = cursor.getColumnIndex("priority");
-                    int priority = (cursor.getInt(priorityIndex));
-
-
-                    int reminderDateIndex = cursor.getColumnIndex("reminder_date");
-                    String reminderDate = (reminderDateIndex >= 0) ? cursor.getString(reminderDateIndex) : "";
-
-
-                    int completeIndex = cursor.getColumnIndex("complete");
-                    boolean isCompleted = (completeIndex >= 0) && cursor.getInt(completeIndex) == 1;
-
-
-                    Task task = new Task(title, description, priority);
-                    task.setReminderDate(reminderDate);
-                    task.setCompleted(isCompleted);
-
-
-                    addTaskToUI(task);
-                    taskList.add(task);
-                } while (cursor.moveToNext());
-            }
-            cursor.close();
-        } catch (Exception e) {
-            Log.e("Matrix_Eisenhower", "Error loading tasks: " + e.getMessage(), e);
-        } finally {
-            DatabaseHelper.getInstance(this).closeDatabase();
-        }
-    }
     // Set up click listeners for priority quadrants
     private void setupPriorityClickListeners() {
         Log.d("Matrix_Eisenhower", "Setting up click listeners for priority quadrants");
@@ -203,6 +153,54 @@ public class Matrix_Eisenhower extends AppCompatActivity {
         startActivity(intent);
     }
 
+    private void loadTasksFromDatabase() {
+        SQLiteDatabase db = DatabaseHelper.getInstance(this).openDatabase();
+        if (db == null) {
+            Log.e("Matrix_Eisenhower", "Database không tồn tại hoặc không thể mở");
+            return;
+        }
+
+
+        try {
+            Cursor cursor = db.rawQuery("SELECT * FROM tbl_task", null);
+            if (cursor.moveToFirst()) {
+                do {
+                    int titleIndex = cursor.getColumnIndex("title");
+                    String title = (titleIndex >= 0) ? cursor.getString(titleIndex) : "";
+
+
+                    int descriptionIndex = cursor.getColumnIndex("description");
+                    String description = (descriptionIndex >= 0) ? cursor.getString(descriptionIndex) : "";
+
+
+                    int priorityIndex = cursor.getColumnIndex("priority");
+                    int priority = (cursor.getInt(priorityIndex));
+
+
+                    int reminderDateIndex = cursor.getColumnIndex("reminder_date");
+                    String reminderDate = (reminderDateIndex >= 0) ? cursor.getString(reminderDateIndex) : "";
+
+
+                    int completeIndex = cursor.getColumnIndex("is_completed");
+                    boolean isCompleted = (completeIndex >= 0) && cursor.getInt(completeIndex) == 1;
+
+
+                    Task task = new Task(title, description, priority);
+                    task.setReminderDate(reminderDate);
+                    task.setCompleted(isCompleted);
+
+
+                    addTaskToUI(task);
+                    taskList.add(task);
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        } catch (Exception e) {
+            Log.e("Matrix_Eisenhower", "Error loading tasks: " + e.getMessage(), e);
+        } finally {
+            DatabaseHelper.getInstance(this).closeDatabase();
+        }
+    }
 
     // Hàm thêm task vào UI theo priority
     private void addTaskToUI(Task task) {
@@ -248,7 +246,6 @@ public class Matrix_Eisenhower extends AppCompatActivity {
                 taskNameView.setPaintFlags(taskNameView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             }
 
-
             // In the addTaskToUI method, update the checkbox listener:
             taskCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 // Handle checkbox state change
@@ -277,39 +274,6 @@ public class Matrix_Eisenhower extends AppCompatActivity {
         }
     }
 
-
-    private void saveTaskToDatabase(Task task) {
-        SQLiteDatabase db = DatabaseHelper.getInstance(this).openDatabase();
-        if (db == null) {
-            Log.e("Matrix_Eisenhower", "Database không tồn tại hoặc không thể mở");
-            return;
-        }
-
-        try {
-            // Create ContentValues to store task data
-            android.content.ContentValues values = new android.content.ContentValues();
-            values.put("title", task.getTitle());
-            values.put("description", task.getDescription());
-            values.put("priority", task.getPriority());
-            values.put("reminder_date", task.hasReminder() ? task.getReminderDate() : "");
-            values.put("category", task.getCategory());
-
-            // Insert into database
-            long result = db.insert("tbl_task", null, values);
-
-            if (result == -1) {
-                Log.e("Matrix_Eisenhower", "Lỗi khi lưu task vào database");
-            } else {
-                Log.d("Matrix_Eisenhower", "Task đã được lưu vào database thành công");
-            }
-        } catch (Exception e) {
-            Log.e("Matrix_Eisenhower", "Lỗi: " + e.getMessage());
-        } finally {
-            db.close();
-        }
-    }
-
-
     private void setComplted(Task task, boolean isCompleted) {
         SQLiteDatabase db = DatabaseHelper.getInstance(this).openDatabase();
         if (db == null) {
@@ -317,15 +281,13 @@ public class Matrix_Eisenhower extends AppCompatActivity {
             return;
         }
 
-
         try {
             // Update the Task object's completion status
             task.setCompleted(isCompleted);
 
-
             // Create ContentValues to store task data
             android.content.ContentValues values = new android.content.ContentValues();
-            values.put("complete", isCompleted ? 1 : 0);
+            values.put("is_completed", isCompleted ? 1 : 0);
 
 
             // Update database - using both title and description for more precise matching

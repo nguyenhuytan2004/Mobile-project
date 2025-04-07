@@ -6,7 +6,7 @@ public class Task implements java.io.Serializable {
     private String description;
     private int priority; // 1-4 representing quadrants
     private String reminderDate; // To store date for reminder
-    private String category;
+    private int categoryId;
     private boolean isCompleted;
 
 
@@ -14,16 +14,15 @@ public class Task implements java.io.Serializable {
         this.title = title;
         this.description = description;
         this.priority = priority;
-        this.category = "";
         this.isCompleted = false;
     }
 
 
-    public Task(String title, String description, int priority, String category) {
+    public Task(String title, String description, int priority, int category) {
         this.title = title;
         this.description = description;
         this.priority = priority;
-        this.category = category;
+        this.categoryId = category;
     }
 
     public Task(String title, String description, int priority, boolean isCompleted) {
@@ -76,13 +75,13 @@ public class Task implements java.io.Serializable {
     }
 
 
-    public String getCategory() {
-        return category;
+    public int getCategoryId() {
+        return categoryId;
     }
 
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setCategory(int category) {
+        this.categoryId = category;
     }
     public boolean isCompleted() {
         return isCompleted;
