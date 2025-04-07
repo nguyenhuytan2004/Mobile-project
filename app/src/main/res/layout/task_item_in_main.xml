@@ -11,7 +11,7 @@
         android:id="@+id/taskCheckBox"
         android:layout_width="25dp"
         android:layout_height="25dp"
-        android:button="@drawable/ic_checkbox"
+        android:button="@drawable/ic_checkbox_notcompleted"
         android:buttonTint="@color/gray"
         android:layout_marginTop="3dp"
         />

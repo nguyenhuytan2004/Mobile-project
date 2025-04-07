@@ -681,11 +681,24 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
         titleTextView.setText(title);
         taskCheckBox.setChecked(isCompleted);
 
+        // ✅ Cập nhật icon checkbox theo trạng thái
+        taskCheckBox.setButtonDrawable(isCompleted
+                ? R.drawable.ic_checkbox_complete
+                : R.drawable.ic_checkbox_notcompleted);
+
+        // ✅ Xử lý hiển thị màu sắc/mờ nếu đã hoàn thành
         if (isCompleted) {
             titleTextView.setPaintFlags(titleTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            titleTextView.setTextColor(getResources().getColor(R.color.gray));         // màu xám
+            contentTextView.setTextColor(getResources().getColor(R.color.gray));       // màu xám
+            dateTextView.setTextColor(getResources().getColor(R.color.gray));          // màu xám
+            taskCheckBox.setAlpha(0.6f);                                               // làm mờ
+            titleTextView.setAlpha(0.6f);
+            contentTextView.setAlpha(0.6f);
+            dateTextView.setAlpha(0.6f);
         }
 
-        // Set description/content
+        // Set nội dung
         if (content.isEmpty()) {
             contentTextView.setVisibility(View.GONE);
         } else {
@@ -698,7 +711,7 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
             contentTextView.setText(content);
         }
 
-        // Set reminder date
+        // Ngày nhắc
         if (reminderDate.isEmpty()) {
             dateTextView.setVisibility(View.GONE);
         } else {
@@ -706,34 +719,38 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
 
             try {
                 LocalDate taskDate = LocalDate.parse(reminderDate, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-                dateTextView.setTextColor(getResources().getColor(
-                        taskDate.isBefore(LocalDate.now()) ? R.color.red : R.color.statistics_blue));
+                if (!isCompleted) {
+                    dateTextView.setTextColor(getResources().getColor(
+                            taskDate.isBefore(LocalDate.now()) ? R.color.red : R.color.statistics_blue));
+                }
             } catch (Exception e) {
-                // If date parsing fails, use default color
-                dateTextView.setTextColor(getResources().getColor(R.color.statistics_blue));
+                if (!isCompleted) {
+                    dateTextView.setTextColor(getResources().getColor(R.color.statistics_blue));
+                }
             }
         }
 
-        // Set click listener to open task detail activity
+        // Mở TaskActivity khi bấm vào task
         taskView.setOnClickListener(v -> {
             Intent intent = new Intent(this, TaskActivity.class);
             intent.putExtra("taskId", String.valueOf(taskId));
             startActivity(intent);
         });
 
-
+        // Khi người dùng check/uncheck
         taskCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
             db = DatabaseHelper.getInstance(this).openDatabase();
 
             String updateQuery = "UPDATE tbl_task SET is_completed = ? WHERE id = ?";
             Object[] args = new Object[]{ isChecked ? 1 : 0, taskId };
-
             db.execSQL(updateQuery, args);
 
+            // Load lại để cập nhật giao diện toàn diện
             loadCategoriesAndTasks(currentListId);
         });
 
-        // Add to target layout
+        // Add vào layout chính
         targetLayout.addView(taskView);
     }
+
 }
