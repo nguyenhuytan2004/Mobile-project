@@ -150,7 +150,7 @@ public class CalendarTab extends AppCompatActivity {
         try {
             db = DatabaseHelper.getInstance(this).openDatabase();
 
-            String query = "SELECT id, title, description, priority, reminder_date, complete " +
+            String query = "SELECT id, title, description, priority, reminder_date, is_completed " +
                     "FROM tbl_task WHERE reminder_date = ? " +
                     "ORDER BY priority ASC";
 
@@ -166,7 +166,7 @@ public class CalendarTab extends AppCompatActivity {
                     if (!cursor.isNull(descColumnIndex)) {
                         description = cursor.getString(descColumnIndex);
                     }
-                    boolean completed = cursor.getInt(cursor.getColumnIndexOrThrow("complete")) == 1;
+                    boolean completed = cursor.getInt(cursor.getColumnIndexOrThrow("is_completed")) == 1;
 
                     Task task = new Task( title, description, priority, completed);
                     tasks.add(task);
@@ -365,7 +365,7 @@ public class CalendarTab extends AppCompatActivity {
 
             // Create ContentValues to store task data
             ContentValues values = new ContentValues();
-            values.put("complete", isCompleted ? 1 : 0);
+            values.put("is_completed", isCompleted ? 1 : 0);
 
             // Update database - using both title and description for more precise matching
             String whereClause = "title = ? AND description = ?";

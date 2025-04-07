@@ -38,6 +38,12 @@ public class Task implements java.io.Serializable {
 
     }
 
+    // Getter and setter for category ID
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
+    }
+
+
     public void setTitle(String title) {
         this.title = title;
     }
