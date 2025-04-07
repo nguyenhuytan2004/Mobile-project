@@ -1,6 +1,7 @@
 package com.example.project;
 
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -171,38 +172,58 @@ public class Matrix_Eisenhower extends AppCompatActivity {
             return;
         }
 
-
         try {
-            Cursor cursor = db.rawQuery("SELECT * FROM tbl_task", null);
+            // Get user ID from login session
+            LoginSessionManager loginSessionManager = LoginSessionManager.getInstance(this);
+            int userId = loginSessionManager.getUserId();
+            
+            // Use JOIN to get reminder_date from task_reminder table
+            String query = "SELECT t.id, t.title, t.content, t.priority, r.date, " +
+                    "t.is_completed, t.category_id " +
+                    "FROM tbl_task t " +
+                    "LEFT JOIN tbl_task_reminder r ON t.id = r.task_id " +
+                    "WHERE t.user_id = ?";
+                    
+            Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(userId)});
+            
+            Log.d("Matrix_Eisenhower", "Found " + cursor.getCount() + " tasks in database");
+            
             if (cursor.moveToFirst()) {
                 do {
+                    int idIndex = cursor.getColumnIndex("id");
+                    int id = (idIndex >= 0) ? cursor.getInt(idIndex) : -1;
+                    
                     int titleIndex = cursor.getColumnIndex("title");
                     String title = (titleIndex >= 0) ? cursor.getString(titleIndex) : "";
 
-
-                    int descriptionIndex = cursor.getColumnIndex("description");
-                    String description = (descriptionIndex >= 0) ? cursor.getString(descriptionIndex) : "";
-
+                    int contentIndex = cursor.getColumnIndex("content");
+                    String content = (contentIndex >= 0) ? cursor.getString(contentIndex) : "";
 
                     int priorityIndex = cursor.getColumnIndex("priority");
-                    int priority = (cursor.getInt(priorityIndex));
+                    int priority = (priorityIndex >= 0) ? cursor.getInt(priorityIndex) : 4;  // Default to lowest priority if missing
 
+                    int categoryIdIndex = cursor.getColumnIndex("category_id");
+                    int categoryId = (categoryIdIndex >= 0) ? cursor.getInt(categoryIdIndex) : 1;  // Default category_id = 1
 
-                    int reminderDateIndex = cursor.getColumnIndex("reminder_date");
-                    String reminderDate = (reminderDateIndex >= 0) ? cursor.getString(reminderDateIndex) : "";
-
+                    int dateIndex = cursor.getColumnIndex("date");
+                    String reminderDate = (dateIndex >= 0 && !cursor.isNull(dateIndex)) ? cursor.getString(dateIndex) : "";
 
                     int completeIndex = cursor.getColumnIndex("is_completed");
                     boolean isCompleted = (completeIndex >= 0) && cursor.getInt(completeIndex) == 1;
 
-
-                    Task task = new Task(title, description, priority);
+                    // Create a task object with all needed fields
+                    Task task = new Task(id, title, categoryId);
+                    task.setDescription(content);
+                    task.setPriority(priority);
                     task.setReminderDate(reminderDate);
                     task.setCompleted(isCompleted);
 
-
+                    // Add to UI and task list
                     addTaskToUI(task);
                     taskList.add(task);
+                    
+                    Log.d("Matrix_Eisenhower", "Loaded task: " + title + ", priority: " + priority + 
+                          ", completed: " + isCompleted);
                 } while (cursor.moveToNext());
             }
             cursor.close();
@@ -261,10 +282,10 @@ public class Matrix_Eisenhower extends AppCompatActivity {
             taskCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 // Handle checkbox state change
                 if (isChecked) {
-                    setComplted(task, true);
+                    setCompleted(task, true);
                     taskNameView.setPaintFlags(taskNameView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                 } else {
-                    setComplted(task, false);
+                    setCompleted(task, false);
                     taskNameView.setPaintFlags(taskNameView.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
                 }
             });
@@ -288,19 +309,36 @@ public class Matrix_Eisenhower extends AppCompatActivity {
     private void addTaskToDatabase(Task task) {
         SQLiteDatabase db = DatabaseHelper.getInstance(this).openDatabase();
         try {
-            android.content.ContentValues values = new android.content.ContentValues();
+            LoginSessionManager loginSessionManager = LoginSessionManager.getInstance(this);
+            int userId = loginSessionManager.getUserId();
+            
+            ContentValues values = new ContentValues();
+            values.put("user_id", userId);
             values.put("title", task.getTitle());
-            values.put("description", task.getDescription());
+            values.put("content", task.getDescription());  // Note: uses content field in DB
             values.put("priority", task.getPriority());
-            values.put("reminder_date", task.getReminderDate());
             values.put("is_completed", task.isCompleted() ? 1 : 0);
-            values.put("category_id", task.getCategoryId());
+            values.put("category_id", task.getCategoryId() > 0 ? task.getCategoryId() : 1); // Default to 1 if not set
 
-            long result = db.insert("tbl_task", null, values);
-            if (result == -1) {
+            long taskId = db.insert("tbl_task", null, values);
+            
+            if (taskId == -1) {
                 Log.e("Matrix_Eisenhower", "Error adding task to database");
             } else {
-                Log.d("Matrix_Eisenhower", "Task added successfully to database");
+                // If task has a reminder date, add it to the reminder table
+                if (task.hasReminder()) {
+                    ContentValues reminderValues = new ContentValues();
+                    reminderValues.put("task_id", taskId);
+                    reminderValues.put("date", task.getReminderDate());
+                    
+                    long reminderId = db.insert("tbl_task_reminder", null, reminderValues);
+                    
+                    if (reminderId == -1) {
+                        Log.e("Matrix_Eisenhower", "Error adding task reminder to database");
+                    }
+                }
+                
+                Log.d("Matrix_Eisenhower", "Task added successfully to database with ID: " + taskId);
             }
         } catch (Exception e) {
             Log.e("Matrix_Eisenhower", "Error: " + e.getMessage(), e);
@@ -310,7 +348,7 @@ public class Matrix_Eisenhower extends AppCompatActivity {
     }
 
 
-    private void setComplted(Task task, boolean isCompleted) {
+    private void setCompleted(Task task, boolean isCompleted) {
         SQLiteDatabase db = DatabaseHelper.getInstance(this).openDatabase();
         if (db == null) {
             Log.e("Matrix_Eisenhower", "Database không tồn tại hoặc không thể mở");
@@ -325,17 +363,28 @@ public class Matrix_Eisenhower extends AppCompatActivity {
             android.content.ContentValues values = new android.content.ContentValues();
             values.put("is_completed", isCompleted ? 1 : 0);
 
-
-            // Update database - using both title and description for more precise matching
-            String whereClause = "title = ? AND description = ?";
-            String[] whereArgs = {task.getTitle(), task.getDescription()};
-
+            // Update database using task ID which is more reliable
+            String whereClause = "id = ?";
+            String[] whereArgs = {String.valueOf(task.getId())};
 
             long result = db.update("tbl_task", values, whereClause, whereArgs);
 
-
             if (result == -1) {
                 Log.e("Matrix_Eisenhower", "Lỗi khi cập nhật trạng thái task vào database");
+            } else if (result == 0) {
+                // If no rows were updated, try the old method as fallback
+                Log.w("Matrix_Eisenhower", "Không tìm thấy task với ID " + task.getId() + ", thử dùng title và content");
+                
+                whereClause = "title = ? AND content = ? AND priority = ?";
+                whereArgs = new String[]{task.getTitle(), task.getDescription(), String.valueOf(task.getPriority())};
+                
+                result = db.update("tbl_task", values, whereClause, whereArgs);
+                
+                if (result > 0) {
+                    Log.d("Matrix_Eisenhower", "Task đã được cập nhật bằng phương thức thay thế");
+                } else {
+                    Log.e("Matrix_Eisenhower", "Vẫn không thể cập nhật task");
+                }
             } else {
                 Log.d("Matrix_Eisenhower", "Task đã được cập nhật trạng thái thành công: " +
                         (isCompleted ? "đã hoàn thành" : "chưa hoàn thành"));

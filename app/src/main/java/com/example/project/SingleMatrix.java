@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
+import android.content.ContentValues;
 
 
 public class SingleMatrix extends AppCompatActivity implements TaskAdapter.TaskCompletionListener {
@@ -104,32 +105,48 @@ public class SingleMatrix extends AppCompatActivity implements TaskAdapter.TaskC
         }
 
         try {
-            Cursor cursor = db.rawQuery("SELECT * FROM tbl_task WHERE priority = ?",
-                    new String[]{String.valueOf(priority)});
+            // Use proper JOIN with task_reminder table to get reminder dates
+            String query = "SELECT t.id, t.title, t.content, t.priority, r.date, " +
+                  "t.is_completed, t.category_id " +
+                  "FROM tbl_task t " +
+                  "LEFT JOIN tbl_task_reminder r ON t.id = r.task_id " +
+                  "WHERE t.priority = ?";
+                  
+            Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(priority)});
+            
+            Log.d("SingleMatrix", "Found " + cursor.getCount() + " tasks with priority " + priority);
+            
             if (cursor.moveToFirst()) {
                 do {
+                    int idIndex = cursor.getColumnIndex("id");
+                    int id = (idIndex >= 0) ? cursor.getInt(idIndex) : -1;
+                    
                     int titleIndex = cursor.getColumnIndex("title");
                     String title = (titleIndex >= 0) ? cursor.getString(titleIndex) : "";
 
+                    int contentIndex = cursor.getColumnIndex("content");
+                    String content = (contentIndex >= 0) ? cursor.getString(contentIndex) : "";
 
-                    int descriptionIndex = cursor.getColumnIndex("description");
-                    String description = (descriptionIndex >= 0) ? cursor.getString(descriptionIndex) : "";
+                    int categoryIdIndex = cursor.getColumnIndex("category_id");
+                    int categoryId = (categoryIdIndex >= 0) ? cursor.getInt(categoryIdIndex) : 1;  // Default category_id = 1
 
-
-                    int reminderDateIndex = cursor.getColumnIndex("reminder_date");
-                    String reminderDate = (reminderDateIndex >= 0) ? cursor.getString(reminderDateIndex) : "";
-
+                    int dateIndex = cursor.getColumnIndex("date");
+                    String reminderDate = (dateIndex >= 0 && !cursor.isNull(dateIndex)) ? cursor.getString(dateIndex) : "";
 
                     int completeIndex = cursor.getColumnIndex("is_completed");
                     boolean isCompleted = (completeIndex >= 0) && cursor.getInt(completeIndex) == 1;
 
-
-                    Task task = new Task(title, description, priority);
+                    // Create a task object with all needed fields
+                    Task task = new Task(id, title, categoryId);
+                    task.setDescription(content);
+                    task.setPriority(priority);
                     task.setReminderDate(reminderDate);
                     task.setCompleted(isCompleted);
 
-
                     taskList.add(task);
+                    
+                    Log.d("SingleMatrix", "Loaded task: " + title + ", priority: " + priority + 
+                          ", completed: " + isCompleted);
                 } while (cursor.moveToNext());
             }
             cursor.close();
@@ -161,19 +178,31 @@ public class SingleMatrix extends AppCompatActivity implements TaskAdapter.TaskC
             task.setCompleted(isCompleted);
 
             // Create ContentValues to store task data
-            android.content.ContentValues values = new android.content.ContentValues();
+            ContentValues values = new ContentValues();
             values.put("is_completed", isCompleted ? 1 : 0);
 
-            // Use the correct query based on identifying fields
-            String whereClause = "title = ? AND description = ? AND priority = ?";
-            String[] whereArgs = {task.getTitle(), task.getDescription(), String.valueOf(task.getPriority())};
+            // First, try to update using the task ID (most reliable)
+            String whereClause = "id = ?";
+            String[] whereArgs = {String.valueOf(task.getId())};
 
             long result = db.update("tbl_task", values, whereClause, whereArgs);
 
             if (result == -1) {
                 Log.e("SingleMatrix", "Lỗi khi cập nhật trạng thái task vào database");
             } else if (result == 0) {
-                Log.e("SingleMatrix", "Không tìm thấy task để cập nhật");
+                // If no rows were updated, try using title and content (fallback method)
+                Log.w("SingleMatrix", "Không tìm thấy task với ID " + task.getId() + ", thử dùng title và content");
+                
+                whereClause = "title = ? AND content = ? AND priority = ?";
+                whereArgs = new String[]{task.getTitle(), task.getDescription(), String.valueOf(task.getPriority())};
+                
+                result = db.update("tbl_task", values, whereClause, whereArgs);
+                
+                if (result > 0) {
+                    Log.d("SingleMatrix", "Task đã được cập nhật bằng phương thức thay thế");
+                } else {
+                    Log.e("SingleMatrix", "Vẫn không thể cập nhật task");
+                }
             } else {
                 Log.d("SingleMatrix", "Task đã được cập nhật trạng thái thành công: " +
                         (isCompleted ? "đã hoàn thành" : "chưa hoàn thành"));
