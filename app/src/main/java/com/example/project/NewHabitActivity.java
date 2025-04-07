@@ -5,12 +5,15 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 public class NewHabitActivity extends AppCompatActivity {
 
     private EditText etHabitName, etQuote;
+
+    private ImageView back;
     private Button btnNext;
 
     @Override
@@ -22,6 +25,7 @@ public class NewHabitActivity extends AppCompatActivity {
         etHabitName = findViewById(R.id.et_habit_name);
         etQuote = findViewById(R.id.et_quote);
         btnNext = findViewById(R.id.btn_next);
+        back = findViewById(R.id.back);
 
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -41,6 +45,14 @@ public class NewHabitActivity extends AppCompatActivity {
                 Intent intent = new Intent(NewHabitActivity.this, NewHabitAimActivity.class);
                 intent.putExtra("habit", newHabit);
                 startActivity(intent);
+            }
+        });
+
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Finish the activity and return to the previous one
+                finish();
             }
         });
     }

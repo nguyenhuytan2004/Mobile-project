@@ -9,106 +9,106 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/button">
 
-        <LinearLayout
+        <!-- Header -->
+        <TextView
+            android:id="@+id/textView5"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:text="Habit gallery"
+            android:textAlignment="center"
+            android:textSize="24sp"
+            android:textColor="@color/white"
+            android:paddingBottom="8dp"
+            android:textStyle="bold"/>
 
-            <ImageButton
-                android:id="@+id/imageButton4"
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:scaleType="fitCenter"
-                android:background="@color/black"
-                app:srcCompat="@android:drawable/ic_menu_revert" />
-
-            <TextView
-                android:id="@+id/textView5"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Habit gallery"
-                android:textAlignment="center"
-                android:textSize="28sp"
-                android:textColor="@color/white"/>
-        </LinearLayout>
-
+        <!-- Bộ lọc -->
         <LinearLayout
             android:id="@+id/filterLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
 
             <Button
                 android:id="@+id/btnAll"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Tất cả" />
+                android:text="Tất cả"
+                android:textSize="10sp"
+                android:padding="4dp"/>
 
             <Button
                 android:id="@+id/btnDailyLife"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
                 android:layout_weight="1"
-                android:text="Cuộc sống" />
+                android:layout_marginStart="4dp"
+                android:text="Cuộc sống"
+                android:textSize="10sp"
+                android:padding="4dp"/>
 
             <Button
                 android:id="@+id/btnSport"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
                 android:layout_weight="1"
-                android:text="Thể thao" />
+                android:layout_marginStart="4dp"
+                android:text="Thể thao"
+                android:textSize="10sp"
+                android:padding="4dp"/>
 
             <Button
                 android:id="@+id/btnLearning"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
                 android:layout_weight="1"
-                android:text="Học tập" />
+                android:layout_marginStart="4dp"
+                android:text="Học tập"
+                android:textSize="10sp"
+                android:padding="4dp"/>
         </LinearLayout>
 
-
+        <!-- Lưới -->
         <GridView
             android:id="@+id/gridView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="100dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:horizontalSpacing="8dp"
             android:numColumns="1"
             android:verticalSpacing="8dp" />
-
-
     </LinearLayout>
+
+    <!-- Nút thêm -->
     <Button
         android:id="@+id/button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginBottom="30dp"
         android:text="Thêm sở thích mới"
-        android:layout_marginBottom="50dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
-    <!-- Thanh tiêu đề -->
+        app:layout_constraintBottom_toTopOf="@+id/navigationBar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Thanh điều hướng -->
     <LinearLayout
         android:id="@+id/navigationBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="8dp"
+        android:background="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <ImageView
             android:id="@+id/homeTab"
@@ -126,8 +126,8 @@
 
         <ImageView
             android:id="@+id/matrixTabHabit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_weight="1"
             app:srcCompat="@drawable/icons8_matrix_32" />
 
@@ -140,11 +140,9 @@
 
         <ImageView
             android:id="@+id/imageView16"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_weight="1"
             app:srcCompat="@drawable/ic_healthy_lifestyle_on" />
-
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

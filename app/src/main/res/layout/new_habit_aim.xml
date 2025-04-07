@@ -98,13 +98,14 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_horizontal"
-                        app:chipSpacingHorizontal="4dp">
+                        app:chipSpacingHorizontal="2dp">
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chip"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="SU" />
+                            android:text="SU"
+                            android:layout_marginLeft="2dp" />
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chip2"
@@ -271,23 +272,25 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="horizontal">
 
                     <TextView
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Reminder"
-                        android:textSize="20sp"
-                        android:textColor="@color/white"
-                        android:textStyle="bold"
                         android:layout_marginLeft="12dp"
-                        android:layout_marginTop="12dp"/>
+                        android:layout_marginTop="12dp"
+                        android:text="Reminder"
+                        android:textColor="@color/white"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
 
                     <LinearLayout
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:gravity="center_vertical">
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="18dp"
+                        android:layout_marginLeft="150dp">
 
                         <TextView
                             android:id="@+id/tvReminderTime"
@@ -303,15 +306,6 @@
                             android:drawableEnd="@android:drawable/ic_menu_recent_history"
                             android:drawablePadding="8dp"/>
 
-                        <TextView
-                            android:id="@+id/tvAddReminder"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="+ Add"
-                            android:textColor="@color/blue"
-                            android:layout_marginStart="16dp"
-                            android:clickable="true"
-                            android:focusable="true"/>
                     </LinearLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -333,11 +327,13 @@
 
                     <LinearLayout android:orientation="horizontal"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp">
                         <TextView android:text="Auto pop-up of habit log"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textColor="#D3D3D3"/>
+                            android:textColor="#D3D3D3"
+                            android:layout_marginLeft="12dp"/>
                         <Switch android:id="@+id/switchAutoPopup"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"

@@ -25,7 +25,6 @@ public class HabitActivity extends AppCompatActivity {
     private static final String TAG = "HabitActivity";
     private GridView gridView;
     private Button btnAll, btnDailyLife, btnSport, btnAddHabit, btnLearning;
-    private ImageButton btnBack;
     ImageView focusTab, calendarTab, homeTab, matrixTab;
     private ArrayList<Habit> habitList;
     private HabitAdapter habitAdapter;
@@ -63,7 +62,6 @@ public class HabitActivity extends AppCompatActivity {
         btnSport = findViewById(R.id.btnSport);
         btnLearning = findViewById(R.id.btnLearning);
         btnAddHabit = findViewById(R.id.button);
-        btnBack = findViewById(R.id.imageButton4);
         calendarTab = findViewById(R.id.calendarTab2);
         focusTab = findViewById(R.id.focusTab);
         homeTab = findViewById(R.id.homeTab);
@@ -97,9 +95,6 @@ public class HabitActivity extends AppCompatActivity {
             Intent intent = new Intent(HabitActivity.this, NewHabitActivity.class);
             startActivity(intent);
         });
-
-        // Back button listener
-        btnBack.setOnClickListener(v -> finish());
 
         // Filter buttons listeners
         btnAll.setOnClickListener(v -> filterHabits("all"));

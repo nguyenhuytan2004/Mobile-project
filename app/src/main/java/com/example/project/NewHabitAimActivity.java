@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -33,6 +35,7 @@ public class NewHabitAimActivity extends AppCompatActivity {
     private Switch switchAutoPopup;
     private Chip chipDaily, chipWeekly, chipInterval;
     private Chip chipSun, chipMon, chipTue, chipWed, chipThu, chipFri, chipSat;
+    private ChipGroup weekdaysChipGroup;
     private Habit habit;
     
     private EditText editTextGoal;
@@ -40,8 +43,7 @@ public class NewHabitAimActivity extends AppCompatActivity {
     private Spinner spinnerGoalDays;
     private Spinner spinnerSection;
     private TextView tvReminderTime;
-    private TextView tvAddReminder;
-    
+
     private Calendar calendar;
 
     @Override
@@ -52,11 +54,14 @@ public class NewHabitAimActivity extends AppCompatActivity {
         habit = (Habit) getIntent().getSerializableExtra("habit");
         if (habit == null) {
             habit = new Habit();
+            // Initialize weekDays array with false values
+            habit.setWeekDays(new boolean[]{false, false, false, false, false, false, false});
         }
 
         initializeUI();
         setDefaultValues();
         setupListeners();
+        updateWeekdayChipGroupVisibility();
     }
 
     private void initializeUI() {
@@ -68,6 +73,8 @@ public class NewHabitAimActivity extends AppCompatActivity {
         chipWeekly = findViewById(R.id.chip9);
         chipInterval = findViewById(R.id.chip10);
 
+        weekdaysChipGroup = (ChipGroup) findViewById(R.id.chip).getParent();
+        
         chipSun = findViewById(R.id.chip);
         chipMon = findViewById(R.id.chip2);
         chipTue = findViewById(R.id.chip3);
@@ -81,7 +88,6 @@ public class NewHabitAimActivity extends AppCompatActivity {
         spinnerGoalDays = findViewById(R.id.spinnerGoalDays);
         spinnerSection = findViewById(R.id.spinnerSection);
         tvReminderTime = findViewById(R.id.tvReminderTime);
-        tvAddReminder = findViewById(R.id.tvAddReminder);
         
         calendar = Calendar.getInstance();
     }
@@ -147,6 +153,7 @@ public class NewHabitAimActivity extends AppCompatActivity {
                     habit.setFrequency("Daily");
                     chipWeekly.setChecked(false);
                     chipInterval.setChecked(false);
+                    updateWeekdayChipGroupVisibility();
                 }
             }
         });
@@ -158,6 +165,7 @@ public class NewHabitAimActivity extends AppCompatActivity {
                     habit.setFrequency("Weekly");
                     chipDaily.setChecked(false);
                     chipInterval.setChecked(false);
+                    updateWeekdayChipGroupVisibility();
                 }
             }
         });
@@ -169,6 +177,7 @@ public class NewHabitAimActivity extends AppCompatActivity {
                     habit.setFrequency("Interval");
                     chipDaily.setChecked(false);
                     chipWeekly.setChecked(false);
+                    updateWeekdayChipGroupVisibility();
                 }
             }
         });
@@ -202,12 +211,34 @@ public class NewHabitAimActivity extends AppCompatActivity {
             }
         });
         
-        tvAddReminder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showTimePickerDialog();
-            }
-        });
+    }
+    
+    private void updateWeekdayChipGroupVisibility() {
+        Log.d("NewHabitAimActivity", "Updating weekday chip group visibility");
+        if (chipWeekly.isChecked()) {
+            weekdaysChipGroup.setVisibility(View.VISIBLE);
+        } else if (chipDaily.isChecked()) {
+            // For daily habits, select all days by default
+            boolean[] allDaysSelected = {true, true, true, true, true, true, true};
+            habit.setWeekDays(allDaysSelected);
+            
+            // Update UI to reflect selection but hide the group
+            chipSun.setChecked(true);
+            chipMon.setChecked(true);
+            chipTue.setChecked(true);
+            chipWed.setChecked(true);
+            chipThu.setChecked(true);
+            chipFri.setChecked(true);
+            chipSat.setChecked(true);
+            
+            weekdaysChipGroup.setVisibility(View.GONE);
+        } else if (chipInterval.isChecked()) {
+            // For interval, we don't use weekdays
+            boolean[] noDaysSelected = {false, false, false, false, false, false, false};
+            habit.setWeekDays(noDaysSelected);
+            
+            weekdaysChipGroup.setVisibility(View.GONE);
+        }
     }
     
     private void showDatePickerDialog() {
@@ -256,6 +287,9 @@ public class NewHabitAimActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 boolean[] weekDays = habit.getWeekDays();
+                if (weekDays == null) {
+                    weekDays = new boolean[7];
+                }
                 weekDays[dayIndex] = isChecked;
                 habit.setWeekDays(weekDays);
             }
@@ -263,9 +297,29 @@ public class NewHabitAimActivity extends AppCompatActivity {
     }
 
     private void saveHabit() {
+        // Update all habit data from UI input fields
+        habit.setName(editTextGoal.getText().toString()); // Assuming the name is the same as goal for simplicity
         habit.setGoal(editTextGoal.getText().toString());
         habit.setGoalDays(spinnerGoalDays.getSelectedItem().toString());
         habit.setSection(spinnerSection.getSelectedItem().toString());
+        
+        // Handle frequency-related data
+        String frequency = null;
+        if (chipDaily.isChecked()) frequency = "Daily";
+        else if (chipWeekly.isChecked()) frequency = "Weekly";
+        else if (chipInterval.isChecked()) frequency = "Interval";
+        habit.setFrequency(frequency);
+        
+        // Ensure weekdays are properly collected (especially important for Weekly frequency)
+        boolean[] weekDays = new boolean[7];
+        weekDays[0] = chipSun.isChecked();
+        weekDays[1] = chipMon.isChecked();
+        weekDays[2] = chipTue.isChecked();
+        weekDays[3] = chipWed.isChecked();
+        weekDays[4] = chipThu.isChecked();
+        weekDays[5] = chipFri.isChecked();
+        weekDays[6] = chipSat.isChecked();
+        habit.setWeekDays(weekDays);
         
         long habitId = new HabitActivity().saveHabit(habit);
 
