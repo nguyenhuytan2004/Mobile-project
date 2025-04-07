@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:layout_marginBottom="24dp"
     android:background="@drawable/search_bar_background"
-    android:padding="10dp">
+    android:padding="20dp">
 
     <TextView
         android:id="@+id/category_title"
@@ -15,7 +15,7 @@
         android:text="Category Title"
         android:textSize="18sp"
         android:textColor="#888888"
-        android:layout_marginBottom="8dp"/>
+        android:layout_marginBottom="15dp"/>
 
     <LinearLayout
         android:id="@+id/task_list_layout"

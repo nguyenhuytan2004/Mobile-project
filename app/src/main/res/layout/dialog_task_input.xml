@@ -84,26 +84,8 @@
     </RadioGroup>
 
     <!-- Add this after the priority RadioGroup in dialog_task_input.xml -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Chọn danh mục"
-        android:textColor="@color/white"
-        android:textStyle="bold"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="8dp"/>
 
     <!-- Replace the spinner with an EditText for user input -->
-    <EditText
-        android:id="@+id/etTaskCategory"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Nhập danh mục công việc"
-        android:textColorHint="#AAAAAA"
-        android:textColor="@color/white"
-        android:padding="12dp"
-        android:background="@drawable/button_custom"
-        android:layout_marginBottom="16dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"

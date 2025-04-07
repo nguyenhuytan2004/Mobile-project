@@ -62,9 +62,26 @@ public class ShareTaskActivity extends AppCompatActivity {
         layout.setPadding(16, 16, 16, 16);
 
         TextView titleView = new TextView(this);
-        titleView.setText("📝 " + t.getTitle());
+        // Show different icon based on type
+        String icon = t.isNote() ? "📝 " : "✓ ";
+        titleView.setText(icon + t.getTitle());
         titleView.setTextSize(16);
         titleView.setTypeface(null, android.graphics.Typeface.BOLD);
+
+        // If task has priority, show it
+        if (!t.isNote() && t.getPriority() > 0) {
+            String priorityText;
+            switch (t.getPriority()) {
+                case 1: priorityText = "Ưu tiên: Cao (Quan trọng & Khẩn cấp)"; break;
+                case 2: priorityText = "Ưu tiên: Trung bình (Quan trọng, Không khẩn cấp)"; break;
+                case 3: priorityText = "Ưu tiên: Thấp (Không quan trọng, Khẩn cấp)"; break;
+                default: priorityText = "Ưu tiên: Rất thấp (Không quan trọng & Không khẩn cấp)"; break;
+            }
+            
+            TextView priorityView = new TextView(this);
+            priorityView.setText(priorityText);
+            layout.addView(priorityView);
+        }
 
         TextView descView = new TextView(this);
         if (t.getDescription() != null && !t.getDescription().isEmpty()) {
@@ -78,6 +95,13 @@ public class ShareTaskActivity extends AppCompatActivity {
             dateView.setText("Ngày đến hạn: " + t.getReminderDate());
         } else {
             dateView.setText("Không có ngày đến hạn");
+        }
+        
+        // Show completion status for tasks
+        if (!t.isNote()) {
+            TextView statusView = new TextView(this);
+            statusView.setText("Trạng thái: " + (t.isCompleted() ? "Đã hoàn thành" : "Chưa hoàn thành"));
+            layout.addView(statusView);
         }
 
         TextView appView = new TextView(this);
@@ -152,20 +176,67 @@ public class ShareTaskActivity extends AppCompatActivity {
     }
     private String prepareShareText(ArrayList<Task> taskList) {
         StringBuilder sb = new StringBuilder();
-        int index = 1;
+        int noteIndex = 1;
+        int taskIndex = 1;
 
+        // First add notes
+        sb.append("===== GHI CHÚ =====\n\n");
+        boolean hasNotes = false;
         for (Task t : taskList) {
-            sb.append("📝 Task ").append(index++).append(": ").append(t.getTitle()).append("\n");
+            if (t.isNote()) {
+                hasNotes = true;
+                sb.append("📝 Ghi chú ").append(noteIndex++).append(": ").append(t.getTitle()).append("\n");
 
-            if (t.getDescription() != null && !t.getDescription().isEmpty()) {
-                sb.append("Mô tả: ").append(t.getDescription()).append("\n");
+                if (t.getDescription() != null && !t.getDescription().isEmpty()) {
+                    sb.append("Nội dung: ").append(t.getDescription()).append("\n");
+                }
+
+                if (t.hasReminder()) {
+                    sb.append("Hạn: ").append(t.getReminderDate()).append("\n");
+                }
+
+                sb.append("\n");
             }
+        }
+        
+        if (!hasNotes) {
+            sb.append("Không có ghi chú\n\n");
+        }
 
-            if (t.hasReminder()) {
-                sb.append("Hạn: ").append(t.getReminderDate()).append("\n");
+        // Then add tasks
+        sb.append("===== CÔNG VIỆC =====\n\n");
+        boolean hasTasks = false;
+        for (Task t : taskList) {
+            if (!t.isNote()) {
+                hasTasks = true;
+                String status = t.isCompleted() ? "✓ " : "□ ";
+                sb.append(status).append("Công việc ").append(taskIndex++).append(": ").append(t.getTitle()).append("\n");
+
+                String priorityText;
+                switch (t.getPriority()) {
+                    case 1: priorityText = "Cao"; break;
+                    case 2: priorityText = "Trung bình"; break;
+                    case 3: priorityText = "Thấp"; break;
+                    default: priorityText = "Rất thấp"; break;
+                }
+                sb.append("Ưu tiên: ").append(priorityText).append("\n");
+
+                if (t.getDescription() != null && !t.getDescription().isEmpty()) {
+                    sb.append("Mô tả: ").append(t.getDescription()).append("\n");
+                }
+
+                if (t.hasReminder()) {
+                    sb.append("Hạn: ").append(t.getReminderDate()).append("\n");
+                }
+                
+                sb.append("Trạng thái: ").append(t.isCompleted() ? "Đã hoàn thành" : "Chưa hoàn thành").append("\n");
+
+                sb.append("\n");
             }
-
-            sb.append("\n");
+        }
+        
+        if (!hasTasks) {
+            sb.append("Không có công việc\n\n");
         }
 
         sb.append("🔗 Shared from TickTick");

@@ -56,9 +56,12 @@ public class FocusTab extends AppCompatActivity {
     private boolean isPaused = false;
     private String focusNotesText = "";
     private int prefFocusTime;
+    private String prefWhiteNoise;
+    SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        Log.e("FocusTab", "onCreate called");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.focus);
 
@@ -86,13 +89,10 @@ public class FocusTab extends AppCompatActivity {
 
         progressBar2 = findViewById(R.id.progressBar2);
 
-        SharedPreferences sharedPreferences = getSharedPreferences("FocusTabPrefs", MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences("FocusTabPrefs", MODE_PRIVATE);
         prefFocusTime = sharedPreferences.getInt("focusTime", 5);
         focusTime.setText(String.format("%02d:00", prefFocusTime));
 
-        if (getIntent().getAction() != null && getIntent().getAction().equals("START_FOCUS")) {
-            startFocus();
-        }
 
         homeTab.setOnClickListener(view -> {
             startActivity(new Intent(FocusTab.this, MainActivity.class));
@@ -111,6 +111,7 @@ public class FocusTab extends AppCompatActivity {
         });
 
         btnStart.setOnClickListener(view -> {
+            Log.e("FocusTab", "Start button clicked");
             front.setVisibility(View.GONE);
             behind.setVisibility(View.VISIBLE);
 
@@ -119,21 +120,43 @@ public class FocusTab extends AppCompatActivity {
                 playLayout.setVisibility(View.GONE);
             }
 
-            int totalSecond = Integer.parseInt(focusTime.getText().toString().substring(0, 2)) * 60;
+//            int totalSecond = Integer.parseInt(focusTime.getText().toString().substring(0, 2)) * 60;
+            int totalSecond = 20;
             timeLeftInMillis = totalSecond * 1000L;
 
             progressBar2.setMax(totalSecond);
             progressBar2.setProgress(0);
 
-            mediaPlayer = MediaPlayer.create(this, R.raw.ting);
-
             startTimer();
+
+            sharedPreferences = getSharedPreferences("whiteNoise", MODE_PRIVATE);
+            prefWhiteNoise = sharedPreferences.getString("storage_sound", "none");
+            Log.e("FocusTab", "White noise preference: " + prefWhiteNoise);
+            if (prefWhiteNoise.equals("none")) {
+                if (mediaPlayer != null) {
+                    mediaPlayer.stop();
+                    mediaPlayer.release();
+                    mediaPlayer = null;
+                }
+            } else if (prefWhiteNoise.equals("clock")) {
+                if (mediaPlayer == null) {
+                    mediaPlayer = MediaPlayer.create(this, R.raw.clock_sound);
+                    mediaPlayer.setLooping(true);
+                    mediaPlayer.start();
+                }
+            }
         });
 
         btnEnd.setOnClickListener(view -> {
             if (countDownTimer != null) {
                 countDownTimer.cancel();
                 countDownTimer = null;
+            }
+
+            if (mediaPlayer != null) {
+                mediaPlayer.stop();
+                mediaPlayer.release();
+                mediaPlayer = null;
             }
 
             front.setVisibility(View.VISIBLE);
@@ -146,6 +169,10 @@ public class FocusTab extends AppCompatActivity {
                 isPaused = true;
             }
 
+            if (mediaPlayer != null) {
+                mediaPlayer.pause();
+            }
+
             pauseLayout.setVisibility(View.GONE);
             playLayout.setVisibility(View.VISIBLE);
         });
@@ -154,6 +181,10 @@ public class FocusTab extends AppCompatActivity {
             if (isPaused) {
                 startTimer();
                 isPaused = false;
+            }
+
+            if (mediaPlayer != null) {
+                mediaPlayer.start();
             }
 
             pauseLayout.setVisibility(View.VISIBLE);
@@ -252,6 +283,15 @@ public class FocusTab extends AppCompatActivity {
 
             dialog.show();
         });
+
+        if (getIntent().getAction() != null && getIntent().getAction().equals("START_FOCUS")) {
+            sharedPreferences = getSharedPreferences("whiteNoise", MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("sound", sharedPreferences.getString("storage_sound", "none"));
+            editor.apply();
+
+            btnStart.performClick();
+        }
     }
 
     @Override
@@ -259,34 +299,106 @@ public class FocusTab extends AppCompatActivity {
         super.onNewIntent(intent);
         setIntent(intent);
 
+        sharedPreferences = getSharedPreferences("whiteNoise", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("sound", sharedPreferences.getString("storage_sound", "none"));
+        editor.apply();
+
         if (Objects.equals(intent.getAction(), "START_FOCUS") && countDownTimer == null) {
-            startFocus();
+            btnStart.performClick();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        Log.e("FocusTab", "onResume called");
+        super.onResume();
+        sharedPreferences = getSharedPreferences("whiteNoise", MODE_PRIVATE);
+        if (countDownTimer != null) {
+            prefWhiteNoise = sharedPreferences.getString("storage_sound", "none");
+        } else {
+            prefWhiteNoise = sharedPreferences.getString("sound", "none");
+        }
+        if (prefWhiteNoise.equals("none")) {
+            if (mediaPlayer != null) {
+                mediaPlayer.stop();
+                mediaPlayer.release();
+                mediaPlayer = null;
+            }
+        } else if (prefWhiteNoise.equals("clock")) {
+            if (mediaPlayer == null) {
+                mediaPlayer = MediaPlayer.create(this, R.raw.clock_sound);
+                mediaPlayer.setLooping(true);
+                if (!isPaused)
+                    mediaPlayer.start();
+            }
         }
     }
 
     @Override
     protected void onStop() {
+        Log.e("FocusTab", "onStop called");
         super.onStop();
-        SharedPreferences sharedPreferences = getSharedPreferences("FocusTabPrefs", MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences("FocusTabPrefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt("focusTime", prefFocusTime);
         editor.apply();
+
+        sharedPreferences = getSharedPreferences("whiteNoise", MODE_PRIVATE);
+        SharedPreferences.Editor whiteNoiseEditor = sharedPreferences.edit();
+        whiteNoiseEditor.remove("sound");
+        whiteNoiseEditor.apply();
     }
 
-    private void startFocus() {
-        front.setVisibility(View.GONE);
-        behind.setVisibility(View.VISIBLE);
-        pauseLayout.setVisibility(View.VISIBLE);
-        playLayout.setVisibility(View.GONE);
+    private void startTimer() {
+        countDownTimer = new CountDownTimer(timeLeftInMillis, 1000) {
+            public void onTick(long millisUntilFinished) {
+                timeLeftInMillis = millisUntilFinished;
+                int secondsLeft = (int) (millisUntilFinished / 1000);
+                focusTime2.setText(String.format("%02d:%02d", secondsLeft / 60, secondsLeft % 60));
+                progressBar2.setProgress(progressBar2.getMax() - secondsLeft);
+            }
 
-        int totalSecond = Integer.parseInt(focusTime.getText().toString().substring(0, 2)) * 60;
-        timeLeftInMillis = totalSecond * 1000L;
+            public void onFinish() {
+                if (mediaPlayer != null) {
+                    mediaPlayer.stop();
+                    mediaPlayer.release();
+                    mediaPlayer = null;
+                }
 
-        progressBar2.setMax(totalSecond);
-        progressBar2.setProgress(0);
+                mediaPlayer = MediaPlayer.create(FocusTab.this, R.raw.ting);
+                mediaPlayer.setLooping(true);
+                mediaPlayer.start();
 
-        mediaPlayer = MediaPlayer.create(this, R.raw.ting);
-        startTimer();
+                showEndFocusDialog();
+                showEndFocusNotification();
+            }
+        }.start();
+    }
+
+    private void showEndFocusDialog() {
+        View endFocusView = getLayoutInflater().inflate(R.layout.notification_dialog, null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(FocusTab.this);
+        builder.setView(endFocusView);
+
+        TextView title = endFocusView.findViewById(R.id.title);
+        TextView content = endFocusView.findViewById(R.id.content);
+        TextView btnConfirm = endFocusView.findViewById(R.id.btnConfirm);
+
+        title.setText("Hoàn thành tập trung");
+        content.setText("Hãy nghỉ ngơi một chút trước khi bắt đầu lại!");
+        btnConfirm.setText("Ok");
+
+        AlertDialog dialog = builder.create();
+        dialog.setOnDismissListener(dialogInterface -> {
+            stopNotificationMusic(dialog);
+        });
+
+        btnConfirm.setOnClickListener(v -> {
+            stopNotificationMusic(dialog);
+        });
+
+        dialog.show();
     }
 
     private void createNotificationChannel() {
@@ -324,51 +436,7 @@ public class FocusTab extends AppCompatActivity {
         notificationManager.notify(1, builder.build());
     }
 
-    private void startTimer() {
-        countDownTimer = new CountDownTimer(timeLeftInMillis, 1000) {
-            public void onTick(long millisUntilFinished) {
-                timeLeftInMillis = millisUntilFinished;
-                int secondsLeft = (int) (millisUntilFinished / 1000);
-                focusTime2.setText(String.format("%02d:%02d", secondsLeft / 60, secondsLeft % 60));
-                progressBar2.setProgress(progressBar2.getMax() - secondsLeft);
-            }
-
-            public void onFinish() {
-                mediaPlayer.setLooping(true);
-                mediaPlayer.start();
-
-                showEndFocusDialog();
-                showEndFocusNotification();
-            }
-        }.start();
-    }
-
-    private void showEndFocusDialog() {
-        View endFocusView = getLayoutInflater().inflate(R.layout.notification_dialog, null);
-        AlertDialog.Builder builder = new AlertDialog.Builder(FocusTab.this);
-        builder.setView(endFocusView);
-
-        TextView title = endFocusView.findViewById(R.id.title);
-        TextView content = endFocusView.findViewById(R.id.content);
-        TextView btnConfirm = endFocusView.findViewById(R.id.btnConfirm);
-
-        title.setText("Hoàn thành tập trung");
-        content.setText("Hãy nghỉ ngơi một chút trước khi bắt đầu lại!");
-        btnConfirm.setText("Ok");
-
-        AlertDialog dialog = builder.create();
-        dialog.setOnDismissListener(dialogInterface -> {
-            stopMusicAndDismiss(dialog);
-        });
-
-        btnConfirm.setOnClickListener(v -> {
-            stopMusicAndDismiss(dialog);
-        });
-
-        dialog.show();
-    }
-
-    private void stopMusicAndDismiss(AlertDialog dialog) {
+    private void stopNotificationMusic(AlertDialog dialog) {
         if (mediaPlayer != null) {
             mediaPlayer.stop();
             mediaPlayer.release();

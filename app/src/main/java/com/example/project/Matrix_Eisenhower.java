@@ -39,6 +39,8 @@ public class Matrix_Eisenhower extends AppCompatActivity {
         homeTab = findViewById(R.id.homeTab);
         habitTab = findViewById(R.id.habitTabCalender);
 
+        addButton = findViewById(R.id.addButton);
+
 
         focusTab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,24 +93,33 @@ public class Matrix_Eisenhower extends AppCompatActivity {
         // Set up click listeners for all priority quadrants
         setupPriorityClickListeners();
         // Nút thêm task
-        addButton = findViewById(R.id.addButton);
+        // Update the add button click listener
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TaskDialogHelper.showInputDialog(Matrix_Eisenhower.this, new TaskDialogHelper.TaskDialogCallback() {
+                // Adding the missing defaultPriority parameter (using 1 as default)
+                TaskDialogHelper.showInputDialog(Matrix_Eisenhower.this, 1, new TaskDialogHelper.TaskDialogCallback() {
                     @Override
                     public void onTaskAdded(Task task) {
-                        // Add task to UI
-                        addTaskToUI(task);
-                        // Add task to the list
-                        taskList.add(task);
-                        // Save task to database
+                        Matrix_Eisenhower.this.onTaskAdded(task);
                     }
                 });
             }
         });
         // Load tasks from database
         loadTasksFromDatabase();
+    }
+
+
+    public void onTaskAdded(Task task) {
+        // Add the task to database
+        addTaskToDatabase(task);
+
+        // Add the task to UI
+        addTaskToUI(task);
+
+        // Add to task list
+        taskList.add(task);
     }
 
 
@@ -273,6 +284,31 @@ public class Matrix_Eisenhower extends AppCompatActivity {
             priorityLayout.addView(taskContainer);
         }
     }
+    // Method to add task to database
+    private void addTaskToDatabase(Task task) {
+        SQLiteDatabase db = DatabaseHelper.getInstance(this).openDatabase();
+        try {
+            android.content.ContentValues values = new android.content.ContentValues();
+            values.put("title", task.getTitle());
+            values.put("description", task.getDescription());
+            values.put("priority", task.getPriority());
+            values.put("reminder_date", task.getReminderDate());
+            values.put("is_completed", task.isCompleted() ? 1 : 0);
+            values.put("category_id", task.getCategoryId());
+
+            long result = db.insert("tbl_task", null, values);
+            if (result == -1) {
+                Log.e("Matrix_Eisenhower", "Error adding task to database");
+            } else {
+                Log.d("Matrix_Eisenhower", "Task added successfully to database");
+            }
+        } catch (Exception e) {
+            Log.e("Matrix_Eisenhower", "Error: " + e.getMessage(), e);
+        } finally {
+            DatabaseHelper.getInstance(this).closeDatabase();
+        }
+    }
+
 
     private void setComplted(Task task, boolean isCompleted) {
         SQLiteDatabase db = DatabaseHelper.getInstance(this).openDatabase();
