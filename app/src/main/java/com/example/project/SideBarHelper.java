@@ -1,6 +1,7 @@
 package com.example.project;
 
 import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -12,6 +13,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -56,15 +58,41 @@ public class SideBarHelper {
             List<String> lists = getListsFromDatabase(context);
             addCategoryItems(context, categorySection, lists, callback);
             
-            // Set up click listeners
-            btnSetting.setOnClickListener(v -> {
-                Toast.makeText(context, "Settings clicked", Toast.LENGTH_SHORT).show();
-                // Add settings intent here if needed
-            });
             
             btnAddList.setOnClickListener(v -> {
-                Toast.makeText(context, "Add new list", Toast.LENGTH_SHORT).show();
-                // Implement add list functionality here
+                // Create dialog to get new list name
+                final EditText input = new EditText(context);
+                input.setHint("Tên danh sách mới");
+                input.setTextColor(Color.WHITE);
+                input.setHintTextColor(Color.GRAY);
+                
+                AlertDialog.Builder addListDialog = new AlertDialog.Builder(context);
+                addListDialog.setTitle("Thêm danh sách mới");
+                addListDialog.setView(input);
+                
+                // Add buttons
+                addListDialog.setPositiveButton("Thêm", (dialogInterface, which) -> {
+                    String listName = input.getText().toString().trim();
+                    if (!listName.isEmpty()) {
+                        // Add list to database
+                        int newListId = addListToDatabase(context, listName);
+                        if (newListId != -1) {
+                            Toast.makeText(context, "Đã thêm danh sách: " + listName, Toast.LENGTH_SHORT).show();
+                            
+                            // Refresh sidebar
+                            List<String> updatedLists = getListsFromDatabase(context);
+                            addCategoryItems(context, categorySection, updatedLists, callback);
+                        } else {
+                            Toast.makeText(context, "Không thể thêm danh sách", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(context, "Tên danh sách không thể trống", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                
+                addListDialog.setNegativeButton("Hủy", (dialogInterface, which) -> dialogInterface.cancel());
+                
+                addListDialog.show();
             });
         }
 
@@ -77,6 +105,52 @@ public class SideBarHelper {
         params.y = 0;
         params.x = 0;
         dialog.getWindow().setAttributes(params);
+    }
+    
+    // New method to add a list to the database
+    private static int addListToDatabase(Context context, String listName) {
+        SQLiteDatabase db = null;
+        int newListId = -1;
+        
+        try {
+            db = DatabaseHelper.getInstance(context).openDatabase();
+            
+            // Check if list with this name already exists
+            Cursor cursor = db.rawQuery("SELECT id FROM tbl_list WHERE name = ?", new String[]{listName});
+            boolean exists = cursor.getCount() > 0;
+            cursor.close();
+            
+            if (exists) {
+                // List already exists
+                Toast.makeText(context, "Danh sách này đã tồn tại", Toast.LENGTH_SHORT).show();
+                return -1;
+            }
+            
+            // Insert the new list
+            ContentValues values = new ContentValues();
+            values.put("name", listName);
+            values.put("icon", (String) null); // No icon initially
+            
+            newListId = (int) db.insert("tbl_list", null, values);
+            
+            // Create a default category for this list
+            if (newListId != -1) {
+                ContentValues categoryValues = new ContentValues();
+                categoryValues.put("name", "Default");
+                categoryValues.put("list_id", newListId);
+                db.insert("tbl_category", null, categoryValues);
+            }
+            
+        } catch (Exception e) {
+            Log.e("SideBarHelper", "Error adding list to database", e);
+            newListId = -1;
+        } finally {
+            if (db != null) {
+                DatabaseHelper.getInstance(context).closeDatabase();
+            }
+        }
+        
+        return newListId;
     }
 
     // Method to get lists from the database
