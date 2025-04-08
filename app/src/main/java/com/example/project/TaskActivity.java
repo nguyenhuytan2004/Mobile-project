@@ -512,10 +512,18 @@ public class TaskActivity extends  AppCompatActivity{
             taskValues.put("title", title);
             taskValues.put("content", contentInput.getText().toString());
             taskValues.put("user_id", LoginSessionManager.getInstance(this).getUserId());
-            taskValues.put("priority", 1); // mặc định priority = 1, bạn có thể thay đổi
             taskValues.put("is_completed", 0);
 
+            int calculatedPriority = calculatePriority(title, contentInput.getText().toString(), db);
+            taskValues.put("priority", calculatedPriority);
+
             taskValues.put("category_id", Integer.parseInt(categoryId));
+
+            Log.d("TaskSave", "Task Values:");
+            Log.d("TaskSave", "Title: " + title);
+            Log.d("TaskSave", "Content: " + contentInput.getText().toString());
+            Log.d("TaskSave", "Priority: " + calculatedPriority);
+            Log.d("TaskSave", "Task ID: " + taskId);
 
             if (Integer.parseInt(taskId) != -1) {
                 taskExists = true;
@@ -610,5 +618,49 @@ public class TaskActivity extends  AppCompatActivity{
         }
     }
 
+    private int calculatePriority(String title, String content, SQLiteDatabase db) {
+        double[] x = new double[9];
+
+        int titleLen = title.length();
+        x[0] = titleLen > 100 ? 1.0 : titleLen / 100.0;
+
+        int contentLen = content.length();
+        x[1] = contentLen > 500 ? 1.0 : contentLen / 500.0;
+
+        x[2] = Softmax.checkHashtagImportance(content) ? 1 : 0;
+        x[3] = Softmax.checkHashtagTravel(content) ? 1 : 0;
+        x[4] = Softmax.checkHashtagJob(content) ? 1 : 0;
+        x[5] = Softmax.checkHashtagEmail(content) ? 1 : 0;
+        x[6] = Softmax.checkKeywordImportance(title + " " + content) ? 1 : 0;
+        x[7] = Softmax.checkKeywordEmergency(title + " " + content) ? 1 : 0;
+        x[8] = 1.0;
+
+        Softmax softmax = new Softmax(9, 4);
+
+        Cursor cursor = null;
+        try {
+            String query = "SELECT class_id, feature_index, weight FROM tbl_weights";
+            Log.d("PriorityCalc", "Executing query: " + query);
+            cursor = db.rawQuery(query, null);
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    int classId = cursor.getInt(cursor.getColumnIndexOrThrow("class_id"));
+                    int featureIndex = cursor.getInt(cursor.getColumnIndexOrThrow("feature_index"));
+                    double weight = cursor.getDouble(cursor.getColumnIndexOrThrow("weight"));
+                    softmax.setWeight(classId, featureIndex, weight);
+                }
+            }
+        } catch (Exception e) {
+            Log.e("PriorityCalc", "Error loading weights", e);
+        } finally {
+            if (cursor != null) cursor.close();
+        }
+
+        // kết quả đổi ngược lại cho trùng matrix 1,2,3,4 - > 4,3,2,1
+        int predicted = softmax.predict(x);
+        int reversed = 5 - predicted;
+
+        return reversed;
+    }
 
 }
