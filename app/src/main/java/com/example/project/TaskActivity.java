@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -42,6 +44,8 @@ public class TaskActivity extends  AppCompatActivity{
     EditText titleInput, contentInput;
     FlexboxLayout tagContainer, attachmentContainer;
 
+    CheckBox taskCheckBox;
+
     SQLiteDatabase db;
     String taskId, listId, categoryId;
 
@@ -70,6 +74,7 @@ public class TaskActivity extends  AppCompatActivity{
 
         tagContainer = findViewById(R.id.tagContainer);
         attachmentContainer = findViewById(R.id.attachmentContainer);
+        taskCheckBox = findViewById(R.id.taskCheckBox);
 
         String title = getIntent().getStringExtra("title");
         String content = getIntent().getStringExtra("content");
@@ -105,6 +110,50 @@ public class TaskActivity extends  AppCompatActivity{
             cursor.close();
             DatabaseHelper.getInstance(this).closeDatabase();
         }
+
+        // ✅ Truy vấn DB để lấy is_completed
+        db = DatabaseHelper.getInstance(this).openDatabase();
+        Cursor cursor = db.rawQuery("SELECT is_completed FROM tbl_task WHERE id = ?", new String[]{taskId});
+        if (cursor.moveToFirst()) {
+            boolean isCompleted = cursor.getInt(0) == 1;
+
+            // Đặt trạng thái checkbox
+            taskCheckBox.setChecked(isCompleted);
+            taskCheckBox.setButtonDrawable(isCompleted
+                    ? R.drawable.ic_checkbox_complete
+                    : R.drawable.ic_checkbox_notcompleted);
+
+            if (isCompleted) {
+                titleInput.setPaintFlags(titleInput.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                titleInput.setTextColor(getResources().getColor(R.color.gray));
+                titleInput.setAlpha(0.6f);
+                contentInput.setAlpha(0.6f);
+            }
+        }
+        cursor.close();
+
+        // ✅ Xử lý khi người dùng check/uncheck
+        taskCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            String updateQuery = "UPDATE tbl_task SET is_completed = ? WHERE id = ?";
+            db.execSQL(updateQuery, new Object[]{isChecked ? 1 : 0, taskId});
+
+            // Cập nhật giao diện theo trạng thái mới
+            taskCheckBox.setButtonDrawable(isChecked
+                    ? R.drawable.ic_checkbox_complete
+                    : R.drawable.ic_checkbox_notcompleted);
+
+            if (isChecked) {
+                titleInput.setPaintFlags(titleInput.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                titleInput.setTextColor(getResources().getColor(R.color.gray));
+                titleInput.setAlpha(0.6f);
+                contentInput.setAlpha(0.6f);
+            } else {
+                titleInput.setPaintFlags(titleInput.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+                titleInput.setTextColor(getResources().getColor(R.color.black)); // hoặc màu chính bạn đang dùng
+                titleInput.setAlpha(1f);
+                contentInput.setAlpha(1f);
+            }
+        });
 
         btnDropDownList.setOnClickListener(v -> {
             BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(TaskActivity.this);
@@ -399,6 +448,7 @@ public class TaskActivity extends  AppCompatActivity{
             if (!cursor.isNull(dateColumnIndex)) {
                 date = cursor.getString(dateColumnIndex);
             }
+
             txtDate.setText(date);
 
             if (!date.isEmpty()) {
@@ -419,6 +469,8 @@ public class TaskActivity extends  AppCompatActivity{
                 } else {
                     txtDate.setTextColor(getResources().getColor(R.color.statistics_blue));
                 }
+            }else{
+                txtDate.setText("Ngày & Lặp lại");
             }
 
             // Load tags
@@ -662,5 +714,4 @@ public class TaskActivity extends  AppCompatActivity{
 
         return reversed;
     }
-
 }
