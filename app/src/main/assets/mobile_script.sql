@@ -6,8 +6,6 @@ CREATE TABLE "android_metadata" (
 );
 
 
-
-
 DROP TABLE IF EXISTS "tbl_note";
 CREATE TABLE "tbl_note" (
 	id INTEGER,
@@ -133,6 +131,14 @@ CREATE TABLE "tbl_user" (
 	PRIMARY KEY("id" AUTOINCREMENT)
 );
 
+DROP TABLE IF EXISTS "tbl_weights";
+CREATE TABLE "tbl_weights" (
+    class_id INTEGER,
+    feature_index INTEGER,
+    weight REAL,
+    PRIMARY KEY (class_id, feature_index)
+);
+
 INSERT INTO "android_metadata" VALUES ('en_US');
 INSERT INTO "tbl_user" VALUES (1,'alice@example.com','hashed_password_123',0);
 INSERT INTO "tbl_user" VALUES (2,'bob@example.com','hashed_password_456',0);
@@ -179,3 +185,47 @@ INSERT INTO "tbl_task_tag" VALUES (26,1,'😊','#E67E22');
 ('Morning Jog', 'Start your day with energy!', 'daily', '[true, true, true, true, true, false, false]', 'Run 3km', '2024-04-01', '30', 'Health', '07:00 AM', 1),
 ('Reading', 'A book a day keeps ignorance away.', 'weekly', '[false, false, true, false, false, true, false]', 'Read 20 pages', '2024-03-15', '60', 'Education', '09:00 PM', 0);
 COMMIT;
+
+-- Class 0
+INSERT INTO "tbl_weights" VALUES (0, 0, -2.189159382724869);
+INSERT INTO "tbl_weights" VALUES (0, 1, -1.3128789784743151);
+INSERT INTO "tbl_weights" VALUES (0, 2, -3.5283748238456183);
+INSERT INTO "tbl_weights" VALUES (0, 3, -3.289643787018639);
+INSERT INTO "tbl_weights" VALUES (0, 4, -3.706564747176178);
+INSERT INTO "tbl_weights" VALUES (0, 5, -4.100838928860778);
+INSERT INTO "tbl_weights" VALUES (0, 6, -5.187676360306409);
+INSERT INTO "tbl_weights" VALUES (0, 7, -5.737979925122579);
+INSERT INTO "tbl_weights" VALUES (0, 8, -9.136539244350658);
+
+-- Class 1
+INSERT INTO "tbl_weights" VALUES (1, 0, -2.4385431510118716);
+INSERT INTO "tbl_weights" VALUES (1, 1, -4.037066977039492);
+INSERT INTO "tbl_weights" VALUES (1, 2, -3.24140352026251);
+INSERT INTO "tbl_weights" VALUES (1, 3, -2.9445039776875035);
+INSERT INTO "tbl_weights" VALUES (1, 4, -3.3183069213717586);
+INSERT INTO "tbl_weights" VALUES (1, 5, -3.7232724963545207);
+INSERT INTO "tbl_weights" VALUES (1, 6, -7.028582237447608);
+INSERT INTO "tbl_weights" VALUES (1, 7, -8.445607978476197);
+INSERT INTO "tbl_weights" VALUES (1, 8, -5.251555465853737);
+
+-- Class 2
+INSERT INTO "tbl_weights" VALUES (2, 0, -1.6707346252996615);
+INSERT INTO "tbl_weights" VALUES (2, 1, -1.5354013059132938);
+INSERT INTO "tbl_weights" VALUES (2, 2, -3.7585407373227078);
+INSERT INTO "tbl_weights" VALUES (2, 3, -2.865228577893336);
+INSERT INTO "tbl_weights" VALUES (2, 4, -4.014978396233632);
+INSERT INTO "tbl_weights" VALUES (2, 5, -3.9133410313119543);
+INSERT INTO "tbl_weights" VALUES (2, 6, -9.700525425805623);
+INSERT INTO "tbl_weights" VALUES (2, 7, -2.7116033012331995);
+INSERT INTO "tbl_weights" VALUES (2, 8, -7.641629536867922);
+
+-- Class 3
+INSERT INTO "tbl_weights" VALUES (3, 0, -1.2262161288484035);
+INSERT INTO "tbl_weights" VALUES (3, 1, 2.7576094503183737);
+INSERT INTO "tbl_weights" VALUES (3, 2, -3.2564156241907782);
+INSERT INTO "tbl_weights" VALUES (3, 3, -2.8784029073445447);
+INSERT INTO "tbl_weights" VALUES (3, 4, -3.3440326074512163);
+INSERT INTO "tbl_weights" VALUES (3, 5, -3.8389347322144687);
+INSERT INTO "tbl_weights" VALUES (3, 6, -3.8608874191840927);
+INSERT INTO "tbl_weights" VALUES (3, 7, -11.285287407444331);
+INSERT INTO "tbl_weights" VALUES (3, 8, -6.159176880073111);
