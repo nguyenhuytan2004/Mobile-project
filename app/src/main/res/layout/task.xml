@@ -29,10 +29,11 @@
             android:id="@+id/listNameText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="8dp"
+            android:padding="12dp"
             android:text="👋 Welcome"
             android:textColor="#FFFFFF"
-            android:textSize="24sp" />
+            android:textSize="24sp"
+            />
 
         <TextView
             android:id="@+id/dropDownList"

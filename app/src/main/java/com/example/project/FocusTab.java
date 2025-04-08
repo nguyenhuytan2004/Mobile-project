@@ -120,8 +120,7 @@ public class FocusTab extends AppCompatActivity {
                 playLayout.setVisibility(View.GONE);
             }
 
-//            int totalSecond = Integer.parseInt(focusTime.getText().toString().substring(0, 2)) * 60;
-            int totalSecond = 20;
+            int totalSecond = Integer.parseInt(focusTime.getText().toString().substring(0, 2)) * 60;
             timeLeftInMillis = totalSecond * 1000L;
 
             progressBar2.setMax(totalSecond);
@@ -245,13 +244,13 @@ public class FocusTab extends AppCompatActivity {
 
             SeekBar seekBar = focusTimeView.findViewById(R.id.seekBar);
             pomoTime = focusTimeView.findViewById(R.id.pomoTime);
-            seekBar.setProgress(Integer.parseInt(focusTime.getText().toString().substring(0, 2)) - 5);
-            pomoTime.setText(String.valueOf(seekBar.getProgress() + 5));
+            seekBar.setProgress(Integer.parseInt(focusTime.getText().toString().substring(0, 2)) - 1);
+            pomoTime.setText(String.valueOf(seekBar.getProgress() + 1));
 
             seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                    int value = progress + 5;
+                    int value = progress + 1;
                     pomoTime.setText(String.valueOf(value));
                 }
 
@@ -274,7 +273,7 @@ public class FocusTab extends AppCompatActivity {
             });
 
             btnSave.setOnClickListener(v2 -> {
-                int newTime = seekBar.getProgress() + 5;
+                int newTime = seekBar.getProgress() + 1;
                 focusTime.setText(String.format("%02d:00", newTime));
                 prefFocusTime = newTime;
 
