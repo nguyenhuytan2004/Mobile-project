@@ -298,7 +298,7 @@ public class NewHabitAimActivity extends AppCompatActivity {
 
     private void saveHabit() {
         // Update all habit data from UI input fields
-        habit.setName(editTextGoal.getText().toString()); // Assuming the name is the same as goal for simplicity
+
         habit.setGoal(editTextGoal.getText().toString());
         habit.setGoalDays(spinnerGoalDays.getSelectedItem().toString());
         habit.setSection(spinnerSection.getSelectedItem().toString());

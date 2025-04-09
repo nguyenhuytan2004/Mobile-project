@@ -455,7 +455,7 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
 
                     Log.d("HomeActivity", "Adding task: " + title + " with date: " + reminderDate);
 
-                    addTaskView(taskListLayout, taskId, title, description, priority, reminderDate, isCompleted);
+                    addTaskView(taskListLayout, listId,-1, taskId, title, description, priority, reminderDate, isCompleted);
                 }
                 taskCursor.close();
 
@@ -543,8 +543,8 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
                         String reminderDate = taskCursor.isNull(4) ? "" : taskCursor.getString(4);
                         boolean isCompleted = taskCursor.getInt(5) > 0;
 
-                        Log.d("SearchFilter", "Task title: " + title);
-                        addTaskView(taskListLayout, taskId, title, content, priority, reminderDate, isCompleted);
+                        Log.d("SearchFilter", "Task title: " + title + "task id"+taskId);
+                        addTaskView(taskListLayout,listId,categoryId, taskId, title, content, priority, reminderDate, isCompleted);
                     }
                     taskCursor.close();
 
@@ -596,7 +596,7 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
                     boolean isCompleted = completedCursor.getInt(5) > 0;
 
                     Log.d("SearchFilter", "Completed Task: " + title);
-                    addTaskView(completedTaskLayout, taskId, title, content, priority, reminderDate, isCompleted);
+                    addTaskView(completedTaskLayout,listId,-1, taskId, title, content, priority, reminderDate, isCompleted);
                 }
 
                 completedCursor.close();
@@ -668,7 +668,7 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
         targetLayout.addView(noteView);
     }
 
-    private void addTaskView(LinearLayout targetLayout, int taskId, String title, String content,
+    private void addTaskView(LinearLayout targetLayout,int listId,int categoryId, int taskId, String title, String content,
                              int priority, String reminderDate, boolean isCompleted) {
 
         View taskView = LayoutInflater.from(this).inflate(R.layout.task_item_in_main, targetLayout, false);
@@ -681,12 +681,11 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
         titleTextView.setText(title);
         taskCheckBox.setChecked(isCompleted);
 
-        // ✅ Cập nhật icon checkbox theo trạng thái
         taskCheckBox.setButtonDrawable(isCompleted
                 ? R.drawable.ic_checkbox_complete
                 : R.drawable.ic_checkbox_notcompleted);
 
-        // ✅ Xử lý hiển thị màu sắc/mờ nếu đã hoàn thành
+
         if (isCompleted) {
             titleTextView.setPaintFlags(titleTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             titleTextView.setTextColor(getResources().getColor(R.color.gray));         // màu xám
@@ -734,6 +733,12 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
         taskView.setOnClickListener(v -> {
             Intent intent = new Intent(this, TaskActivity.class);
             intent.putExtra("taskId", String.valueOf(taskId));
+            intent.putExtra("listId", String.valueOf(listId));
+            Log.d("TaskViewClick", "Clicked taskId: " + taskId + ", listId: " + listId);
+
+            if(categoryId!=-1){
+                intent.putExtra("categoryId", categoryId);
+            }
             startActivity(intent);
         });
 

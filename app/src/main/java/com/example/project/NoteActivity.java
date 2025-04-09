@@ -142,6 +142,7 @@ public class NoteActivity extends AppCompatActivity {
                 intent.putExtra("categoryId", categoryId);
                 startActivity(intent);
 
+                //Toast.makeText(NoteActivity.this, "Ghi chú đã được chuyển đổi thành nhiệm vụ!", Toast.LENGTH_SHORT).show();
                 bottomSheetDialog.dismiss();
             });
 

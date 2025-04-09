@@ -60,6 +60,32 @@
             android:textSize="34sp" />
     </LinearLayout>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:paddingHorizontal="30dp">
+
+        <CheckBox
+            android:id="@+id/taskCheckBox"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:button="@drawable/ic_checkbox_notcompleted"
+            android:buttonTint="@color/gray" />
+
+        <TextView
+            android:id="@+id/txtDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="Ngày và lặp lại"
+            android:textColor="#545454"
+            android:textSize="16sp" />
+    </RelativeLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -68,13 +94,6 @@
         android:orientation="vertical"
         android:paddingHorizontal="30dp">
 
-        <TextView
-            android:id="@+id/txtDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="15sp"
-            android:layout_marginBottom="10dp"
-            />
 
         <EditText
             android:id="@+id/titleInput"

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -42,6 +44,8 @@ public class TaskActivity extends  AppCompatActivity{
     EditText titleInput, contentInput;
     FlexboxLayout tagContainer, attachmentContainer;
 
+    CheckBox taskCheckBox;
+
     SQLiteDatabase db;
     String taskId, listId, categoryId;
 
@@ -70,6 +74,7 @@ public class TaskActivity extends  AppCompatActivity{
 
         tagContainer = findViewById(R.id.tagContainer);
         attachmentContainer = findViewById(R.id.attachmentContainer);
+        taskCheckBox = findViewById(R.id.taskCheckBox);
 
         String title = getIntent().getStringExtra("title");
         String content = getIntent().getStringExtra("content");
@@ -105,6 +110,50 @@ public class TaskActivity extends  AppCompatActivity{
             cursor.close();
             DatabaseHelper.getInstance(this).closeDatabase();
         }
+
+        // ✅ Truy vấn DB để lấy is_completed
+        db = DatabaseHelper.getInstance(this).openDatabase();
+        Cursor cursor = db.rawQuery("SELECT is_completed FROM tbl_task WHERE id = ?", new String[]{taskId});
+        if (cursor.moveToFirst()) {
+            boolean isCompleted = cursor.getInt(0) == 1;
+
+            // Đặt trạng thái checkbox
+            taskCheckBox.setChecked(isCompleted);
+            taskCheckBox.setButtonDrawable(isCompleted
+                    ? R.drawable.ic_checkbox_complete
+                    : R.drawable.ic_checkbox_notcompleted);
+
+            if (isCompleted) {
+                titleInput.setPaintFlags(titleInput.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                titleInput.setTextColor(getResources().getColor(R.color.gray));
+                titleInput.setAlpha(0.6f);
+                contentInput.setAlpha(0.6f);
+            }
+        }
+        cursor.close();
+
+        // ✅ Xử lý khi người dùng check/uncheck
+        taskCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            String updateQuery = "UPDATE tbl_task SET is_completed = ? WHERE id = ?";
+            db.execSQL(updateQuery, new Object[]{isChecked ? 1 : 0, taskId});
+
+            // Cập nhật giao diện theo trạng thái mới
+            taskCheckBox.setButtonDrawable(isChecked
+                    ? R.drawable.ic_checkbox_complete
+                    : R.drawable.ic_checkbox_notcompleted);
+
+            if (isChecked) {
+                titleInput.setPaintFlags(titleInput.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                titleInput.setTextColor(getResources().getColor(R.color.gray));
+                titleInput.setAlpha(0.6f);
+                contentInput.setAlpha(0.6f);
+            } else {
+                titleInput.setPaintFlags(titleInput.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+                titleInput.setTextColor(getResources().getColor(R.color.black)); // hoặc màu chính bạn đang dùng
+                titleInput.setAlpha(1f);
+                contentInput.setAlpha(1f);
+            }
+        });
 
         btnDropDownList.setOnClickListener(v -> {
             BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(TaskActivity.this);
@@ -155,7 +204,7 @@ public class TaskActivity extends  AppCompatActivity{
                             categoryId = String.valueOf(categoryIdFromDB);
                             btnlistName.setText(listName);
 
-                            Toast.makeText(this, "Chuyển đến: " + listName + " / " + categoryName, Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(this, "Chuyển đến: " + listName + " / " + categoryName, Toast.LENGTH_SHORT).show();
                             bottomSheetDialog.dismiss();
                         });
 
@@ -228,12 +277,12 @@ public class TaskActivity extends  AppCompatActivity{
 
             // Xử lý sự kiện
             pinTask.setOnClickListener(v -> {
-                Toast.makeText(TaskActivity.this, "Nhiệm vụ đã được ghim!", Toast.LENGTH_SHORT).show();
+                //.makeText(TaskActivity.this, "Nhiệm vụ đã được ghim!", Toast.LENGTH_SHORT).show();
                 bottomSheetDialog.dismiss();
             });
 
             convertTask.setOnClickListener(v -> {
-                Toast.makeText(TaskActivity.this, "Nhiệm vụ đã được chuyển thành ghi chú!", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(TaskActivity.this, "Nhiệm vụ đã được chuyển thành ghi chú!", Toast.LENGTH_SHORT).show();
                 bottomSheetDialog.dismiss();
             });
 
@@ -318,7 +367,7 @@ public class TaskActivity extends  AppCompatActivity{
 
                     bottomSheetDialog.dismiss();
                 } else {
-                    Toast.makeText(TaskActivity.this, "Vui lòng nhập nội dung!", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(TaskActivity.this, "Vui lòng nhập nội dung!", Toast.LENGTH_SHORT).show();
                 }
             });
         });
@@ -353,7 +402,7 @@ public class TaskActivity extends  AppCompatActivity{
                 attachmentContainer.addView(attachedPhoto);
             } catch (IOException e) {
                 Log.e("NoteActivity", "Error copying image", e);
-                Toast.makeText(this, "Không thể thêm ảnh", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this, "Không thể thêm ảnh", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -399,6 +448,7 @@ public class TaskActivity extends  AppCompatActivity{
             if (!cursor.isNull(dateColumnIndex)) {
                 date = cursor.getString(dateColumnIndex);
             }
+
             txtDate.setText(date);
 
             if (!date.isEmpty()) {
@@ -419,6 +469,8 @@ public class TaskActivity extends  AppCompatActivity{
                 } else {
                     txtDate.setTextColor(getResources().getColor(R.color.statistics_blue));
                 }
+            }else{
+                txtDate.setText("Ngày & Lặp lại");
             }
 
             // Load tags
@@ -498,7 +550,7 @@ public class TaskActivity extends  AppCompatActivity{
     private void saveTask() {
         String title = titleInput.getText().toString();
         if (title.isEmpty()) {
-            Toast.makeText(TaskActivity.this, "Vui lòng nhập tiêu đề!", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(TaskActivity.this, "Vui lòng nhập tiêu đề!", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -594,7 +646,7 @@ public class TaskActivity extends  AppCompatActivity{
                     db.insert("tbl_task_reminder", null, reminderValues);
 
                     // Nếu bạn có ReminderService riêng cho Task thì đặt ở đây
-                    ReminderService.scheduleNoteReminder(
+                    ReminderService.scheduleTaskReminder(
                             this,
                             taskId,
                             title,
@@ -614,7 +666,8 @@ public class TaskActivity extends  AppCompatActivity{
         } finally {
             db.endTransaction();
             DatabaseHelper.getInstance(this).closeDatabase();
-            finish();
+            Intent intent = new Intent(this, HomeActivity.class);
+            startActivity(intent);
         }
     }
 
@@ -662,5 +715,4 @@ public class TaskActivity extends  AppCompatActivity{
 
         return reversed;
     }
-
 }
