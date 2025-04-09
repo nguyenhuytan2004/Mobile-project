@@ -142,7 +142,7 @@ public class NoteActivity extends AppCompatActivity {
                 intent.putExtra("categoryId", categoryId);
                 startActivity(intent);
 
-                Toast.makeText(NoteActivity.this, "Ghi chú đã được chuyển đổi thành nhiệm vụ!", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(NoteActivity.this, "Ghi chú đã được chuyển đổi thành nhiệm vụ!", Toast.LENGTH_SHORT).show();
                 bottomSheetDialog.dismiss();
             });
 
@@ -525,7 +525,8 @@ public class NoteActivity extends AppCompatActivity {
         } finally {
             db.endTransaction();
             DatabaseHelper.getInstance(this).closeDatabase();
-            finish();
+            Intent intent = new Intent(NoteActivity.this, MainActivity.class);
+            startActivity(intent);
         }
     }
 

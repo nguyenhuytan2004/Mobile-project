@@ -204,7 +204,7 @@ public class TaskActivity extends  AppCompatActivity{
                             categoryId = String.valueOf(categoryIdFromDB);
                             btnlistName.setText(listName);
 
-                            Toast.makeText(this, "Chuyển đến: " + listName + " / " + categoryName, Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(this, "Chuyển đến: " + listName + " / " + categoryName, Toast.LENGTH_SHORT).show();
                             bottomSheetDialog.dismiss();
                         });
 
@@ -277,12 +277,12 @@ public class TaskActivity extends  AppCompatActivity{
 
             // Xử lý sự kiện
             pinTask.setOnClickListener(v -> {
-                Toast.makeText(TaskActivity.this, "Nhiệm vụ đã được ghim!", Toast.LENGTH_SHORT).show();
+                //.makeText(TaskActivity.this, "Nhiệm vụ đã được ghim!", Toast.LENGTH_SHORT).show();
                 bottomSheetDialog.dismiss();
             });
 
             convertTask.setOnClickListener(v -> {
-                Toast.makeText(TaskActivity.this, "Nhiệm vụ đã được chuyển thành ghi chú!", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(TaskActivity.this, "Nhiệm vụ đã được chuyển thành ghi chú!", Toast.LENGTH_SHORT).show();
                 bottomSheetDialog.dismiss();
             });
 
@@ -367,7 +367,7 @@ public class TaskActivity extends  AppCompatActivity{
 
                     bottomSheetDialog.dismiss();
                 } else {
-                    Toast.makeText(TaskActivity.this, "Vui lòng nhập nội dung!", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(TaskActivity.this, "Vui lòng nhập nội dung!", Toast.LENGTH_SHORT).show();
                 }
             });
         });
@@ -402,7 +402,7 @@ public class TaskActivity extends  AppCompatActivity{
                 attachmentContainer.addView(attachedPhoto);
             } catch (IOException e) {
                 Log.e("NoteActivity", "Error copying image", e);
-                Toast.makeText(this, "Không thể thêm ảnh", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this, "Không thể thêm ảnh", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -550,7 +550,7 @@ public class TaskActivity extends  AppCompatActivity{
     private void saveTask() {
         String title = titleInput.getText().toString();
         if (title.isEmpty()) {
-            Toast.makeText(TaskActivity.this, "Vui lòng nhập tiêu đề!", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(TaskActivity.this, "Vui lòng nhập tiêu đề!", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -646,7 +646,7 @@ public class TaskActivity extends  AppCompatActivity{
                     db.insert("tbl_task_reminder", null, reminderValues);
 
                     // Nếu bạn có ReminderService riêng cho Task thì đặt ở đây
-                    ReminderService.scheduleNoteReminder(
+                    ReminderService.scheduleTaskReminder(
                             this,
                             taskId,
                             title,
@@ -666,7 +666,8 @@ public class TaskActivity extends  AppCompatActivity{
         } finally {
             db.endTransaction();
             DatabaseHelper.getInstance(this).closeDatabase();
-            finish();
+            Intent intent = new Intent(this, HomeActivity.class);
+            startActivity(intent);
         }
     }
 

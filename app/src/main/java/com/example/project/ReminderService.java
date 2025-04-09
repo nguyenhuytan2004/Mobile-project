@@ -150,6 +150,88 @@ public class ReminderService extends BroadcastReceiver {
         }
     }
 
+    @SuppressLint("ScheduleExactAlarm")
+    public static void scheduleTaskReminder(Context context, String taskId, String title,
+                                            String dateStr, String timeStr, int daysBefore, boolean isRepeat) {
+        try {
+            // Parse date từ chuỗi "Ngày X, tháng Y"
+            Pattern pattern = Pattern.compile("(\\d+)");
+            Matcher matcher = pattern.matcher(dateStr);
+
+            int day = 0, month = 0;
+            if (matcher.find()) {
+                day = Integer.parseInt(matcher.group(1));
+            }
+            if (matcher.find()) {
+                month = Integer.parseInt(matcher.group(1));
+            }
+
+            Calendar calendar = Calendar.getInstance();
+            int year = calendar.get(Calendar.YEAR);
+
+            calendar.set(Calendar.YEAR, year);
+            calendar.set(Calendar.MONTH, month - 1); // Tháng trong Calendar bắt đầu từ 0
+            calendar.set(Calendar.DAY_OF_MONTH, day);
+
+            // Trừ đi số ngày nhắc nhở trước
+            if (daysBefore > 0) {
+                calendar.add(Calendar.DAY_OF_MONTH, -daysBefore);
+            }
+
+            // Thiết lập thời gian nhắc
+            if (timeStr != null && !timeStr.isEmpty()) {
+                String[] timeParts = timeStr.split(":");
+                if (timeParts.length == 2) {
+                    calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(timeParts[0]));
+                    calendar.set(Calendar.MINUTE, Integer.parseInt(timeParts[1]));
+                    calendar.set(Calendar.SECOND, 0);
+                }
+            } else {
+                calendar.set(Calendar.HOUR_OF_DAY, 9);
+                calendar.set(Calendar.MINUTE, 0);
+                calendar.set(Calendar.SECOND, 0);
+            }
+
+            long triggerTime = calendar.getTimeInMillis();
+
+            if (triggerTime > System.currentTimeMillis()) {
+                AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
+                Intent intent = new Intent(context, ReminderService.class);
+                intent.putExtra("taskId", taskId);
+                intent.putExtra("taskTitle", title);
+
+                int requestCode = Integer.parseInt(taskId); // tránh trùng với noteId
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                        context,
+                        requestCode,
+                        intent,
+                        PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+                );
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    alarmManager.setExactAndAllowWhileIdle(
+                            AlarmManager.RTC_WAKEUP,
+                            triggerTime,
+                            pendingIntent
+                    );
+                } else {
+                    alarmManager.setExact(
+                            AlarmManager.RTC_WAKEUP,
+                            triggerTime,
+                            pendingIntent
+                    );
+                }
+
+                Log.d(TAG, "Reminder scheduled for task: " + title + " at " +
+                        calendar.getTime().toString());
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error scheduling task reminder", e);
+        }
+    }
+
+
     private static void createNotificationChannel(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = "Note Reminders";

@@ -132,14 +132,14 @@ public class Matrix_Eisenhower extends AppCompatActivity {
         // For Priority 1: Khẩn cấp và Quan trọng
         LinearLayout priority1Layout = priorityMap.get(1);
         if (priority1Layout != null) {
-            priority1Layout.setOnClickListener(v -> navigateToSingleMatrix(1, "Khẩn cấp và Quan trọng"));
+            priority1Layout.setOnClickListener(v -> navigateToSingleMatrix(1, "Khẩn cấp và quan trọng"));
         }
 
 
         // For Priority 2: Không gấp mà quan trọng
         LinearLayout priority2Layout = priorityMap.get(2);
         if (priority2Layout != null) {
-            priority2Layout.setOnClickListener(v -> navigateToSingleMatrix(2, "Không gấp mà quan trọng"));
+            priority2Layout.setOnClickListener(v -> navigateToSingleMatrix(2, "Không khẩn cấp nhưng quan trọng"));
         }
 
 
@@ -153,7 +153,7 @@ public class Matrix_Eisenhower extends AppCompatActivity {
         // For Priority 4: Không cấp bách và không quan trọng
         LinearLayout priority4Layout = priorityMap.get(4);
         if (priority4Layout != null) {
-            priority4Layout.setOnClickListener(v -> navigateToSingleMatrix(4, "Không cấp bách và không quan trọng"));
+            priority4Layout.setOnClickListener(v -> navigateToSingleMatrix(4, "Không khẩn cấp và không quan trọng"));
         }
     }
 
