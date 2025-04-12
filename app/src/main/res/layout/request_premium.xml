@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/premium_banner"> <!-- Dùng ảnh làm background -->
+
+    <!-- Optional: Overlay một lớp mờ hoặc màu trắng nhẹ để làm nội dung dễ đọc hơn -->
+
+    <!-- Title -->
+    <TextView
+        android:id="@+id/premiumTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Upgrade to Premium"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@color/yellow"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_margin="200dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="240dp" />
+
+    <!-- Description -->
+    <TextView
+        android:id="@+id/premiumDescription"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Unlock all premium features including advanced tools, no ads, and more!"
+        android:textSize="16sp"
+        android:textColor="@color/gray"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/premiumTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"
+        android:layout_marginHorizontal="16dp" />
+
+    <!-- Upgrade Button -->
+    <Button
+        android:id="@+id/upgradeButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Upgrade Now"
+        android:backgroundTint="@color/yellow"
+        android:textColor="@color/blue"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/premiumDescription"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"
+        android:layout_marginHorizontal="32dp" />
+
+    <!-- Cancel Button -->
+    <Button
+        android:id="@+id/cancelButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Cancel"
+        android:backgroundTint="@color/gray"
+        android:textColor="@color/white"
+        app:layout_constraintTop_toBottomOf="@id/upgradeButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginHorizontal="32dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
