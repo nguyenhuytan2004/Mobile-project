@@ -48,6 +48,7 @@
         </activity>
 
         <!-- Others activity -->
+        <activity android:name=".PremiumRequestActivity"/>
         <activity android:name=".HabitDetailActivity" />
         <activity android:name=".ShareTaskActivity" />
         <activity android:name=".TaskByCategory" />

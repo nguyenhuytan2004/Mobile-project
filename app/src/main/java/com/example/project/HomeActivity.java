@@ -119,8 +119,8 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
                         showDeleteConfirmationDialog();
                         return true;
                     case "Chia sẻ":
-                        // Get all tasks from current list for sharing
-                        shareCurrentList();
+                        // Check premium status before sharing
+                        checkPremiumAndShare();
                         return true;
                     default:
                         return false;
@@ -315,6 +315,22 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
             if (db != null) {
                 DatabaseHelper.getInstance(this).closeDatabase();
             }
+        }
+    }
+
+    // Add this method after shareCurrentList()
+    private void checkPremiumAndShare() {
+        // Check if user is premium
+        if (DatabaseHelper.isPremiumUser(this)) {
+            // User is premium, proceed with sharing
+            Log.d("HomeActivity", "User is premium, proceeding with sharing");
+            shareCurrentList();
+        } else {
+            // User is not premium, show upgrade screen
+            Intent premiumIntent = new Intent(this, PremiumRequestActivity.class);
+            startActivity(premiumIntent);
+            Toast.makeText(this, "Chia sẻ là tính năng cao cấp. Vui lòng nâng cấp tài khoản!",
+                    Toast.LENGTH_SHORT).show();
         }
     }
 

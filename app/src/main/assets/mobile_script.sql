@@ -128,6 +128,7 @@ CREATE TABLE "tbl_user" (
 	email TEXT NOT NULL,
 	password_hash TEXT,
 	isGoogle INTEGER DEFAULT 0,
+	is_premium INTEGER DEFAULT 0,
 	PRIMARY KEY("id" AUTOINCREMENT)
 );
 

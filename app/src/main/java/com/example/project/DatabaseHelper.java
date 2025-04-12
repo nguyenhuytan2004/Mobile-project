@@ -1,6 +1,8 @@
 package com.example.project;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -89,6 +91,45 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
         }
         return database;
+    }
+
+    public boolean isPremiumUser(Context context, int userId) {
+        SQLiteDatabase db = null;
+        boolean isPremium = false;
+
+        try {
+            db = DatabaseHelper.getInstance(context).openDatabase();
+
+            // Query the correct column (is_premium) for the specified user
+            Cursor cursor = db.rawQuery(
+                    "SELECT is_premium FROM tbl_user WHERE id = ?", 
+                    new String[] { String.valueOf(userId) });
+
+            if (cursor.moveToFirst()) {
+                isPremium = cursor.getInt(0) == 1;
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Error checking premium status", e);
+        } finally {
+            if (db != null) {
+                DatabaseHelper.getInstance(context).closeDatabase();
+            }
+        }
+
+        return isPremium;
+    }
+
+    // Add this static method
+    public static boolean isPremiumUser(Context context) {
+        // Get current user ID (assuming you store it somewhere like SharedPreferences)
+        SharedPreferences prefs = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+        Log.d("DatabaseHelper", "Current user ID: " + prefs.getInt("CURRENT_USER_ID", 1));
+        int currentUserId = prefs.getInt("CURRENT_USER_ID", 1); // Default to user ID 1 if not found
+        
+        // Call the instance method with both parameters
+        return getInstance(context).isPremiumUser(context, currentUserId);
     }
 
     @Override
