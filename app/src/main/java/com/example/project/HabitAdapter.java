@@ -1,6 +1,8 @@
 package com.example.project;
 
 import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,6 +70,17 @@ public class HabitAdapter extends BaseAdapter {
         } else {
             holder.tvSection.setText("Others");
         }
+
+        // Add click listener to open habit detail
+        convertView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("HabitAdapter", "Habit clicked: " + habit.getName() + ", ID: " + habit.getId());
+                Intent intent = new Intent(context, HabitDetailActivity.class);
+                intent.putExtra("habit_id", habit.getId());
+                context.startActivity(intent);
+            }
+        });
 
         return convertView;
     }

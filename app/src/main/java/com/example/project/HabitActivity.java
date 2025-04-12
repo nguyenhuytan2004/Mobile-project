@@ -142,7 +142,7 @@ public class HabitActivity extends AppCompatActivity {
     @SuppressLint("RestrictedApi")
     public long saveHabit(Habit habit) {
         SQLiteDatabase db = DatabaseHelper.getInstance(this).openDatabase();
-        long newId = -1;
+        int newId = -1;
 
         try {
             ContentValues values = new ContentValues();
@@ -157,7 +157,7 @@ public class HabitActivity extends AppCompatActivity {
             values.put("reminder", habit.getReminder());
             values.put("auto_popup", habit.isAutoPopup() ? 1 : 0);
 
-            newId = db.insert("tbl_habit", null, values);
+            newId = (int) db.insert("tbl_habit", null, values);
             Log.d(TAG, "Habit saved with ID: " + newId);
         } catch (Exception e) {
             Log.e(TAG, "Error saving habit", e);
@@ -181,7 +181,7 @@ public class HabitActivity extends AppCompatActivity {
                     
                     // Get column indexes to avoid issues with column order
                     int idIndex = cursor.getColumnIndex("id");
-                    if (idIndex >= 0) habit.setId(cursor.getLong(idIndex));
+                    if (idIndex >= 0) habit.setId(cursor.getInt(idIndex));
                     
                     int nameIndex = cursor.getColumnIndex("name");
                     if (nameIndex >= 0) habit.setName(cursor.getString(nameIndex));

@@ -321,9 +321,12 @@ public class NewHabitAimActivity extends AppCompatActivity {
         weekDays[6] = chipSat.isChecked();
         habit.setWeekDays(weekDays);
         
-        long habitId = new HabitActivity().saveHabit(habit);
+        int habitId = (int) new HabitActivity().saveHabit(habit);
 
         if (habitId != -1) {
+            // Update the habit with the new ID
+            habit.setId(habitId);
+            
             Toast.makeText(this, "Habit saved successfully!", Toast.LENGTH_SHORT).show();
 
             Intent intent = new Intent(this, HabitActivity.class);

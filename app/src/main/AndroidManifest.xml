@@ -48,6 +48,7 @@
         </activity>
 
         <!-- Others activity -->
+        <activity android:name=".HabitDetailActivity" />
         <activity android:name=".ShareTaskActivity" />
         <activity android:name=".TaskByCategory" />
         <activity android:name=".Matrix_Eisenhower" />

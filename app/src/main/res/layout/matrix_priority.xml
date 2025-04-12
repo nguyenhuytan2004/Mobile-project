@@ -74,7 +74,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="II. Không gấp mà quan trọng"
+                    android:text="II. Không khẩn cấp mà quan trọng"
                     android:textColor="#FFC107"
                     android:textStyle="bold" />
 
@@ -119,7 +119,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="IV. Không cấp bách và không quan trọng"
+                    android:text="IV. Không khẩn cấp và không quan trọng"
                     android:textColor="#28A745"
                     android:textStyle="bold" />
 
