@@ -1,5 +1,6 @@
 package com.example.project;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -12,6 +13,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TAG = "DatabaseHelper";
@@ -130,6 +134,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         
         // Call the instance method with both parameters
         return getInstance(context).isPremiumUser(context, currentUserId);
+    }
+
+    public void markTaskAsCompleted(int taskId, boolean isCompleted) {
+        SQLiteDatabase db = null;
+        try {
+            db = openDatabase();
+            ContentValues values = new ContentValues();
+            values.put("is_completed", isCompleted ? 1 : 0);
+
+            // Store completion datetime when marking as completed
+            if (isCompleted) {
+                // Get current datetime in ISO 8601 format
+                String completionDateTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US)
+                        .format(new Date());
+                values.put("completion_datetime", completionDateTime);
+            } else {
+                // If marking as not completed, clear the completion datetime
+                values.putNull("completion_datetime");
+            }
+
+            db.update("tbl_task", values, "id = ?", new String[] {String.valueOf(taskId)});
+        } catch (Exception e) {
+            Log.e(TAG, "Error marking task as completed", e);
+        } finally {
+            if (db != null) {
+                closeDatabase();
+            }
+        }
     }
 
     @Override

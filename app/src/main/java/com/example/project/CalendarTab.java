@@ -480,6 +480,7 @@ public class CalendarTab extends AppCompatActivity {
     }
 
     private void updateTaskCompletionStatus(Task task, boolean isCompleted) {
+        DatabaseHelper.getInstance(this).markTaskAsCompleted(task.getId(), isCompleted);
         SQLiteDatabase db = DatabaseHelper.getInstance(this).openDatabase();
         if (db == null) {
             Log.e("CalendarTab", "Database không tồn tại hoặc không thể mở");

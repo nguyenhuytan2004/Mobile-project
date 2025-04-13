@@ -57,6 +57,7 @@ CREATE TABLE tbl_task (
     content TEXT,
     priority INTEGER NOT NULL,
 	is_completed BOOL DEFAULT FALSE,
+	completion_datetime TEXT,
 	category_id INTEGER NOT NULL,
 	FOREIGN KEY (category_id) REFERENCES tbl_category(id),
 	FOREIGN KEY (user_id) REFERENCES tbl_user(id)
@@ -141,9 +142,9 @@ CREATE TABLE "tbl_weights" (
 );
 
 INSERT INTO "android_metadata" VALUES ('en_US');
-INSERT INTO "tbl_user" VALUES (1,'alice@example.com','hashed_password_123',0);
-INSERT INTO "tbl_user" VALUES (2,'bob@example.com','hashed_password_456',0);
-INSERT INTO "tbl_user" VALUES (3,'alice@example.com',NULL,1);
+INSERT INTO "tbl_user" VALUES (1,'alice@example.com','hashed_password_123',0,0);
+INSERT INTO "tbl_user" VALUES (2,'bob@example.com','hashed_password_456',0,0);
+INSERT INTO "tbl_user" VALUES (3,'alice@example.com',NULL,1,0);
 
 INSERT INTO tbl_list VALUES
 (1, 'none' , NULL),

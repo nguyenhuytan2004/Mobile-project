@@ -4,9 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/premium_banner"> <!-- Dùng ảnh làm background -->
-
-    <!-- Optional: Overlay một lớp mờ hoặc màu trắng nhẹ để làm nội dung dễ đọc hơn -->
+    android:background="@drawable/premium_banner">
 
     <!-- Title -->
     <TextView
@@ -20,7 +18,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="240dp" />
+        android:layout_marginTop="120dp" />
 
     <!-- Description -->
     <TextView
@@ -37,6 +35,121 @@
         android:layout_marginTop="8dp"
         android:layout_marginHorizontal="16dp" />
 
+    <!-- Features List Container -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/featuresContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginHorizontal="16dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp"
+        app:cardBackgroundColor="#80FFFFFF"
+        app:layout_constraintTop_toBottomOf="@id/premiumDescription"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Premium Features"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/yellow"
+                android:gravity="center"
+                android:layout_marginBottom="12dp"/>
+
+            <!-- Feature item 1 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@android:drawable/ic_menu_share"
+                    app:tint="@color/yellow" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Share tasks and notes with others"
+                    android:textColor="@color/white"
+                    android:layout_marginStart="8dp"/>
+            </LinearLayout>
+
+            <!-- Feature item 2 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@android:drawable/ic_menu_save"
+                    app:tint="@color/yellow" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Unlimited cloud backups"
+                    android:textColor="@color/white"
+                    android:layout_marginStart="8dp"/>
+            </LinearLayout>
+
+            <!-- Feature item 3 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@android:drawable/ic_menu_gallery"
+                    app:tint="@color/yellow" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Advanced customization options"
+                    android:textColor="@color/white"
+                    android:layout_marginStart="8dp"/>
+            </LinearLayout>
+
+            <!-- Feature item 4 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@android:drawable/ic_menu_sort_by_size"
+                    app:tint="@color/yellow" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Priority support"
+                    android:textColor="@color/white"
+                    android:layout_marginStart="8dp"/>
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
     <!-- Upgrade Button -->
     <Button
         android:id="@+id/upgradeButton"
@@ -46,7 +159,7 @@
         android:backgroundTint="@color/yellow"
         android:textColor="@color/blue"
         android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/premiumDescription"
+        app:layout_constraintTop_toBottomOf="@id/featuresContainer"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="24dp"
