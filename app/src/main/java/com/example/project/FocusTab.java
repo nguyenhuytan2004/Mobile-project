@@ -36,6 +36,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import java.util.Map;
 import java.util.Objects;
 
 public class FocusTab extends AppCompatActivity {
@@ -58,6 +59,10 @@ public class FocusTab extends AppCompatActivity {
     private int prefFocusTime;
     private String prefWhiteNoise;
     SharedPreferences sharedPreferences;
+    Map<String, Integer> sounds = Map.of(
+            "clock", R.raw.clock_sound,
+            "rain", R.raw.rain_sound
+    );
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -130,16 +135,20 @@ public class FocusTab extends AppCompatActivity {
 
             sharedPreferences = getSharedPreferences("whiteNoise", MODE_PRIVATE);
             prefWhiteNoise = sharedPreferences.getString("storage_sound", "none");
-            Log.e("FocusTab", "White noise preference: " + prefWhiteNoise);
+
+            if (!DatabaseHelper.isPremiumUser(FocusTab.this)) {
+                prefWhiteNoise = "none";
+            }
+
             if (prefWhiteNoise.equals("none")) {
                 if (mediaPlayer != null) {
                     mediaPlayer.stop();
                     mediaPlayer.release();
                     mediaPlayer = null;
                 }
-            } else if (prefWhiteNoise.equals("clock")) {
+            } else {
                 if (mediaPlayer == null) {
-                    mediaPlayer = MediaPlayer.create(this, R.raw.clock_sound);
+                    mediaPlayer = MediaPlayer.create(this, sounds.get(prefWhiteNoise));
                     mediaPlayer.setLooping(true);
                     mediaPlayer.start();
                 }
@@ -191,6 +200,12 @@ public class FocusTab extends AppCompatActivity {
         });
 
         btnWhiteNoise.setOnClickListener(view -> {
+            boolean isPremiumUser = DatabaseHelper.isPremiumUser(FocusTab.this);
+            if (!isPremiumUser) {
+                startActivity(new Intent(FocusTab.this, PremiumRequestActivity.class));
+                return;
+            }
+
             startActivity(new Intent(FocusTab.this, WhiteNoise.class));
         });
 
@@ -314,7 +329,12 @@ public class FocusTab extends AppCompatActivity {
         super.onResume();
         sharedPreferences = getSharedPreferences("whiteNoise", MODE_PRIVATE);
         if (countDownTimer != null) {
-            prefWhiteNoise = sharedPreferences.getString("storage_sound", "none");
+            Log.d("FocusTab", "onResume: countDownTimer is not null");
+            if (!DatabaseHelper.isPremiumUser(FocusTab.this)) {
+                prefWhiteNoise = "none";
+            } else {
+                prefWhiteNoise = sharedPreferences.getString("storage_sound", "none");
+            }
         } else {
             prefWhiteNoise = sharedPreferences.getString("sound", "none");
         }
@@ -324,12 +344,16 @@ public class FocusTab extends AppCompatActivity {
                 mediaPlayer.release();
                 mediaPlayer = null;
             }
-        } else if (prefWhiteNoise.equals("clock")) {
-            if (mediaPlayer == null) {
-                mediaPlayer = MediaPlayer.create(this, R.raw.clock_sound);
-                mediaPlayer.setLooping(true);
-                if (!isPaused)
-                    mediaPlayer.start();
+        } else {
+            Log.d("FocusTab", "PrefWhiteNoise: " + prefWhiteNoise);
+            if (mediaPlayer != null) {
+                mediaPlayer.stop();
+                mediaPlayer.release();
+            }
+            mediaPlayer = MediaPlayer.create(this, sounds.get(prefWhiteNoise));
+            mediaPlayer.setLooping(true);
+            if (!isPaused) {
+                mediaPlayer.start();
             }
         }
     }

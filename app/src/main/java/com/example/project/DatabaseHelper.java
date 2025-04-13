@@ -124,10 +124,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Add this static method
     public static boolean isPremiumUser(Context context) {
         // Get current user ID (assuming you store it somewhere like SharedPreferences)
-        SharedPreferences prefs = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
-        Log.d("DatabaseHelper", "Current user ID: " + prefs.getInt("CURRENT_USER_ID", 1));
-        int currentUserId = prefs.getInt("CURRENT_USER_ID", 1); // Default to user ID 1 if not found
-        
+        LoginSessionManager loginSessionManager = LoginSessionManager.getInstance(context);
+        int currentUserId = loginSessionManager.getUserId();
+
         // Call the instance method with both parameters
         return getInstance(context).isPremiumUser(context, currentUserId);
     }

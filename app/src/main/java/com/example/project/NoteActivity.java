@@ -76,6 +76,11 @@ public class NoteActivity extends AppCompatActivity {
         }
 
         btnDate.setOnClickListener(view -> {
+            if (!DatabaseHelper.isPremiumUser(this)) {
+                startActivity(new Intent(NoteActivity.this, PremiumRequestActivity.class));
+                return;
+            }
+
             SetReminderDialog dialog = new SetReminderDialog(noteId);
             dialog.setOnDateSelectedListener(new SetReminderDialog.OnReminderSettingsListener() {
                 @Override
