@@ -53,6 +53,12 @@ public class HabitActivity extends AppCompatActivity {
 
         // Load habits from database
         loadHabitsFromDatabase();
+
+        // Create notification channel
+        HabitNotificationHelper.createNotificationChannel(this);
+
+        // Schedule all habit reminders
+        HabitNotificationHelper.scheduleHabitReminders(this);
     }
 
     private void initializeUI() {
