@@ -5,8 +5,21 @@ CREATE TABLE "android_metadata" (
 	"locale"	TEXT
 );
 
-
+DROP TABLE IF EXISTS "tbl_user_information";
 DROP TABLE IF EXISTS "tbl_note";
+DROP TABLE IF EXISTS "tbl_note_photo";
+DROP TABLE IF EXISTS "tbl_note_reminder";
+DROP TABLE IF EXISTS "tbl_note_tag";
+DROP TABLE IF EXISTS "tbl_task";
+DROP TABLE IF EXISTS "tbl_task_photo";
+DROP TABLE IF EXISTS "tbl_task_reminder";
+DROP TABLE IF EXISTS "tbl_task_tag";
+DROP TABLE IF EXISTS "tbl_category";
+DROP TABLE IF EXISTS "tbl_list";
+DROP TABLE IF EXISTS "tbl_habit";
+DROP TABLE IF EXISTS "tbl_user";
+DROP TABLE IF EXISTS "tbl_weights";
+
 CREATE TABLE "tbl_note" (
 	id INTEGER,
 	user_id	INTEGER NOT NULL,
@@ -17,7 +30,6 @@ CREATE TABLE "tbl_note" (
 	FOREIGN KEY("user_id") REFERENCES "tbl_user"("id") ON DELETE CASCADE
 );
 
-DROP TABLE IF EXISTS "tbl_note_photo";
 CREATE TABLE "tbl_note_photo" (
 	id INTEGER,
 	note_id INTEGER NOT NULL,
@@ -26,7 +38,6 @@ CREATE TABLE "tbl_note_photo" (
 	FOREIGN KEY("note_id") REFERENCES "tbl_note"("id") ON DELETE CASCADE
 );
 
-DROP TABLE IF EXISTS "tbl_note_reminder";
 CREATE TABLE "tbl_note_reminder" (
 	id INTEGER,
 	note_id INTEGER NOT NULL,
@@ -38,7 +49,6 @@ CREATE TABLE "tbl_note_reminder" (
 	FOREIGN KEY("note_id") REFERENCES "tbl_note"("id") ON DELETE CASCADE
 );
 
-DROP TABLE IF EXISTS "tbl_note_tag";
 CREATE TABLE "tbl_note_tag" (
 	id INTEGER,
 	note_id	INTEGER NOT NULL,
@@ -49,7 +59,6 @@ CREATE TABLE "tbl_note_tag" (
 );
 
 
-DROP TABLE IF EXISTS "tbl_task";
 CREATE TABLE tbl_task (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
@@ -62,7 +71,7 @@ CREATE TABLE tbl_task (
 	FOREIGN KEY (category_id) REFERENCES tbl_category(id),
 	FOREIGN KEY (user_id) REFERENCES tbl_user(id)
 );
-DROP TABLE IF EXISTS "tbl_task_photo";
+
 CREATE TABLE "tbl_task_photo" (
 	id INTEGER,
 	task_id INTEGER NOT NULL,
@@ -71,7 +80,6 @@ CREATE TABLE "tbl_task_photo" (
 	FOREIGN KEY("task_id") REFERENCES "tbl_task"("id") ON DELETE CASCADE
 );
 
-DROP TABLE IF EXISTS "tbl_task_reminder";
 CREATE TABLE "tbl_task_reminder" (
 	id INTEGER,
 	task_id INTEGER NOT NULL,
@@ -83,7 +91,6 @@ CREATE TABLE "tbl_task_reminder" (
 	FOREIGN KEY("task_id") REFERENCES "tbl_task"("id") ON DELETE CASCADE
 );
 
-DROP TABLE IF EXISTS "tbl_task_tag";
 CREATE TABLE "tbl_task_tag" (
 	id INTEGER,
 	task_id	INTEGER NOT NULL,
@@ -93,7 +100,6 @@ CREATE TABLE "tbl_task_tag" (
 	FOREIGN KEY("task_id") REFERENCES "tbl_task"("id") ON DELETE CASCADE
 );
 
-DROP TABLE IF EXISTS "tbl_category";
 CREATE TABLE tbl_category (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	name TEXT NOT NULL UNIQUE,
@@ -101,14 +107,12 @@ CREATE TABLE tbl_category (
 	FOREIGN KEY (list_id) REFERENCES tbl_list(id)
 );
 
-DROP TABLE IF EXISTS "tbl_list";
 CREATE TABLE tbl_list (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	name TEXT NOT NULL UNIQUE,
 	icon TEXT
 );
 
-DROP TABLE IF EXISTS "tbl_habit";
 CREATE TABLE tbl_habit (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -123,7 +127,6 @@ CREATE TABLE tbl_habit (
     auto_popup INTEGER     -- 0/1
 );
 
-DROP TABLE IF EXISTS "tbl_user";
 CREATE TABLE "tbl_user" (
 	id INTEGER,
 	email TEXT NOT NULL,
@@ -133,7 +136,6 @@ CREATE TABLE "tbl_user" (
 	PRIMARY KEY("id" AUTOINCREMENT)
 );
 
-DROP TABLE IF EXISTS "tbl_user_information";
 CREATE TABLE "tbl_user_information" (
 	user_id INTEGER NOT NULL,
 	avatar TEXT,
@@ -143,7 +145,6 @@ CREATE TABLE "tbl_user_information" (
 	FOREIGN KEY (user_id) REFERENCES tbl_user(id)
 );
 
-DROP TABLE IF EXISTS "tbl_weights";
 CREATE TABLE "tbl_weights" (
     class_id INTEGER,
     feature_index INTEGER,
@@ -186,8 +187,6 @@ INSERT INTO tbl_task (user_id,title, content, priority, category_id)
 VALUES
     (1,'Hoàn thành báo cáo', 'Báo cáo tài chính quý 1', 1, 3),
     (1,'Mua sách mới', 'Sách về lập trình Android', 3, 2);
-
-INSERT INTO "tbl_task_photo" VALUES (30,1,'file:///data/user/0/com.example.project/files/note_img_1743490583956.jpg');
 
 INSERT INTO "tbl_task_reminder" VALUES (21,2,'Ngày 1, tháng 4','15:15',0,0);
 INSERT INTO "tbl_task_reminder" VALUES (22,1,'Ngày 30, tháng 4','09:00',0,0);
