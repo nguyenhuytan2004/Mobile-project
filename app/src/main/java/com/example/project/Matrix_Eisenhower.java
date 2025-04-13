@@ -349,6 +349,7 @@ public class Matrix_Eisenhower extends AppCompatActivity {
 
 
     private void setCompleted(Task task, boolean isCompleted) {
+        DatabaseHelper.getInstance(this).markTaskAsCompleted(task.getId(), isCompleted);
         SQLiteDatabase db = DatabaseHelper.getInstance(this).openDatabase();
         if (db == null) {
             Log.e("Matrix_Eisenhower", "Database không tồn tại hoặc không thể mở");

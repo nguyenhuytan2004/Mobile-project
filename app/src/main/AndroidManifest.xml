@@ -48,10 +48,10 @@
         </activity>
 
         <!-- Others activity -->
+        <activity android:name=".TaskStatistics" />
         <activity android:name=".PremiumRequestActivity"/>
         <activity android:name=".HabitDetailActivity" />
         <activity android:name=".ShareTaskActivity" />
-        <activity android:name=".TaskByCategory" />
         <activity android:name=".Matrix_Eisenhower" />
         <activity android:name=".SingleMatrix" />
         <activity android:name=".NoteActivity"/>
