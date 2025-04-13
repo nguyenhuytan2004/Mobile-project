@@ -60,7 +60,7 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
 
         loginSessionManager = LoginSessionManager.getInstance(this);
         if (!loginSessionManager.isLoggedIn()) {
-            loginSessionManager.createSession(2); // tạo giả user
+            loginSessionManager.createSession(1); // tạo giả user
         }
         Log.d("HomeActivity", "User ID: " + loginSessionManager.getUserId());
 
@@ -339,6 +339,7 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
     protected void onResume() {
         super.onResume();
         loadCategoriesAndTasks(currentListId);
+        SideBarHelper.markProfileForRefresh();
     }
 
     // SideBarCallback implementation

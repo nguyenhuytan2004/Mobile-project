@@ -12,7 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class WhiteNoise extends AppCompatActivity {
     TextView btnBack;
-    ImageView noneSound, clockSound, fireSound, rainSound, stormSound, boilingSound;
+    ImageView noneSound, clockSound, rainSound;
     private String currentSound = "none";
 
     @Override
@@ -23,10 +23,7 @@ public class WhiteNoise extends AppCompatActivity {
         btnBack = findViewById(R.id.btnBack);
         noneSound = findViewById(R.id.noneSound);
         clockSound = findViewById(R.id.clockSound);
-        fireSound = findViewById(R.id.fireSound);
         rainSound = findViewById(R.id.rainSound);
-        stormSound = findViewById(R.id.stormSound);
-        boilingSound = findViewById(R.id.boilingSound);
 
         // Load current sound setting
         SharedPreferences sharedPreferences = getSharedPreferences("whiteNoise", MODE_PRIVATE);
@@ -49,20 +46,8 @@ public class WhiteNoise extends AppCompatActivity {
             setWhiteNoiseSound("clock");
         });
 
-        fireSound.setOnClickListener(view -> {
-            setWhiteNoiseSound("fire");
-        });
-
         rainSound.setOnClickListener(view -> {
             setWhiteNoiseSound("rain");
-        });
-
-        stormSound.setOnClickListener(view -> {
-            setWhiteNoiseSound("storm");
-        });
-
-        boilingSound.setOnClickListener(view -> {
-            setWhiteNoiseSound("boiling");
         });
     }
 
@@ -85,10 +70,7 @@ public class WhiteNoise extends AppCompatActivity {
         // Reset all icons to normal state
         noneSound.setAlpha(0.5f);
         clockSound.setAlpha(0.5f);
-        fireSound.setAlpha(0.5f);
         rainSound.setAlpha(0.5f);
-        stormSound.setAlpha(0.5f);
-        boilingSound.setAlpha(0.5f);
 
         // Highlight selected icon
         switch (currentSound) {
@@ -98,17 +80,8 @@ public class WhiteNoise extends AppCompatActivity {
             case "clock":
                 clockSound.setAlpha(1.0f);
                 break;
-            case "fire":
-                fireSound.setAlpha(1.0f);
-                break;
             case "rain":
                 rainSound.setAlpha(1.0f);
-                break;
-            case "storm":
-                stormSound.setAlpha(1.0f);
-                break;
-            case "boiling":
-                boilingSound.setAlpha(1.0f);
                 break;
         }
     }

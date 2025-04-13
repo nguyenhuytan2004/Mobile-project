@@ -67,6 +67,7 @@
         <activity android:name=".NotificationSettingHome" />
         <activity android:name=".NotificationSettingDaily" />
         <activity android:name=".TaskActivity"/>
+        <activity android:name=".Profile"/>
 
     </application>
 

@@ -133,6 +133,16 @@ CREATE TABLE "tbl_user" (
 	PRIMARY KEY("id" AUTOINCREMENT)
 );
 
+DROP TABLE IF EXISTS "tbl_user_information";
+CREATE TABLE "tbl_user_information" (
+	user_id INTEGER NOT NULL,
+	avatar TEXT,
+	full_name TEXT,
+	sex TEXT CHECK(sex IN ('Nam', 'Nữ')),
+	birthday TEXT,
+	FOREIGN KEY (user_id) REFERENCES tbl_user(id)
+);
+
 DROP TABLE IF EXISTS "tbl_weights";
 CREATE TABLE "tbl_weights" (
     class_id INTEGER,
@@ -145,6 +155,8 @@ INSERT INTO "android_metadata" VALUES ('en_US');
 INSERT INTO "tbl_user" VALUES (1,'alice@example.com','hashed_password_123',0,0);
 INSERT INTO "tbl_user" VALUES (2,'bob@example.com','hashed_password_456',0,0);
 INSERT INTO "tbl_user" VALUES (3,'alice@example.com',NULL,1,0);
+
+INSERT INTO "tbl_user_information" VALUES (2, '', 'Nguyễn Văn Khoác', 'Nam', '27 - 08 - 2005');
 
 INSERT INTO tbl_list VALUES
 (1, 'none' , NULL),

@@ -116,7 +116,6 @@ public class FocusTab extends AppCompatActivity {
         });
 
         btnStart.setOnClickListener(view -> {
-            Log.e("FocusTab", "Start button clicked");
             front.setVisibility(View.GONE);
             behind.setVisibility(View.VISIBLE);
 
@@ -345,7 +344,6 @@ public class FocusTab extends AppCompatActivity {
                 mediaPlayer = null;
             }
         } else {
-            Log.d("FocusTab", "PrefWhiteNoise: " + prefWhiteNoise);
             if (mediaPlayer != null) {
                 mediaPlayer.stop();
                 mediaPlayer.release();

@@ -17,5 +17,6 @@
     <color name="magenta">#FFFF00FF</color>
     <color name="lavender">#FFE6E6FA</color>
     <color name="statistics_blue">#4772fb</color>
+    <color name="light_gray">#D3D3D3</color>
 
 </resources>
