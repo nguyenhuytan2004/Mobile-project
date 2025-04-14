@@ -110,7 +110,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Thêm"
+            android:text="@string/btn_add_new_list"
             android:textColor="#FF811C"
             android:textSize="16sp"
             android:layout_marginStart="8dp" />

@@ -88,35 +88,42 @@ public class SideBarHelper {
             btnAddList.setOnClickListener(v -> {
                 // Create dialog to get new list name
                 final EditText input = new EditText(context);
-                input.setHint("Tên danh sách mới");
+                input.setHint(context.getString(R.string.sidebar_new_list_hint));
                 input.setTextColor(Color.WHITE);
                 input.setHintTextColor(Color.GRAY);
                 
                 AlertDialog.Builder addListDialog = new AlertDialog.Builder(context);
-                addListDialog.setTitle("Thêm danh sách mới");
+                addListDialog.setTitle(context.getString(R.string.sidebar_add_list_title));
                 addListDialog.setView(input);
                 
                 // Add buttons
-                addListDialog.setPositiveButton("Thêm", (dialogInterface, which) -> {
+                addListDialog.setPositiveButton(context.getString(R.string.sidebar_btn_add), (dialogInterface, which) -> {
                     String listName = input.getText().toString().trim();
                     if (!listName.isEmpty()) {
                         // Add list to database
                         int newListId = addListToDatabase(context, listName);
                         if (newListId != -1) {
-                            Toast.makeText(context, "Đã thêm danh sách: " + listName, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, 
+                                context.getString(R.string.sidebar_list_added, listName), 
+                                Toast.LENGTH_SHORT).show();
                             
                             // Refresh sidebar
                             List<String> updatedLists = getListsFromDatabase(context);
                             addCategoryItems(context, categorySection, updatedLists, callback);
                         } else {
-                            Toast.makeText(context, "Không thể thêm danh sách", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, 
+                                context.getString(R.string.sidebar_list_add_failed), 
+                                Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        Toast.makeText(context, "Tên danh sách không thể trống", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, 
+                            context.getString(R.string.sidebar_list_name_empty), 
+                            Toast.LENGTH_SHORT).show();
                     }
                 });
                 
-                addListDialog.setNegativeButton("Hủy", (dialogInterface, which) -> dialogInterface.cancel());
+                addListDialog.setNegativeButton(context.getString(R.string.sidebar_btn_cancel), 
+                    (dialogInterface, which) -> dialogInterface.cancel());
                 
                 addListDialog.show();
             });
@@ -198,7 +205,7 @@ public class SideBarHelper {
             
             if (exists) {
                 // List already exists
-                Toast.makeText(context, "Danh sách này đã tồn tại", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, context.getString(R.string.sidebar_list_exists), Toast.LENGTH_SHORT).show();
                 return -1;
             }
             

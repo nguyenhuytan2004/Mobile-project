@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -25,7 +26,7 @@
             android:id="@+id/tv_overview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Overview"
+            android:text="@string/stats_overview"
             android:textColor="@color/gray"
             android:textSize="20sp"
             android:gravity="center"
@@ -39,7 +40,7 @@
             android:layout_gravity="center"
             android:layout_marginLeft="20dp"
             android:gravity="center"
-            android:text="Day"
+            android:text="@string/stats_day"
             android:textColor="@color/statistics_blue"
             android:textSize="20sp" />
 
@@ -47,7 +48,7 @@
             android:id="@+id/tv_week"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Week"
+            android:text="@string/stats_week"
             android:textColor="@color/gray"
             android:textSize="20sp"
             android:gravity="center"
@@ -58,7 +59,7 @@
             android:id="@+id/tv_month"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Month"
+            android:text="@string/stats_month"
             android:textColor="@color/gray"
             android:textSize="20sp"
             android:gravity="center"
@@ -78,7 +79,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textSize="25sp"
-            android:text="&lt;"
+            android:text="@string/stats_prev"
             android:gravity="center"
             android:textColor="@color/statistics_blue"/>
 
@@ -89,7 +90,7 @@
             android:layout_gravity="center"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="Today"
+            android:text="@string/stats_today"
             android:textColor="#e4e5e4"
             android:textSize="20sp" />
 
@@ -100,7 +101,7 @@
             android:layout_weight="1"
             android:fontFamily="@font/arimo_medium"
             android:gravity="center"
-            android:text="&gt;"
+            android:text="@string/stats_next"
             android:textSize="25sp" />
     </LinearLayout>
 
@@ -129,7 +130,7 @@
                     android:id="@+id/textView28"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Completed"
+                    android:text="@string/stats_completed"
                     android:textColor="#d3d2d2"
                     android:textSize="20sp"/>
 
@@ -138,7 +139,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="2 from yesterday"
+                    android:text="@string/stats_from_yesterday"
                     android:textColor="#636262"
                     android:textSize="13sp"/>
 
@@ -171,7 +172,7 @@
                     android:id="@+id/textView10"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Total Task"
+                    android:text="@string/stats_total_task"
                     android:textColor="#d3d2d2"
                     android:textSize="20sp" />
 
@@ -180,7 +181,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="66.67% from yesterday"
+                    android:text="@string/stats_percent_from_yesterday"
                     android:textColor="#636262"
                     android:textSize="13sp" />
 
@@ -215,11 +216,12 @@
                 android:id="@+id/textView13"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Completion Rate Distribution"
+                android:text="@string/stats_completion_rate_distribution"
                 android:textColor="#d3d2d2"
                 android:textSize="20sp"
                 android:layout_marginBottom="15dp"/>
 
+            <!-- Rest of the distribution section -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -256,7 +258,7 @@
                                 android:id="@+id/textView14"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Overdue"
+                                android:text="@string/stats_overdue"
                                 android:textColor="#636262"
                                 android:textSize="18sp" />
 
@@ -296,7 +298,7 @@
                                 android:id="@+id/textView16"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="On-Time"
+                                android:text="@string/stats_on_time"
                                 android:textColor="#636262"
                                 android:textSize="18sp" />
 
@@ -336,7 +338,7 @@
                                 android:id="@+id/textView18"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Undate"
+                                android:text="@string/stats_undate"
                                 android:textColor="#636262"
                                 android:textSize="18sp" />
 
@@ -376,7 +378,7 @@
                                 android:id="@+id/textView21"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Uncomplete"
+                                android:text="@string/stats_uncomplete"
                                 android:textColor="#636262"
                                 android:textSize="18sp" />
 
@@ -433,7 +435,7 @@
                             android:id="@+id/textView6"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Completion Rate"
+                            android:text="@string/stats_completion_rate"
                             android:gravity="center"
                             android:textColor="#636262"/>
                     </LinearLayout>

@@ -109,4 +109,89 @@
     <string name="notification_habit_title">Habit Reminder</string>
     <string name="notification_habit_text">Time for your habit: %1$s</string>
     <string name="notification_action_complete">Complete</string>
+
+    <!-- Task Statistics -->
+    <string name="stats_overview">Overview</string>
+    <string name="stats_day">Day</string>
+    <string name="stats_week">Week</string>
+    <string name="stats_month">Month</string>
+    <string name="stats_today">Today</string>
+    <string name="stats_prev"><![CDATA[<]]></string>
+    <string name="stats_next"><![CDATA[>]]></string>
+    <string name="stats_completed">Completed</string>
+    <string name="stats_from_yesterday">%1$d from yesterday</string>
+    <string name="stats_more_than_yesterday">%1$d more than yesterday</string>
+    <string name="stats_fewer_than_yesterday">%1$d fewer than yesterday</string>
+    <string name="stats_total_task">Total Task</string>
+    <string name="stats_percent_from_yesterday">%1$.2f%% from yesterday</string>
+    <string name="stats_percent_more_than">%1$.2f%% more than yesterday</string>
+    <string name="stats_percent_less_than">%1$.2f%% less than yesterday</string>
+    <string name="stats_completion_rate_distribution">Completion Rate Distribution</string>
+    <string name="stats_overdue">Overdue</string>
+    <string name="stats_on_time">On-Time</string>
+    <string name="stats_undate">Undate</string>
+    <string name="stats_uncomplete">Uncomplete</string>
+    <string name="stats_completion_rate">Completion Rate</string>
+    <string name="stats_week_number">Week %1$d</string>
+    <string name="stats_all_time">All Time Statistics</string>
+    <string name="stats_completed_count">%1$d completed</string>
+
+    <!--side_bar.xml-->
+    <string name="btn_add_new_list">Add new list</string>
+    <string name="sidebar_new_list_hint">New list name</string>
+    <string name="sidebar_add_list_title">Add new list</string>
+    <string name="sidebar_btn_add">Add</string>
+    <string name="sidebar_btn_cancel">Cancel</string>
+    <string name="sidebar_list_added">Added list: %1$s</string>
+    <string name="sidebar_list_add_failed">Could not add list</string>
+    <string name="sidebar_list_name_empty">List name cannot be empty</string>
+    <string name="sidebar_list_exists">This list already exists</string>
+
+    <!-- Premium rq Screen -->
+    <string name="premium_title">Upgrade to Premium</string>
+    <string name="premium_description">Unlock all premium features including advanced tools, no ads, and more!</string>
+    <string name="premium_features_header">Premium Features</string>
+    <string name="premium_feature_share">Share tasks and notes with others</string>
+    <string name="premium_feature_backup">Unlimited cloud backups</string>
+    <string name="premium_feature_custom">Advanced customization options</string>
+    <string name="premium_feature_support">Priority support</string>
+    <string name="premium_btn_upgrade">Upgrade Now</string>
+    <string name="premium_btn_cancel">Cancel</string>
+
+    <!-- Share Tasks -->
+    <string name="share_title">Share</string>
+    <string name="share_via_email">Share via Email</string>
+    <string name="share_via_messenger">Share via Messenger</string>
+    <string name="share_via_sms">Share via SMS</string>
+    <string name="share_tasks">Share tasks</string>
+    <string name="share_task_list_subject">Task List</string>
+    <string name="share_from">Shared from TickTick</string>
+
+    <!-- Task Details -->
+    <string name="priority_high">Priority: High (Important &amp; Urgent)</string>
+    <string name="priority_medium">Priority: Medium (Important, Not urgent)</string>
+    <string name="priority_low">Priority: Low (Not important, Urgent)</string>
+    <string name="priority_lowest">Priority: Very low (Not important &amp; Not urgent)</string>
+    <string name="description_prefix">Description: </string>
+    <string name="no_description">No description</string>
+    <string name="due_date_prefix">Due date: </string>
+    <string name="no_due_date">No due date</string>
+    <string name="status_prefix">Status: </string>
+    <string name="status_completed">Completed</string>
+    <string name="status_incomplete">Incomplete</string>
+
+    <!-- Share Content -->
+    <string name="notes_header">===== NOTES =====</string>
+    <string name="note_prefix">Note </string>
+    <string name="no_notes">No notes</string>
+    <string name="content_prefix">Content: </string>
+    <string name="due_prefix">Due: </string>
+    <string name="tasks_header">===== TASKS =====</string>
+    <string name="task_prefix">Task </string>
+    <string name="no_tasks">No tasks</string>
+    <string name="priority_prefix">Priority: </string>
+    <string name="priority_text_high">High</string>
+    <string name="priority_text_medium">Medium</string>
+    <string name="priority_text_low">Low</string>
+    <string name="priority_text_lowest">Very low</string>
 </resources>

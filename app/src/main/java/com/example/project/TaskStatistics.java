@@ -174,12 +174,13 @@ public class TaskStatistics extends AppCompatActivity {
         });
     }
 
+    // Update the updateDateDisplay method
     private void updateDateDisplay() {
         // Check if the date is today
         Calendar today = Calendar.getInstance();
         if (currentDate.get(Calendar.YEAR) == today.get(Calendar.YEAR) &&
                 currentDate.get(Calendar.DAY_OF_YEAR) == today.get(Calendar.DAY_OF_YEAR)) {
-            tvDate.setText("Today");
+            tvDate.setText(getString(R.string.stats_today));
         } else {
             SimpleDateFormat displayFormat = new SimpleDateFormat("MMM dd", Locale.getDefault());
             tvDate.setText(displayFormat.format(currentDate.getTime()));
@@ -198,7 +199,7 @@ public class TaskStatistics extends AppCompatActivity {
         int weekOfYear = currentDate.get(Calendar.WEEK_OF_YEAR);
         
         // Update the date display to show Week #
-        tvDate.setText("Week " + weekOfYear);
+        tvDate.setText(getString(R.string.stats_week_number, weekOfYear));
 
         // Show navigation buttons
         prevButton.setVisibility(View.VISIBLE);
@@ -250,7 +251,7 @@ public class TaskStatistics extends AppCompatActivity {
         nextButton.setVisibility(View.GONE);
         
         // Set title for overview
-        tvDate.setText("All Time Statistics");
+        tvDate.setText(getString(R.string.stats_all_time));
     }
 
     private void resetStatistics() {
@@ -497,12 +498,17 @@ public class TaskStatistics extends AppCompatActivity {
         updateUI();
     }
 
+    // Update the updateUI method
     private void updateUI() {
         // Update completed tasks
         tvCompletedTasksCount.setText(String.valueOf(completedTasks));
         int taskDifference = completedTasks - previousDayCompletedTasks;
-        tvCompletedFromYesterday.setText(Math.abs(taskDifference) +
-                (taskDifference >= 0 ? " more than" : " fewer than") + " yesterday");
+        
+        if (taskDifference >= 0) {
+            tvCompletedFromYesterday.setText(getString(R.string.stats_more_than_yesterday, Math.abs(taskDifference)));
+        } else {
+            tvCompletedFromYesterday.setText(getString(R.string.stats_fewer_than_yesterday, Math.abs(taskDifference)));
+        }
 
         // Update completion rate
         double completionRate = (totalTasks > 0) ? (completedTasks * 100.0 / totalTasks) : 0;
@@ -510,8 +516,11 @@ public class TaskStatistics extends AppCompatActivity {
         tvCompletionRate.setText(formattedRate);
 
         double rateDifference = completionRate - previousDayCompletionRate;
-        tvTotalTask.setText(String.format(Locale.getDefault(), "%.2f%%", Math.abs(rateDifference)) +
-                (rateDifference >= 0 ? " more than" : " less than") + " yesterday");
+        if (rateDifference >= 0) {
+            tvTotalTask.setText(getString(R.string.stats_percent_more_than, Math.abs(rateDifference)));
+        } else {
+            tvTotalTask.setText(getString(R.string.stats_percent_less_than, Math.abs(rateDifference)));
+        }
 
         // Update progress bar
         progressBar.setProgress((int) completionRate);
@@ -525,6 +534,6 @@ public class TaskStatistics extends AppCompatActivity {
 
         // Update task counts
         tvCompletionRate.setText(String.valueOf(totalTasks));  // Display total tasks
-        tvTotalTask.setText(completedTasks + " completed");    // Display completed tasks
+        tvTotalTask.setText(getString(R.string.stats_completed_count, completedTasks));
     }
 }

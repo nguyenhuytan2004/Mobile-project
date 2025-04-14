@@ -110,5 +110,90 @@
     <string name="notification_habit_title">Nhắc nhở thói quen</string>
     <string name="notification_habit_text">Đã đến lúc thực hiện thói quen: %1$s</string>
     <string name="notification_action_complete">Hoàn thành</string>
+
+    <!-- Task Statistics -->
+    <string name="stats_overview">Tổng quan</string>
+    <string name="stats_day">Ngày</string>
+    <string name="stats_week">Tuần</string>
+    <string name="stats_month">Tháng</string>
+    <string name="stats_today">Hôm nay</string>
+    <string name="stats_prev"><![CDATA[<]]></string>
+    <string name="stats_next"><![CDATA[>]]></string>
+    <string name="stats_completed">Đã hoàn thành</string>
+    <string name="stats_from_yesterday">%1$d từ hôm qua</string>
+    <string name="stats_more_than_yesterday">%1$d nhiều hơn hôm qua</string>
+    <string name="stats_fewer_than_yesterday">%1$d ít hơn hôm qua</string>
+    <string name="stats_total_task">Tổng nhiệm vụ</string>
+    <string name="stats_percent_from_yesterday">%1$.2f%% từ hôm qua</string>
+    <string name="stats_percent_more_than">%1$.2f%% nhiều hơn hôm qua</string>
+    <string name="stats_percent_less_than">%1$.2f%% ít hơn hôm qua</string>
+    <string name="stats_completion_rate_distribution">Phân phối tỷ lệ hoàn thành</string>
+    <string name="stats_overdue">Quá hạn</string>
+    <string name="stats_on_time">Đúng giờ</string>
+    <string name="stats_undate">Không có hạn</string>
+    <string name="stats_uncomplete">Chưa hoàn thành</string>
+    <string name="stats_completion_rate">Tỷ lệ hoàn thành</string>
+    <string name="stats_week_number">Tuần %1$d</string>
+    <string name="stats_all_time">Thống kê tất cả</string>
+    <string name="stats_completed_count">%1$d đã hoàn thành</string>
+
+    <!--side_bar.xml-->
+    <string name="btn_add_new_list">Thêm</string>
+    <string name="sidebar_new_list_hint">Tên danh sách mới</string>
+    <string name="sidebar_add_list_title">Thêm danh sách mới</string>
+    <string name="sidebar_btn_add">Thêm</string>
+    <string name="sidebar_btn_cancel">Hủy</string>
+    <string name="sidebar_list_added">Đã thêm danh sách: %1$s</string>
+    <string name="sidebar_list_add_failed">Không thể thêm danh sách</string>
+    <string name="sidebar_list_name_empty">Tên danh sách không thể trống</string>
+    <string name="sidebar_list_exists">Danh sách này đã tồn tại</string>
+
+    <!-- Premium rq Screen -->
+    <string name="premium_title">Nâng cấp lên Cao cấp</string>
+    <string name="premium_description">Mở khóa tất cả tính năng cao cấp bao gồm công cụ nâng cao, không quảng cáo và hơn thế nữa!</string>
+    <string name="premium_features_header">Tính năng Cao cấp</string>
+    <string name="premium_feature_share">Chia sẻ nhiệm vụ và ghi chú với người khác</string>
+    <string name="premium_feature_backup">Sao lưu đám mây không giới hạn</string>
+    <string name="premium_feature_custom">Tùy chọn tùy chỉnh nâng cao</string>
+    <string name="premium_feature_support">Hỗ trợ ưu tiên</string>
+    <string name="premium_btn_upgrade">Nâng cấp Ngay</string>
+    <string name="premium_btn_cancel">Hủy bỏ</string>
+
+    <!-- Share Tasks -->
+    <string name="share_title">Chia sẻ</string>
+    <string name="share_via_email">Chia sẻ qua Email</string>
+    <string name="share_via_messenger">Chia sẻ qua Messenger</string>
+    <string name="share_via_sms">Chia sẻ qua SMS</string>
+    <string name="share_tasks">Chia sẻ công việc</string>
+    <string name="share_task_list_subject">Danh sách công việc</string>
+    <string name="share_from">Shared from TickTick</string>
+
+    <!-- Task Details -->
+    <string name="priority_high">Ưu tiên: Cao (Quan trọng &amp; Khẩn cấp)</string>
+    <string name="priority_medium">Ưu tiên: Trung bình (Quan trọng, Không khẩn cấp)</string>
+    <string name="priority_low">Ưu tiên: Thấp (Không quan trọng, Khẩn cấp)</string>
+    <string name="priority_lowest">Ưu tiên: Rất thấp (Không quan trọng &amp; Không khẩn cấp)</string>
+    <string name="description_prefix">Mô tả: </string>
+    <string name="no_description">Không có mô tả</string>
+    <string name="due_date_prefix">Ngày đến hạn: </string>
+    <string name="no_due_date">Không có ngày đến hạn</string>
+    <string name="status_prefix">Trạng thái: </string>
+    <string name="status_completed">Đã hoàn thành</string>
+    <string name="status_incomplete">Chưa hoàn thành</string>
+
+    <!-- Share Content -->
+    <string name="notes_header">===== GHI CHÚ =====</string>
+    <string name="note_prefix">Ghi chú </string>
+    <string name="no_notes">Không có ghi chú</string>
+    <string name="content_prefix">Nội dung: </string>
+    <string name="due_prefix">Hạn: </string>
+    <string name="tasks_header">===== CÔNG VIỆC =====</string>
+    <string name="task_prefix">Công việc </string>
+    <string name="no_tasks">Không có công việc</string>
+    <string name="priority_prefix">Ưu tiên: </string>
+    <string name="priority_text_high">Cao</string>
+    <string name="priority_text_medium">Trung bình</string>
+    <string name="priority_text_low">Thấp</string>
+    <string name="priority_text_lowest">Rất thấp</string>
 </resources>
 

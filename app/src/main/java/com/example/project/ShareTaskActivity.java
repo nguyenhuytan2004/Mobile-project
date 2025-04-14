@@ -72,10 +72,10 @@ public class ShareTaskActivity extends AppCompatActivity {
         if (!t.isNote() && t.getPriority() > 0) {
             String priorityText;
             switch (t.getPriority()) {
-                case 1: priorityText = "Ưu tiên: Cao (Quan trọng & Khẩn cấp)"; break;
-                case 2: priorityText = "Ưu tiên: Trung bình (Quan trọng, Không khẩn cấp)"; break;
-                case 3: priorityText = "Ưu tiên: Thấp (Không quan trọng, Khẩn cấp)"; break;
-                default: priorityText = "Ưu tiên: Rất thấp (Không quan trọng & Không khẩn cấp)"; break;
+                case 1: priorityText = getString(R.string.priority_high); break;
+                case 2: priorityText = getString(R.string.priority_medium); break;
+                case 3: priorityText = getString(R.string.priority_low); break;
+                default: priorityText = getString(R.string.priority_lowest); break;
             }
             
             TextView priorityView = new TextView(this);
@@ -85,27 +85,28 @@ public class ShareTaskActivity extends AppCompatActivity {
 
         TextView descView = new TextView(this);
         if (t.getDescription() != null && !t.getDescription().isEmpty()) {
-            descView.setText("Mô tả: " + t.getDescription());
+            descView.setText(getString(R.string.description_prefix) + t.getDescription());
         } else {
-            descView.setText("Không có mô tả");
+            descView.setText(getString(R.string.no_description));
         }
 
         TextView dateView = new TextView(this);
         if (t.hasReminder()) {
-            dateView.setText("Ngày đến hạn: " + t.getReminderDate());
+            dateView.setText(getString(R.string.due_date_prefix) + t.getReminderDate());
         } else {
-            dateView.setText("Không có ngày đến hạn");
+            dateView.setText(getString(R.string.no_due_date));
         }
         
         // Show completion status for tasks
         if (!t.isNote()) {
             TextView statusView = new TextView(this);
-            statusView.setText("Trạng thái: " + (t.isCompleted() ? "Đã hoàn thành" : "Chưa hoàn thành"));
+            statusView.setText(getString(R.string.status_prefix) + 
+                (t.isCompleted() ? getString(R.string.status_completed) : getString(R.string.status_incomplete)));
             layout.addView(statusView);
         }
 
         TextView appView = new TextView(this);
-        appView.setText("Shared from TickTick");
+        appView.setText(getString(R.string.share_from));
 
         View separator = new View(this);
         separator.setLayoutParams(new LinearLayout.LayoutParams(
@@ -122,21 +123,21 @@ public class ShareTaskActivity extends AppCompatActivity {
         return layout;
     }
 
-
     private void setupShareButtons(ArrayList<Task> taskList) {
         ivMailShare.setOnClickListener(v -> shareViaEmail(taskList));
         ivMessShare.setOnClickListener(v -> shareViaMessenger(taskList));
         ivSMSShare.setOnClickListener(v -> shareViaSMS(taskList));
         ivMoreShare.setOnClickListener(v -> shareViaOtherApps(taskList));
     }
+    
     private void shareViaEmail(ArrayList<Task> taskList) {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("message/rfc822");
-        intent.putExtra(Intent.EXTRA_SUBJECT, "Danh sách công việc");
+        intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.share_task_list_subject));
         intent.putExtra(Intent.EXTRA_TEXT, prepareShareText(taskList));
 
         if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivity(Intent.createChooser(intent, "Chia sẻ qua Email"));
+            startActivity(Intent.createChooser(intent, getString(R.string.share_via_email)));
         }
     }
 
@@ -150,7 +151,7 @@ public class ShareTaskActivity extends AppCompatActivity {
             startActivity(intent);
         } catch (Exception e) {
             intent.setPackage(null);
-            startActivity(Intent.createChooser(intent, "Chia sẻ qua Messenger"));
+            startActivity(Intent.createChooser(intent, getString(R.string.share_via_messenger)));
         }
     }
 
@@ -163,36 +164,37 @@ public class ShareTaskActivity extends AppCompatActivity {
             startActivity(intent);
         } else {
             intent.setType("text/plain");
-            startActivity(Intent.createChooser(intent, "Chia sẻ qua SMS"));
+            startActivity(Intent.createChooser(intent, getString(R.string.share_via_sms)));
         }
     }
 
     private void shareViaOtherApps(ArrayList<Task> taskList) {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
-        intent.putExtra(Intent.EXTRA_SUBJECT, "Danh sách công việc");
+        intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.share_task_list_subject));
         intent.putExtra(Intent.EXTRA_TEXT, prepareShareText(taskList));
-        startActivity(Intent.createChooser(intent, "Chia sẻ công việc"));
+        startActivity(Intent.createChooser(intent, getString(R.string.share_tasks)));
     }
+    
     private String prepareShareText(ArrayList<Task> taskList) {
         StringBuilder sb = new StringBuilder();
         int noteIndex = 1;
         int taskIndex = 1;
 
         // First add notes
-        sb.append("===== GHI CHÚ =====\n\n");
+        sb.append(getString(R.string.notes_header)).append("\n\n");
         boolean hasNotes = false;
         for (Task t : taskList) {
             if (t.isNote()) {
                 hasNotes = true;
-                sb.append("📝 Ghi chú ").append(noteIndex++).append(": ").append(t.getTitle()).append("\n");
+                sb.append("📝 ").append(getString(R.string.note_prefix)).append(noteIndex++).append(": ").append(t.getTitle()).append("\n");
 
                 if (t.getDescription() != null && !t.getDescription().isEmpty()) {
-                    sb.append("Nội dung: ").append(t.getDescription()).append("\n");
+                    sb.append(getString(R.string.content_prefix)).append(t.getDescription()).append("\n");
                 }
 
                 if (t.hasReminder()) {
-                    sb.append("Hạn: ").append(t.getReminderDate()).append("\n");
+                    sb.append(getString(R.string.due_prefix)).append(t.getReminderDate()).append("\n");
                 }
 
                 sb.append("\n");
@@ -200,47 +202,48 @@ public class ShareTaskActivity extends AppCompatActivity {
         }
         
         if (!hasNotes) {
-            sb.append("Không có ghi chú\n\n");
+            sb.append(getString(R.string.no_notes)).append("\n\n");
         }
 
         // Then add tasks
-        sb.append("===== CÔNG VIỆC =====\n\n");
+        sb.append(getString(R.string.tasks_header)).append("\n\n");
         boolean hasTasks = false;
         for (Task t : taskList) {
             if (!t.isNote()) {
                 hasTasks = true;
                 String status = t.isCompleted() ? "✓ " : "□ ";
-                sb.append(status).append("Công việc ").append(taskIndex++).append(": ").append(t.getTitle()).append("\n");
+                sb.append(status).append(getString(R.string.task_prefix)).append(taskIndex++).append(": ").append(t.getTitle()).append("\n");
 
                 String priorityText;
                 switch (t.getPriority()) {
-                    case 1: priorityText = "Cao"; break;
-                    case 2: priorityText = "Trung bình"; break;
-                    case 3: priorityText = "Thấp"; break;
-                    default: priorityText = "Rất thấp"; break;
+                    case 1: priorityText = getString(R.string.priority_text_high); break;
+                    case 2: priorityText = getString(R.string.priority_text_medium); break;
+                    case 3: priorityText = getString(R.string.priority_text_low); break;
+                    default: priorityText = getString(R.string.priority_text_lowest); break;
                 }
-                sb.append("Ưu tiên: ").append(priorityText).append("\n");
+                sb.append(getString(R.string.priority_prefix)).append(priorityText).append("\n");
 
                 if (t.getDescription() != null && !t.getDescription().isEmpty()) {
-                    sb.append("Mô tả: ").append(t.getDescription()).append("\n");
+                    sb.append(getString(R.string.description_prefix)).append(t.getDescription()).append("\n");
                 }
 
                 if (t.hasReminder()) {
-                    sb.append("Hạn: ").append(t.getReminderDate()).append("\n");
+                    sb.append(getString(R.string.due_prefix)).append(t.getReminderDate()).append("\n");
                 }
                 
-                sb.append("Trạng thái: ").append(t.isCompleted() ? "Đã hoàn thành" : "Chưa hoàn thành").append("\n");
+                sb.append(getString(R.string.status_prefix))
+                  .append(t.isCompleted() ? getString(R.string.status_completed) : getString(R.string.status_incomplete))
+                  .append("\n");
 
                 sb.append("\n");
             }
         }
         
         if (!hasTasks) {
-            sb.append("Không có công việc\n\n");
+            sb.append(getString(R.string.no_tasks)).append("\n\n");
         }
 
-        sb.append("🔗 Shared from TickTick");
+        sb.append("🔗 ").append(getString(R.string.share_from));
         return sb.toString();
     }
-
 }
