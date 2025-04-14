@@ -1,14 +1,14 @@
 <resources>
-    <string name="app_name">Project</string>
+    <string name="app_name">ĐỒ ÁN</string>
     <string name="focus_text"><font color="#FFFFFF">Tập trung</font> <font color="#888888">&gt;</font></string>
     <string name="time_reminder_text"><font color="#FFFFFF">Đúng ngày</font> <font color="#888888">(09:00)</font></string>
-    <string name="time_reminder_text1"><font color="#FFFFFF">1 days early</font> <font color="#888888">(09:00)</font></string>
-    <string name="time_reminder_text2"><font color="#FFFFFF">2 days early</font> <font color="#888888">(09:00)</font></string>
-    <string name="time_reminder_text3"><font color="#FFFFFF">3 days early</font> <font color="#888888">(09:00)</font></string>
-    <string name="time_reminder_text4"><font color="#FFFFFF">4 days early</font> <font color="#888888">(09:00)</font></string>
-    <string name="time_reminder_text5"><font color="#FFFFFF">5 days early</font> <font color="#888888">(09:00)</font></string>
-    <string name="time_reminder_text6"><font color="#FFFFFF">6 days early</font> <font color="#888888">(09:00)</font></string>
-    <string name="time_reminder_text7"><font color="#FFFFFF">1 week early</font> <font color="#888888">(09:00)</font></string>
+    <string name="time_reminder_text1"><font color="#FFFFFF">Sớm 1 ngày</font> <font color="#888888">(09:00)</font></string>
+    <string name="time_reminder_text2"><font color="#FFFFFF">Sớm 2 ngày</font> <font color="#888888">(09:00)</font></string>
+    <string name="time_reminder_text3"><font color="#FFFFFF">Sớm 3 ngày</font> <font color="#888888">(09:00)</font></string>
+    <string name="time_reminder_text4"><font color="#FFFFFF">Sớm 4 ngày</font> <font color="#888888">(09:00)</font></string>
+    <string name="time_reminder_text5"><font color="#FFFFFF">Sớm 5 ngày</font> <font color="#888888">(09:00)</font></string>
+    <string name="time_reminder_text6"><font color="#FFFFFF">Sớm 6 ngày</font> <font color="#888888">(09:00)</font></string>
+    <string name="time_reminder_text7"><font color="#FFFFFF">Sớm 1 tuần</font> <font color="#888888">(09:00)</font></string>
     <string-array name="priority_levels">
         <item>1 - Quan trọng và Khẩn cấp</item>
         <item>2 - Quan trọng nhưng Không khẩn cấp</item>
@@ -17,6 +17,87 @@
     </string-array>
 
     <string name="client_id">814608883132-3rjf27ov6f0277opa59d1nuugvque1ov.apps.googleusercontent.com</string>
+
+    <!-- Habit Gallery -->
+    <string name="title_habit_gallery">Danh sách thói quen</string>
+    <string name="btn_all">Tất cả</string>
+    <string name="btn_daily_life">Cuộc sống</string>
+    <string name="btn_sport">Thể thao</string>
+    <string name="btn_learning">Học tập</string>
+    <string name="btn_add_new_habit">Thêm thói quen mới</string>
+    
+    <!-- Habit Item -->
+    <string name="habit_name_placeholder">Tên thói quen</string>
+    <string name="habit_quote_placeholder">Câu trích</string>
+    <string name="daily">Hàng ngày</string>
+    <string name="others">Khác</string>
+    
+    <!-- New Habit -->
+    <string name="new_habit">Thói quen mới</string>
+    <string name="hint_name">Tên</string>
+    <string name="label_quote">Câu trích</string>
+    <string name="hint_quote">Số nhỏ, kết quả lớn</string>
+    <string name="btn_next_aim_habit">Tiếp theo</string>
+    
+    <!-- New Habit Aim -->
+    <string name="frequency">Tần suất</string>
+    <string name="chip_daily">Hàng ngày</string>
+    <string name="chip_weekly">Hàng tuần</string>
+    <string name="chip_interval">Định kỳ</string>
+    <string name="sun">CN</string>
+    <string name="mon">T2</string>
+    <string name="tue">T3</string>
+    <string name="wed">T4</string>
+    <string name="thu">T5</string>
+    <string name="fri">T6</string>
+    <string name="sat">T7</string>
+    <string name="goal">Mục tiêu</string>
+    <string name="hint_goal">Nhập mục tiêu (vd: 5 trang mỗi ngày)</string>
+    <string name="start_date">Ngày bắt đầu</string>
+    <string name="select_date">Chọn ngày...</string>
+    <string name="goal_days">Thời gian mục tiêu</string>
+    <string name="section">Danh mục</string>
+    <string name="reminder">Nhắc nhở</string>
+    <string name="auto_popup">Tự động hiển thị ghi nhận</string>
+    <string name="btn_save">Lưu</string>
+    
+    <!-- Habit Detail -->
+    <string name="habit_details">Chi tiết thói quen</string>
+    <string name="quote">Câu trích</string>
+    <string name="selected_days">Ngày đã chọn</string>
+    <string name="goal_details">Chi tiết mục tiêu</string>
+    <string name="label_goal">Mục tiêu: </string>
+    <string name="label_duration">Thời hạn: </string>
+    <string name="forever">Mãi mãi</string>
+    <string name="label_start_date">Ngày bắt đầu: </string>
+    <string name="label_category">Danh mục: </string>
+    <string name="label_time">Thời gian: </string>
+    <string name="auto_popup_switch">Tự động hiển thị</string>
+
+    <!-- Default Values -->
+    <string name="default_goal">5 trang mỗi ngày</string>
+    <string name="default_section">Khác</string>
+
+    <!-- Goal Days Options -->
+    <string-array name="goal_days_options">
+        <item>7 ngày</item>
+        <item>14 ngày</item>
+        <item>30 ngày</item>
+        <item>90 ngày</item>
+        <item>Mãi mãi</item>
+    </string-array>
+
+    <!-- Section Options -->
+    <string-array name="section_options">
+        <item>Thể thao</item>
+        <item>Cuộc sống</item>
+        <item>Học tập</item>
+        <item>Khác</item>
+    </string-array>
+    <string name="habit_saved_success">Đã lưu thói quen thành công!</string>
+    <string name="habit_saved_error">Lỗi khi lưu thói quen</string>
+    <string name="selected_habit">Đã chọn: %1$s</string>
+    <string name="error_empty_habit_name">Vui lòng nhập tên thói quen</string>
 
 </resources>
 

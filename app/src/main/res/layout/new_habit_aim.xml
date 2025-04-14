@@ -35,7 +35,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="New Habit"
+                    android:text="@string/new_habit"
                     android:textColor="@color/white"
                     android:textSize="20sp"
                     android:textStyle="bold"
@@ -61,7 +61,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Frequency"
+                        android:text="@string/frequency"
                         android:layout_marginLeft="8dp"
                         android:textSize="20sp"
                         android:textColor="@color/white"
@@ -78,20 +78,20 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginRight="8dp"
-                            android:text="Daily"/>
+                            android:text="@string/chip_daily"/>
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chip9"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginRight="8dp"
-                            android:text="Weekly"/>
+                            android:text="@string/chip_weekly"/>
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chip10"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Interval"/>
+                            android:text="@string/chip_interval"/>
                     </LinearLayout>
 
                     <com.google.android.material.chip.ChipGroup
@@ -104,44 +104,44 @@
                             android:id="@+id/chip"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="SU"
+                            android:text="@string/sun"
                             android:layout_marginLeft="2dp" />
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chip2"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="M" />
+                            android:text="@string/mon" />
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chip3"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="T" />
+                            android:text="@string/tue" />
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chip4"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="W" />
+                            android:text="@string/wed" />
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chip5"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="TH" />
+                            android:text="@string/thu" />
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chip6"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="F" />
+                            android:text="@string/fri" />
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chip7"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="SA" />
+                            android:text="@string/sat" />
                     </com.google.android.material.chip.ChipGroup>
 
                 </LinearLayout>
@@ -166,7 +166,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Goal"
+                        android:text="@string/goal"
                         android:textColor="@color/white"
                         android:textSize="20sp"
                         android:textStyle="bold" />
@@ -175,7 +175,7 @@
                         android:id="@+id/editTextGoal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Enter your goal (e.g. 5 pages daily)"
+                        android:hint="@string/hint_goal"
                         android:textColorHint="#888888"
                         android:textColor="#D3D3D3"
                         android:layout_marginLeft="8dp"
@@ -187,7 +187,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Start Date"
+                        android:text="@string/start_date"
                         android:textColor="@color/white"
                         android:textSize="20sp"
                         android:textStyle="bold" />
@@ -196,7 +196,7 @@
                         android:id="@+id/tvStartDate"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Select date..."
+                        android:text="@string/select_date"
                         android:textColor="#D3D3D3"
                         android:layout_marginLeft="8dp"
                         android:layout_marginBottom="8dp"
@@ -210,7 +210,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Goal Days"
+                        android:text="@string/goal_days"
                         android:textColor="@color/white"
                         android:textSize="20sp"
                         android:textStyle="bold" />
@@ -244,7 +244,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Section"
+                        android:text="@string/section"
                         android:textColor="@color/white"
                         android:textSize="20sp"
                         android:textStyle="bold" />
@@ -279,7 +279,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="12dp"
                         android:layout_marginTop="12dp"
-                        android:text="Reminder"
+                        android:text="@string/reminder"
                         android:textColor="@color/white"
                         android:textSize="20sp"
                         android:textStyle="bold" />
@@ -329,7 +329,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp">
-                        <TextView android:text="Auto pop-up of habit log"
+                        <TextView android:text="@string/auto_popup"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="#D3D3D3"
@@ -344,7 +344,7 @@
                         android:id="@+id/btnSave"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Save"
+                        android:text="@string/btn_save"
                         android:backgroundTint="@color/blue"
                         android:textColor="@android:color/white"/>
 

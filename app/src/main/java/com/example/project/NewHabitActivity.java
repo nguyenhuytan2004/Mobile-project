@@ -37,7 +37,7 @@ public class NewHabitActivity extends AppCompatActivity {
 
                 // Validate inputs
                 if (newHabit.getName().isEmpty()) {
-                    etHabitName.setError("Please enter a habit name");
+                    etHabitName.setError(getString(R.string.error_empty_habit_name));
                     return;
                 }
 
