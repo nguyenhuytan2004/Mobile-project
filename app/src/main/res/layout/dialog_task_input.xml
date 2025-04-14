@@ -9,7 +9,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Thêm task mới"
+        android:text="@string/add_new_task"
         android:textSize="20sp"
         android:textStyle="bold"
         android:textColor="@color/white"
@@ -19,7 +19,7 @@
         android:id="@+id/etTaskTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Tiêu đề"
+        android:hint="@string/title_hint"
         android:textColorHint="#AAAAAA"
         android:textColor="@color/white"
         android:padding="12dp"
@@ -30,7 +30,7 @@
         android:id="@+id/etTaskDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Mô tả"
+        android:hint="@string/description_hint"
         android:textColorHint="#AAAAAA"
         android:textColor="@color/white"
         android:padding="12dp"
@@ -42,7 +42,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Mức độ ưu tiên"
+        android:text="@string/priority_level"
         android:textColor="@color/white"
         android:textStyle="bold"
         android:layout_marginBottom="8dp"/>
@@ -57,7 +57,7 @@
             android:id="@+id/rbPriority1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="🔥 Khẩn cấp và Quan trọng"
+            android:text="@string/priority_1"
             android:textColor="@color/white"
             android:checked="true"/>
 
@@ -65,27 +65,23 @@
             android:id="@+id/rbPriority2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="🌟 Không gấp mà quan trọng"
+            android:text="@string/priority_2"
             android:textColor="@color/white"/>
 
         <RadioButton
             android:id="@+id/rbPriority3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="⚡ Khẩn cấp nhưng không quan trọng"
+            android:text="@string/priority_3"
             android:textColor="@color/white"/>
 
         <RadioButton
             android:id="@+id/rbPriority4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="💡 Không cấp bách và không quan trọng"
+            android:text="@string/priority_4"
             android:textColor="@color/white"/>
     </RadioGroup>
-
-    <!-- Add this after the priority RadioGroup in dialog_task_input.xml -->
-
-    <!-- Replace the spinner with an EditText for user input -->
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -97,7 +93,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Thêm lời nhắc"
+            android:text="@string/add_reminder"
             android:textColor="@color/white"
             android:layout_marginEnd="8dp"/>
 
@@ -108,14 +104,14 @@
             android:src="@android:drawable/ic_popup_reminder"
             android:tint="@color/statistics_blue"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Set reminder"/>
+            android:contentDescription="@string/set_reminder"/>
     </LinearLayout>
 
     <TextView
         android:id="@+id/tvReminderInfo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Nhắc nhở: 01/11/2023"
+        android:text="@string/reminder_format"
         android:textColor="@color/statistics_blue"
         android:visibility="gone"
         android:layout_marginBottom="16dp"/>
@@ -130,7 +126,7 @@
             android:id="@+id/btnCancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Hủy"
+            android:text="@string/cancel"
             android:textColor="@color/white"
             android:backgroundTint="#333333"
             android:layout_marginEnd="8dp"/>
@@ -139,7 +135,7 @@
             android:id="@+id/btnAddTask"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Thêm"
+            android:text="@string/add"
             android:textColor="@color/black"
             android:backgroundTint="@color/white"/>
     </LinearLayout>

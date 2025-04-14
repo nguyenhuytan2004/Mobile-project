@@ -194,4 +194,33 @@
     <string name="priority_text_medium">Medium</string>
     <string name="priority_text_low">Low</string>
     <string name="priority_text_lowest">Very low</string>
+
+    <!-- Task Input Dialog -->
+    <string name="add_new_task">Add new task</string>
+    <string name="title_hint">Title</string>
+    <string name="description_hint">Description</string>
+    <string name="priority_level">Priority level</string>
+    <string name="priority_1">🔥 Urgent and Important</string>
+    <string name="priority_2">🌟 Important but not urgent</string>
+    <string name="priority_3">⚡ Urgent but not important</string>
+    <string name="priority_4">💡 Not urgent and not important</string>
+    <string name="add_reminder">Add reminder</string>
+    <string name="set_reminder">Set reminder</string>
+    <string name="reminder_format">Reminder: %1$s</string>
+    <string name="cancel">Cancel</string>
+    <string name="add">Add</string>
+
+    <!-- Matrix View -->
+    <string name="matrix_urgent_important">Urgent and Important</string>
+    <string name="matrix_important_not_urgent">Important but not urgent</string>
+    <string name="matrix_urgent_not_important">Urgent but not important</string>
+    <string name="matrix_not_urgent_not_important">Not urgent and not important</string>
+
+    <!-- Eisenhower Matrix -->
+    <string name="eisenhower_matrix_title">Eisenhower Matrix</string>
+    <string name="eisenhower_q1_title">I. Urgent and Important</string>
+    <string name="eisenhower_q2_title">II. Important but not urgent</string>
+    <string name="eisenhower_q3_title">III. Urgent but not important</string>
+    <string name="eisenhower_q4_title">IV. Not urgent and not important</string>
+    <string name="eisenhower_add_task">Add Task</string>
 </resources>

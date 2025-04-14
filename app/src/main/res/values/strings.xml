@@ -195,5 +195,34 @@
     <string name="priority_text_medium">Trung bình</string>
     <string name="priority_text_low">Thấp</string>
     <string name="priority_text_lowest">Rất thấp</string>
+
+    <!-- Task Input Dialog -->
+    <string name="add_new_task">Thêm nhiệm vụ mới</string>
+    <string name="title_hint">Tiêu đề</string>
+    <string name="description_hint">Mô tả</string>
+    <string name="priority_level">Mức độ ưu tiên</string>
+    <string name="priority_1">🔥 Khẩn cấp và Quan trọng</string>
+    <string name="priority_2">🌟 Không gấp mà quan trọng</string>
+    <string name="priority_3">⚡ Khẩn cấp nhưng không quan trọng</string>
+    <string name="priority_4">💡 Không cấp bách và không quan trọng</string>
+    <string name="add_reminder">Thêm lời nhắc</string>
+    <string name="set_reminder">Đặt lời nhắc</string>
+    <string name="reminder_format">Nhắc nhở: %1$s</string>
+    <string name="cancel">Hủy</string>
+    <string name="add">Thêm</string>
+
+    <!-- Matrix View -->
+    <string name="matrix_urgent_important">Khẩn cấp và quan trọng</string>
+    <string name="matrix_important_not_urgent">Không gấp mà quan trọng</string>
+    <string name="matrix_urgent_not_important">Khẩn cấp nhưng không quan trọng</string>
+    <string name="matrix_not_urgent_not_important">Không cấp bách và không quan trọng</string>
+
+    <!-- Eisenhower Matrix -->
+    <string name="eisenhower_matrix_title">Ma trận Eisenhower</string>
+    <string name="eisenhower_q1_title">I. Khẩn cấp và Quan trọng</string>
+    <string name="eisenhower_q2_title">II. Không khẩn cấp mà quan trọng</string>
+    <string name="eisenhower_q3_title">III. Khẩn cấp nhưng không quan trọng</string>
+    <string name="eisenhower_q4_title">IV. Không khẩn cấp và không quan trọng</string>
+    <string name="eisenhower_add_task">Thêm công việc</string>
 </resources>
 
