@@ -99,5 +99,16 @@
     <string name="selected_habit">Đã chọn: %1$s</string>
     <string name="error_empty_habit_name">Vui lòng nhập tên thói quen</string>
 
+    <!-- Habit Popup -->
+    <string name="habit_reminder">Nhắc nhở thói quen</string>
+    <string name="habit_name_default">Tên thói quen</string>
+    <string name="time_to_complete">Đã đến lúc hoàn thành thói quen của bạn!</string>
+    <string name="btn_skip">Bỏ qua</string>
+    <string name="btn_complete">Hoàn thành</string>
+
+    <!-- Notifications -->
+    <string name="notification_habit_title">Nhắc nhở thói quen</string>
+    <string name="notification_habit_text">Đã đến lúc thực hiện thói quen: %1$s</string>
+    <string name="notification_action_complete">Hoàn thành</string>
 </resources>
 

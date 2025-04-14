@@ -52,7 +52,7 @@
 
         <!--Set main activity-->
         <activity
-            android:name=".MainActivity"
+            android:name=".TaskStatistics"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -61,7 +61,7 @@
         </activity>
 
         <!-- Others activity -->
-        <activity android:name=".TaskStatistics" />
+        <activity android:name=".MainActivity" />
         <activity android:name=".PremiumRequestActivity"/>
         <activity android:name=".HabitDetailActivity" />
         <activity android:name=".ShareTaskActivity" />

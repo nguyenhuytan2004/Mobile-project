@@ -97,4 +97,16 @@
     <string name="habit_saved_error">Error saving habit</string>
     <string name="selected_habit">Selected: %1$s</string>
     <string name="error_empty_habit_name">Please enter a habit name</string>
+
+    <!-- Habit Popup -->
+    <string name="habit_reminder">Habit Reminder</string>
+    <string name="habit_name_default">Habit Name</string>
+    <string name="time_to_complete">Time to complete your habit!</string>
+    <string name="btn_skip">Skip</string>
+    <string name="btn_complete">Complete</string>
+
+    <!-- Notifications -->
+    <string name="notification_habit_title">Habit Reminder</string>
+    <string name="notification_habit_text">Time for your habit: %1$s</string>
+    <string name="notification_action_complete">Complete</string>
 </resources>

@@ -134,9 +134,9 @@ public class HabitNotificationHelper {
         
         // Build notification
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_habit) // You'll need to create/use an appropriate icon
-                .setContentTitle("Habit Reminder")
-                .setContentText("Time for your habit: " + habitName)
+                .setSmallIcon(R.drawable.ic_habit)
+                .setContentTitle(context.getString(R.string.notification_habit_title))
+                .setContentText(context.getString(R.string.notification_habit_text, habitName))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setVibrate(new long[]{0, 250, 250, 250})
                 .setAutoCancel(true)
@@ -149,8 +149,10 @@ public class HabitNotificationHelper {
         PendingIntent completePendingIntent = PendingIntent.getBroadcast(
                 context, habitId + 100, completeIntent, 
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-        
-        builder.addAction(R.drawable.checkbox_checked, "Complete", completePendingIntent);
+
+        builder.addAction(R.drawable.checkbox_checked, 
+                        context.getString(R.string.notification_action_complete), 
+                        completePendingIntent);
         
         // Show notification
         NotificationManager notificationManager = 
