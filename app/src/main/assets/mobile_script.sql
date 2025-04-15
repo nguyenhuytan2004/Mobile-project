@@ -115,6 +115,7 @@ CREATE TABLE tbl_list (
 
 CREATE TABLE tbl_habit (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
     name TEXT NOT NULL,
     quote TEXT,
     frequency TEXT,
@@ -191,9 +192,9 @@ INSERT INTO "tbl_task_reminder" VALUES (22,1,'Ngày 30, tháng 4','09:00',0,0);
 INSERT INTO "tbl_task_tag" VALUES (25,1,'excited ','#8E44AD');
 INSERT INTO "tbl_task_tag" VALUES (26,1,'😊','#E67E22');
 
-	INSERT INTO tbl_habit (name, quote, frequency, week_days, goal, start_date, goal_days, section, reminder, auto_popup) VALUES
-('Morning Jog', 'Start your day with energy!', 'daily', '[true, true, true, true, true, false, false]', 'Run 3km', '2024-04-01', '30', 'Health', '07:00 AM', 1),
-('Reading', 'A book a day keeps ignorance away.', 'weekly', '[false, false, true, false, false, true, false]', 'Read 20 pages', '2024-03-15', '60', 'Education', '09:00 PM', 0);
+	INSERT INTO tbl_habit (user_id, name, quote, frequency, week_days, goal, start_date, goal_days, section, reminder, auto_popup) VALUES
+(1, 'Morning Jog', 'Start your day with energy!', 'daily', '[true, true, true, true, true, false, false]', 'Run 3km', '2024-04-01', '30', 'Health', '07:00 AM', 1),
+(1, 'Reading', 'A book a day keeps ignorance away.', 'weekly', '[false, false, true, false, false, true, false]', 'Read 20 pages', '2024-03-15', '60', 'Education', '09:00 PM', 0);
 COMMIT;
 
 -- Class 0

@@ -168,11 +168,14 @@ public class HabitActivity extends AppCompatActivity {
     // Save a new habit to the database
     @SuppressLint("RestrictedApi")
     public long saveHabit(Habit habit) {
+        int userId = LoginSessionManager.getInstance(this).getUserId();
+
         SQLiteDatabase db = DatabaseHelper.getInstance(this).openDatabase();
         int newId = -1;
 
         try {
             ContentValues values = new ContentValues();
+            values.put("user_id", userId);
             values.put("name", habit.getName());
             values.put("quote", habit.getQuote());
             values.put("frequency", habit.getFrequency());
@@ -193,23 +196,28 @@ public class HabitActivity extends AppCompatActivity {
         return newId;
     }
 
-    // Get all habits from the database
+    // Get habits from the database for the current user only
     @SuppressLint("RestrictedApi")
     public List<Habit> getAllHabits() {
+        int userId = LoginSessionManager.getInstance(this).getUserId();
         List<Habit> habits = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
         try {
-            Cursor cursor = db.query("tbl_habit", null, null, null, null, null, null);
+            // Add WHERE clause to filter by user_id
+            String selection = "user_id = ?";
+            String[] selectionArgs = {String.valueOf(userId)};
+
+            Cursor cursor = db.query("tbl_habit", null, selection, selectionArgs, null, null, null);
 
             if (cursor != null && cursor.moveToFirst()) {
                 do {
                     Habit habit = new Habit();
-                    
+
                     // Get column indexes to avoid issues with column order
                     int idIndex = cursor.getColumnIndex("id");
                     if (idIndex >= 0) habit.setId(cursor.getInt(idIndex));
-                    
+
                     int nameIndex = cursor.getColumnIndex("name");
                     if (nameIndex >= 0) habit.setName(cursor.getString(nameIndex));
 
@@ -245,7 +253,7 @@ public class HabitActivity extends AppCompatActivity {
                 cursor.close();
             }
         } catch (Exception e) {
-            Log.e(TAG, "Error getting habits", e);
+            Log.e(TAG, "Error getting habits for user " + userId, e);
         }
 
         return habits;
