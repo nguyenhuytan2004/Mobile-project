@@ -33,6 +33,7 @@
     
     <!-- New Habit -->
     <string name="new_habit">Thói quen mới</string>
+    <string name="edit_habit">Chỉnh sửa thói quen</string>
     <string name="hint_name">Tên</string>
     <string name="label_quote">Câu trích</string>
     <string name="hint_quote">Số nhỏ, kết quả lớn</string>
