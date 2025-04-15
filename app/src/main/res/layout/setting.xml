@@ -20,7 +20,7 @@
             android:gravity="center"
             android:text="&lt;"
             android:textColor="#CCE9E9E8"
-            android:textSize="30sp"/>
+            android:textSize="30sp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -29,7 +29,7 @@
             android:gravity="center"
             android:text="@string/setting_title"
             android:textColor="#CCE9E9E8"
-            android:textSize="25sp"/>
+            android:textSize="25sp" />
 
     </LinearLayout>
 
@@ -37,37 +37,34 @@
         android:id="@+id/profileLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_marginTop="20dp"
-        android:padding="15dp"
-        >
+        android:orientation="horizontal"
+        android:padding="15dp">
 
         <ImageView
             android:id="@+id/avatar"
             android:layout_width="70dp"
             android:layout_height="70dp"
-            android:background="@drawable/circle_background"
-            android:src="@drawable/ic_user_avatar"
             android:layout_marginRight="10dp"
+            android:background="@drawable/circle_background"
+            android:clipToOutline="true"
             android:scaleType="centerCrop"
-            android:clipToOutline="true" />
+            android:src="@drawable/ic_user_avatar" />
 
         <TextView
             android:id="@+id/name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Nguyễn Huy Tấn"
-            android:textColor="@color/white"
-            android:textSize="25dp"
             android:layout_gravity="center"
             android:layout_marginLeft="10dp"
-            />
+            android:text="Nguyễn Huy Tấn"
+            android:textColor="@color/white"
+            android:textSize="25dp" />
 
         <View
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            />
+            android:layout_weight="1" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -83,87 +80,80 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="15dp"
         android:background="@drawable/border_custom3"
         android:gravity="center"
-        >
+        android:orientation="horizontal"
+        android:padding="15dp">
 
         <ImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/icon_setting_premium"
-            />
+            android:src="@drawable/icon_setting_premium" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/setting_premium_account"
-            android:textSize="20dp"
-            android:textColor="@color/white"
             android:layout_gravity="center"
             android:layout_marginLeft="15dp"
-            />
+            android:text="@string/setting_premium_account"
+            android:textColor="@color/white"
+            android:textSize="20dp" />
 
         <View
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            />
+            android:layout_weight="1" />
 
         <TextView
             android:id="@+id/btnUpgrade"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/setting_upgrade_premium"
-            android:textSize="12dp"
             android:background="@drawable/button_custom2"
-            android:textColor="@color/orange"
             android:padding="10dp"
-            />
+            android:text="@string/setting_upgrade_premium"
+            android:textColor="@color/orange"
+            android:textSize="12dp" />
 
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/btnTaskStatistic"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:background="@drawable/border_custom3"
         android:gravity="center"
-        android:paddingHorizontal="20dp"
-        android:paddingVertical="15dp"
+        android:orientation="horizontal"
         android:layout_marginTop="10dp"
-        >
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="10dp">
 
         <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:src="@drawable/icon_setting_tab"
-            />
+            android:src="@drawable/taskstatistc_icon" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/setting_tab_bar"
-            android:textSize="20dp"
-            android:textColor="@color/white"
             android:layout_gravity="center"
             android:layout_marginLeft="20dp"
-            />
+            android:text="@string/profile_statistic"
+            android:textColor="@color/white"
+            android:textSize="20dp" />
 
         <View
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            />
+            android:layout_weight="1" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="&gt;"
-            android:textColor="@color/gray"
-            android:textSize="30dp"
             android:layout_gravity="center"
             android:layout_marginLeft="20dp"
-            />
+            android:text="&gt;"
+            android:textColor="@color/gray"
+            android:textSize="30dp" />
 
     </LinearLayout>
 
@@ -179,59 +169,53 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:background="@drawable/border_custom3"
             android:gravity="center"
-            android:paddingVertical="10dp"
-            >
+            android:orientation="horizontal"
+            android:paddingVertical="10dp">
 
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:src="@drawable/icon_setting_interface"
-                />
+                android:src="@drawable/icon_setting_interface" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/setting_ui"
-                android:textSize="20dp"
-                android:textColor="@color/white"
                 android:layout_gravity="center"
                 android:layout_marginLeft="20dp"
-                />
+                android:text="@string/setting_ui"
+                android:textColor="@color/white"
+                android:textSize="20dp" />
 
             <View
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_weight="1"
-                />
+                android:layout_weight="1" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="&gt;"
-                android:textColor="@color/gray"
-                android:textSize="30dp"
                 android:layout_gravity="center"
                 android:layout_marginLeft="20dp"
-                />
+                android:text="&gt;"
+                android:textColor="@color/gray"
+                android:textSize="30dp" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:background="@drawable/border_custom3"
             android:gravity="center"
-            android:paddingVertical="10dp"
-            >
+            android:orientation="horizontal"
+            android:paddingVertical="10dp">
 
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:src="@drawable/icon_setting_time"
-                />
+                android:src="@drawable/icon_setting_time" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -245,18 +229,16 @@
             <View
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_weight="1"
-                />
+                android:layout_weight="1" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="&gt;"
-                android:textColor="@color/gray"
-                android:textSize="30dp"
                 android:layout_gravity="center"
                 android:layout_marginLeft="20dp"
-                />
+                android:text="&gt;"
+                android:textColor="@color/gray"
+                android:textSize="30dp" />
 
         </LinearLayout>
 
@@ -264,17 +246,15 @@
             android:id="@+id/btnMusicNotify"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:background="@drawable/border_custom3"
             android:gravity="center"
-            android:paddingVertical="10dp"
-            >
+            android:orientation="horizontal"
+            android:paddingVertical="10dp">
 
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:src="@drawable/icon_setting_sound"
-                />
+                android:src="@drawable/icon_setting_sound" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -288,18 +268,16 @@
             <View
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_weight="1"
-                />
+                android:layout_weight="1" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="&gt;"
-                android:textColor="@color/gray"
-                android:textSize="30dp"
                 android:layout_gravity="center"
                 android:layout_marginLeft="20dp"
-                />
+                android:text="&gt;"
+                android:textColor="@color/gray"
+                android:textSize="30dp" />
 
         </LinearLayout>
 
@@ -307,17 +285,15 @@
             android:id="@+id/btnWidget"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:background="@drawable/border_custom3"
             android:gravity="center"
-            android:paddingVertical="10dp"
-            >
+            android:orientation="horizontal"
+            android:paddingVertical="10dp">
 
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:src="@drawable/icon_setting_widget"
-                />
+                android:src="@drawable/icon_setting_widget" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -331,61 +307,56 @@
             <View
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_weight="1"
-                />
+                android:layout_weight="1" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="&gt;"
-                android:textColor="@color/gray"
-                android:textSize="30dp"
                 android:layout_gravity="center"
                 android:layout_marginLeft="20dp"
-                />
+                android:text="&gt;"
+                android:textColor="@color/gray"
+                android:textSize="30dp" />
 
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/btnTaskStatistic"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:layout_marginTop="10dp"
             android:background="@drawable/border_custom3"
             android:gravity="center"
-            android:paddingVertical="10dp"
-            >
+            android:orientation="horizontal"
+            android:paddingHorizontal="0dp"
+            android:paddingVertical="10dp">
 
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:src="@drawable/taskstatistc_icon"
-                />
+                android:src="@drawable/icon_setting_tab" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginLeft="20dp"
-                android:text="@string/profile_statistic"
+                android:text="@string/setting_tab_bar"
                 android:textColor="@color/white"
                 android:textSize="20dp" />
 
             <View
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_weight="1"
-                />
+                android:layout_weight="1" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="&gt;"
-                android:textColor="@color/gray"
-                android:textSize="30dp"
                 android:layout_gravity="center"
                 android:layout_marginLeft="20dp"
-                />
+                android:text="&gt;"
+                android:textColor="@color/gray"
+                android:textSize="30dp" />
 
         </LinearLayout>
 
