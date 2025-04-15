@@ -16,7 +16,7 @@ import java.io.File;
 
 public class Setting extends Activity {
     LinearLayout btnWidget;
-    LinearLayout btnMusic_Notify, profileLayout;
+    LinearLayout btnMusic_Notify, profileLayout, btnTaskStatistic;
     TextView btnBack, btnUpgrade, nameTextView;
     ImageView avatarImage;
     SQLiteDatabase db;
@@ -32,6 +32,7 @@ public class Setting extends Activity {
         btnMusic_Notify = findViewById(R.id.btnMusicNotify);
         btnUpgrade = findViewById(R.id.btnUpgrade);
         profileLayout = findViewById(R.id.profileLayout);
+        btnTaskStatistic = findViewById(R.id.btnTaskStatistic);
 
         avatarImage = findViewById(R.id.avatar);
         nameTextView = findViewById(R.id.name);
@@ -57,6 +58,18 @@ public class Setting extends Activity {
         btnMusic_Notify.setOnClickListener(v -> {
             Intent intent = new Intent(Setting.this, NotificationSettingHome.class);
             startActivity(intent);
+        });
+        btnTaskStatistic.setOnClickListener(v -> {
+            // Check if the user is a premium user
+            if (!DatabaseHelper.isPremiumUser(this)) {
+                Intent premiumIntent = new Intent(this, PremiumRequestActivity.class);
+                startActivity(premiumIntent);
+            }
+            // If the user is a premium user, proceed to TaskStatistics
+            else {
+                Intent intent = new Intent(Setting.this, TaskStatistics.class);
+                startActivity(intent);
+            }
         });
     }
 

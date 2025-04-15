@@ -3,6 +3,7 @@ package com.example.project;
 import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -165,12 +166,11 @@ public class HabitActivity extends AppCompatActivity {
         }
     }
 
-    // Save a new habit to the database
+    // Update the saveHabit method to also take a context parameter for consistency
     @SuppressLint("RestrictedApi")
-    public long saveHabit(Habit habit) {
-        int userId = LoginSessionManager.getInstance(this).getUserId();
-
-        SQLiteDatabase db = DatabaseHelper.getInstance(this).openDatabase();
+    public long saveHabit(Context context, Habit habit) {
+        int userId = LoginSessionManager.getInstance(context).getUserId();
+        SQLiteDatabase db = DatabaseHelper.getInstance(context).openDatabase();
         int newId = -1;
 
         try {
@@ -190,10 +190,18 @@ public class HabitActivity extends AppCompatActivity {
             newId = (int) db.insert("tbl_habit", null, values);
             Log.d(TAG, "Habit saved with ID: " + newId);
         } catch (Exception e) {
-            Log.d(TAG, "Error saving habit", e);
+            Log.e(TAG, "Error saving habit", e);
+        } finally {
+            DatabaseHelper.getInstance(context).closeDatabase();
         }
 
         return newId;
+    }
+
+    // Keep the original method for backward compatibility
+    @SuppressLint("RestrictedApi")
+    public long saveHabit(Habit habit) {
+        return saveHabit(this, habit);
     }
 
     // Get habits from the database for the current user only
@@ -257,6 +265,59 @@ public class HabitActivity extends AppCompatActivity {
         }
 
         return habits;
+    }
+
+    /**
+     * Update an existing habit in the database
+     * @param context The context to use for database operations
+     * @param habit The habit to update
+     * @return true if update was successful, false otherwise
+     */
+    @SuppressLint("RestrictedApi")
+    public boolean editHabit(Context context, Habit habit) {
+        if (habit == null || habit.getId() <= 0) {
+            Log.e(TAG, "Cannot edit habit: Invalid habit or habit ID");
+            return false;
+        }
+
+        SQLiteDatabase db = DatabaseHelper.getInstance(context).openDatabase();
+        boolean success = false;
+
+        try {
+            ContentValues values = new ContentValues();
+            // We don't update user_id as that shouldn't change
+            values.put("name", habit.getName());
+            values.put("quote", habit.getQuote());
+            values.put("frequency", habit.getFrequency());
+            values.put("week_days", booleanArrayToString(habit.getWeekDays()));
+            values.put("goal", habit.getGoal());
+            values.put("start_date", dateToString(habit.getStartDate()));
+            values.put("goal_days", habit.getGoalDays());
+            values.put("section", habit.getSection());
+            values.put("reminder", habit.getReminder());
+            values.put("auto_popup", habit.isAutoPopup() ? 1 : 0);
+
+            // Update the record where id matches
+            int rowsUpdated = db.update(
+                "tbl_habit", 
+                values, 
+                "id = ?", 
+                new String[] { String.valueOf(habit.getId()) }
+            );
+
+            success = (rowsUpdated > 0);
+            Log.d(TAG, "Habit updated, ID: " + habit.getId() + ", Success: " + success);
+            
+            // If reminder changed, reschedule notifications
+            HabitNotificationHelper.scheduleHabitReminders(context);
+            
+        } catch (Exception e) {
+            Log.e(TAG, "Error updating habit", e);
+        } finally {
+            DatabaseHelper.getInstance(context).closeDatabase();
+        }
+
+        return success;
     }
 
     // Helper methods for data conversion

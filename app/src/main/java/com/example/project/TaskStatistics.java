@@ -45,12 +45,17 @@ public class TaskStatistics extends AppCompatActivity {
     // Date handling
     private Calendar currentDate = Calendar.getInstance();
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+    // Get current user's ID once in a class field
+    private int currentUserId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.task_statistics);
 
+        // Get the current user ID once
+        currentUserId = LoginSessionManager.getInstance(this).getUserId();
+        
         initializeViews();
         setupListeners();
         loadStatisticsForToday();
@@ -412,7 +417,7 @@ public class TaskStatistics extends AppCompatActivity {
     private void loadStatisticsForToday() {
         String startDate = dateFormat.format(currentDate.getTime());
         String endDate = dateFormat.format(currentDate.getTime());
-        HashMap<String, Integer> todayStats = getDetailedTaskStats(this, startDate, endDate, 1);
+        HashMap<String, Integer> todayStats = getDetailedTaskStats(this, startDate, endDate, currentUserId);
         totalTasks = todayStats.get("total_tasks");
         completedTasks = todayStats.get("completed_tasks");
         overdueTasks = todayStats.get("completed_late");
@@ -441,8 +446,7 @@ public class TaskStatistics extends AppCompatActivity {
         String endDate = dateFormat.format(endDateObj);
         
         // Get userId from your login session
-        int userId = 1; // Replace with actual user ID
-        HashMap<String, Integer> stats = getDetailedTaskStats(this, startDate, endDate, userId);
+        HashMap<String, Integer> stats = getDetailedTaskStats(this, startDate, endDate, currentUserId);
         
         totalTasks = stats.get("total_tasks");
         completedTasks = stats.get("completed_tasks");
@@ -473,8 +477,7 @@ public class TaskStatistics extends AppCompatActivity {
         String endDate = dateFormat.format(endDateObj);
 
         // Get userId from your login session
-        int userId = 1; // Replace with actual user ID
-        HashMap<String, Integer> stats = getDetailedTaskStats(this, startDate, endDate, userId);
+        HashMap<String, Integer> stats = getDetailedTaskStats(this, startDate, endDate, currentUserId);
 
         totalTasks = stats.get("total_tasks");
         completedTasks = stats.get("completed_tasks");
@@ -487,7 +490,7 @@ public class TaskStatistics extends AppCompatActivity {
     }
 
     private void loadStatisticsforForAll(){
-        HashMap<String, Integer> allStats = getAllDetailedTaskStats(this, 1);
+        HashMap<String, Integer> allStats = getAllDetailedTaskStats(this, currentUserId);
         totalTasks = allStats.get("total_tasks");
         completedTasks = allStats.get("completed_tasks");
         overdueTasks = allStats.get("completed_late");

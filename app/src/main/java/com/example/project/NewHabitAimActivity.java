@@ -46,12 +46,18 @@ public class NewHabitAimActivity extends AppCompatActivity {
 
     private Calendar calendar;
 
+    // Add this as a class variable
+    private boolean isEditing = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.new_habit_aim);
 
+        // Get the habit object and editing status from intent
         habit = (Habit) getIntent().getSerializableExtra("habit");
+        isEditing = getIntent().getBooleanExtra("isEditing", false);
+        
         if (habit == null) {
             habit = new Habit();
             // Initialize weekDays array with false values
@@ -62,6 +68,11 @@ public class NewHabitAimActivity extends AppCompatActivity {
         setDefaultValues();
         setupListeners();
         updateWeekdayChipGroupVisibility();
+        
+        // Update title if editing
+        if (isEditing) {
+            ((TextView) findViewById(R.id.new_habit)).setText(R.string.edit_habit);
+        }
     }
 
     private void initializeUI() {
@@ -321,7 +332,7 @@ public class NewHabitAimActivity extends AppCompatActivity {
         else if (chipInterval.isChecked()) frequency = interval;
         habit.setFrequency(frequency);
         
-        // Ensure weekdays are properly collected (especially important for Weekly frequency)
+        // Ensure weekdays are properly collected
         boolean[] weekDays = new boolean[7];
         weekDays[0] = chipSun.isChecked();
         weekDays[1] = chipMon.isChecked();
@@ -332,19 +343,30 @@ public class NewHabitAimActivity extends AppCompatActivity {
         weekDays[6] = chipSat.isChecked();
         habit.setWeekDays(weekDays);
         
-        int habitId = (int) new HabitActivity().saveHabit(habit);
+        // Use the correct method based on isEditing flag
+        HabitActivity habitActivity = new HabitActivity();
+        boolean success;
+        
+        if (isEditing) {
+            // Update existing habit
+            success = habitActivity.editHabit(this, habit);
+        } else {
+            // Create new habit
+            int habitId = (int) habitActivity.saveHabit(habit);
+            success = (habitId != -1);
+            if (success) {
+                // Update the habit with the new ID
+                habit.setId(habitId);
+            }
+        }
 
-        if (habitId != -1) {
-            // Update the habit with the new ID
-            habit.setId(habitId);
-            
-            Toast.makeText(this, R.string.habit_saved_success, Toast.LENGTH_SHORT).show();
+        if (success) {
 
             Intent intent = new Intent(this, HabitActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
         } else {
-            Toast.makeText(this, R.string.habit_saved_error, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Failed to save habit", Toast.LENGTH_SHORT).show();
         }
     }
 }
