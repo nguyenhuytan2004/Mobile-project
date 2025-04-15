@@ -14,6 +14,8 @@
         <item>3 - Not important but Urgent</item>
         <item>4 - Not important and Not urgent</item>
     </string-array>
+
+    <string name="user">User</string>
     
     <!-- Habit Gallery -->
     <string name="title_habit_gallery">Habit Gallery</string>
@@ -253,5 +255,31 @@
     <string name="focus_complete">Focus complete</string>
     <string name="focus_advice">Take a break before starting again!</string>
     <string name="focus_got_it">OK</string>
+
+    <!--  Widget  -->
+    <string name="widget_title">Widget</string>
+    <string name="widget_focus">Focus</string>
+    <string name="widget_habit">Habit</string>
+
+    <!--  Setting  -->
+    <string name="setting_title">Settings</string>
+    <string name="setting_premium_account">Premium Account</string>
+    <string name="setting_upgrade_premium">UPGRADE</string>
+    <string name="setting_extend_premium">EXTEND</string>
+    <string name="setting_tab_bar">Tab Bar</string>
+    <string name="setting_ui">UI</string>
+    <string name="setting_date_time">Date &amp; Time</string>
+    <string name="setting_sound_notification">Sound &amp; Notification</string>
+    <string name="setting_general">General</string>
+
+    <!--  Profile  -->
+    <string name="profile_title">Profile</string>
+    <string name="profile_avatar">Avatar</string>
+    <string name="profile_sex">Sex</string>
+    <string name="profile_birthday">Birthday</string>
+    <string name="profile_input_hint">Enter name...</string>
+    <string name="profile_full_name">Full name</string>
+    <string name="profile_female">Female</string>
+    <string name="profile_male">Male</string>
 
 </resources>

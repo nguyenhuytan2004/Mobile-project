@@ -153,7 +153,7 @@ CREATE TABLE "tbl_weights" (
 );
 
 INSERT INTO "android_metadata" VALUES ('en_US');
-INSERT INTO "tbl_user" VALUES (1,'alice@example.com',0,0);
+INSERT INTO "tbl_user" VALUES (1,'alice@example.com',0,1);
 
 INSERT INTO "tbl_user_information" VALUES (1, '', 'Nguyễn Văn Khoác', 'Nam', '27 - 08 - 2005');
 

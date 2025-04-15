@@ -18,7 +18,7 @@
         android:id="@+id/widget_timer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Today: 5m"
+        android:text="@string/widget_focus"
         android:textColor="#FFFFFF"
         android:textSize="18sp"
         android:gravity="center"
@@ -26,11 +26,14 @@
 
     <Button
         android:id="@+id/widget_start_btn"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start"
         android:layout_marginTop="12dp"
         android:background="@drawable/button_round_full"
+        android:text="@string/focus_start"
+        android:textColor="#FFFFFF"
         android:textSize="18sp"
-        android:textColor="#FFFFFF" />
+        android:layout_gravity="center"
+        android:paddingHorizontal="40dp"
+        />
 </LinearLayout>

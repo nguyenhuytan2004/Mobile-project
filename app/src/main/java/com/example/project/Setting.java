@@ -40,7 +40,7 @@ public class Setting extends Activity {
         loadUserProfile();
 
         if (DatabaseHelper.isPremiumUser(this)) {
-            btnUpgrade.setText("GIA HẠN");
+            btnUpgrade.setText(getResources().getString(R.string.setting_extend_premium));
         }
         profileLayout.setOnClickListener(v -> {
             Intent intent = new Intent(Setting.this, Profile.class);
@@ -96,7 +96,7 @@ public class Setting extends Activity {
                 if (fullName != null && !fullName.isEmpty()) {
                     nameTextView.setText(fullName);
                 } else {
-                    nameTextView.setText("Người dùng");
+                    nameTextView.setText(getResources().getString(R.string.user));
                 }
             }
             cursor.close();

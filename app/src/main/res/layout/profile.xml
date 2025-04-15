@@ -28,7 +28,7 @@
             android:layout_height="match_parent"
             android:layout_marginLeft="30dp"
             android:gravity="center"
-            android:text="Tài khoản"
+            android:text="@string/profile_title"
             android:textColor="#CCE9E9E8"
             android:textSize="25sp" />
 
@@ -47,7 +47,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Ảnh đại diện"
+            android:text="@string/profile_avatar"
             android:textSize="20dp"
             android:textColor="@color/white"
             android:layout_gravity="center"
@@ -85,7 +85,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Họ và tên"
+            android:text="@string/profile_full_name"
             android:textSize="20dp"
             android:textColor="@color/white"
             android:layout_gravity="center"
@@ -130,7 +130,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Giới tính"
+            android:text="@string/profile_sex"
             android:textSize="20dp"
             android:textColor="@color/white"
             android:layout_gravity="center"
@@ -177,7 +177,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Ngày sinh"
+            android:text="@string/profile_birthday"
             android:textSize="20dp"
             android:textColor="@color/white"
             android:layout_gravity="center"
@@ -222,7 +222,7 @@
         android:id="@+id/btnSave"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Lưu"
+        android:text="@string/note_save"
         android:textSize="25dp"
         android:paddingHorizontal="10dp"
         android:paddingVertical="5dp"

@@ -22,7 +22,6 @@
             android:id="@+id/btnBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="&lt;"
             android:textColor="#CCE9E9E8"
             android:textSize="30sp"
@@ -32,19 +31,20 @@
             android:id="@+id/textView31"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tiện ích máy tính"
-            android:layout_weight="1"
+            android:text="@string/widget_title"
             android:textColor="#CCE9E9E8"
             android:textSize="25sp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="50dp"
-            android:layout_gravity="center"/>
+            android:layout_marginLeft="40dp"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
 
         <ImageView
             android:id="@+id/imageView8"
-            android:layout_width="20dp"
+            android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_weight="1"
             android:layout_gravity="center"
             android:src="@drawable/question_mark_icon" />
     </LinearLayout>
@@ -72,7 +72,7 @@
                 android:id="@+id/textView33"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tập trung"
+                android:text="@string/widget_focus"
                 android:textColor="#CCE9E9E8"
                 android:textSize="16sp"
                 android:layout_gravity="center"
@@ -97,7 +97,7 @@
                 android:id="@+id/textView34"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Thói quen hôm nay"
+                android:text="@string/widget_habit"
                 android:textColor="#CCE9E9E8"
                 android:textSize="16sp"
                 android:layout_gravity="center"
@@ -105,139 +105,6 @@
                 />
         </LinearLayout>
 
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="40dp">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/imageView3"
-                android:layout_width="160dp"
-                android:layout_height="160dp"
-                android:src="@drawable/widget_03"
-                android:layout_gravity="center"/>
-
-            <TextView
-                android:id="@+id/textView35"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Bản đồ nhiệt thói quen"
-                android:textColor="#CCE9E9E8"
-                android:textSize="16sp"
-                android:layout_gravity="center"
-                />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/imageView4"
-                android:layout_width="160dp"
-                android:layout_height="160dp"
-                android:src="@drawable/widget_04"
-                android:layout_gravity="center"/>
-
-            <TextView
-                android:id="@+id/textView36"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Thống kê hoàn thành nhiệm vụ"
-                android:textColor="#CCE9E9E8"
-                android:textSize="16sp"
-                android:layout_gravity="center"
-                android:paddingHorizontal="14dp"
-                />
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="40dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:orientation="vertical"
-            android:layout_marginLeft="15dp">
-
-            <ImageView
-                android:id="@+id/imageView11"
-                android:layout_width="wrap_content"
-                android:layout_height="80dp"
-                android:src="@drawable/widget_05" />
-
-            <TextView
-                android:id="@+id/textView37"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Huy hiệu"
-                android:textColor="#CCE9E9E8"
-                android:textSize="16sp"
-                android:layout_gravity="center"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_weight="1"
-            android:layout_marginLeft="20dp">
-
-            <ImageView
-                android:id="@+id/imageView12"
-                android:layout_width="wrap_content"
-                android:layout_height="80dp"
-                android:src="@drawable/widget_06" />
-
-            <TextView
-                android:id="@+id/textView38"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Pomo"
-                android:textColor="#CCE9E9E8"
-                android:textSize="16sp"
-                android:layout_gravity="center"
-                />
-        </LinearLayout>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <ImageView
-            android:id="@+id/imageView13"
-            android:layout_width="wrap_content"
-            android:layout_height="350dp"
-            android:src="@drawable/widget_07" />
-
-        <TextView
-            android:id="@+id/textView39"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Nhệm vụ"
-            android:textColor="#CCE9E9E8"
-            android:textSize="16sp"
-            android:layout_gravity="center"/>
     </LinearLayout>
 
     </LinearLayout>

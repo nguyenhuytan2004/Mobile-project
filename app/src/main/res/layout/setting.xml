@@ -27,7 +27,7 @@
             android:layout_height="match_parent"
             android:layout_marginLeft="30dp"
             android:gravity="center"
-            android:text="Cài đặt"
+            android:text="@string/setting_title"
             android:textColor="#CCE9E9E8"
             android:textSize="25sp"/>
 
@@ -72,12 +72,11 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="&gt;"
-            android:textColor="@color/gray"
-            android:textSize="30dp"
             android:layout_gravity="center"
             android:layout_marginLeft="20dp"
-            />
+            android:text="&gt;"
+            android:textColor="@color/gray"
+            android:textSize="30dp" />
 
     </LinearLayout>
 
@@ -98,7 +97,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tài khoản cao cấp"
+            android:text="@string/setting_premium_account"
             android:textSize="20dp"
             android:textColor="@color/white"
             android:layout_gravity="center"
@@ -115,7 +114,7 @@
             android:id="@+id/btnUpgrade"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="NÂNG CẤP NGAY"
+            android:text="@string/setting_upgrade_premium"
             android:textSize="12dp"
             android:background="@drawable/button_custom2"
             android:textColor="@color/orange"
@@ -143,7 +142,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Thanh tab"
+            android:text="@string/setting_tab_bar"
             android:textSize="20dp"
             android:textColor="@color/white"
             android:layout_gravity="center"
@@ -194,7 +193,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Giao diện"
+                android:text="@string/setting_ui"
                 android:textSize="20dp"
                 android:textColor="@color/white"
                 android:layout_gravity="center"
@@ -239,7 +238,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginLeft="20dp"
-                android:text="Ngày &amp; Thời gian"
+                android:text="@string/setting_date_time"
                 android:textColor="@color/white"
                 android:textSize="20dp" />
 
@@ -282,7 +281,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginLeft="20dp"
-                android:text="Âm thanh &amp; Thông báo"
+                android:text="@string/setting_sound_notification"
                 android:textColor="@color/white"
                 android:textSize="20dp" />
 
@@ -325,7 +324,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginLeft="20dp"
-                android:text="Tiện ích"
+                android:text="@string/widget_title"
                 android:textColor="@color/white"
                 android:textSize="20dp" />
 
@@ -367,7 +366,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginLeft="20dp"
-                android:text="Chung"
+                android:text="@string/setting_general"
                 android:textColor="@color/white"
                 android:textSize="20dp" />
 

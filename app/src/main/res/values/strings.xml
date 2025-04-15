@@ -16,7 +16,7 @@
     </string-array>
 
     <string name="client_id">814608883132-3rjf27ov6f0277opa59d1nuugvque1ov.apps.googleusercontent.com</string>
-
+    <string name="user">Người dùng</string>
     <!-- Habit Gallery -->
     <string name="title_habit_gallery">Danh sách thói quen</string>
     <string name="btn_all">Tất cả</string>
@@ -254,5 +254,33 @@
     <string name="focus_complete">Hoàn thành tập trung</string>
     <string name="focus_advice">Hãy nghỉ ngơi một chút trước khi bắt đầu lại!</string>
     <string name="focus_got_it">Đồng ý</string>
+
+    <!--  Widget  -->
+    <string name="widget_title">Tiện ích</string>
+    <string name="widget_focus">Tập trung</string>
+    <string name="widget_habit">Thói quen</string>
+
+    <!--  Setting  -->
+    <string name="setting_title">Cài đặt</string>
+    <string name="setting_premium_account">Tài khoản cao cấp</string>
+    <string name="setting_upgrade_premium">NÂNG CẤP</string>
+    <string name="setting_extend_premium">GIA HẠN</string>
+    <string name="setting_tab_bar">Thanh tab</string>
+    <string name="setting_ui">Giao diện</string>
+    <string name="setting_date_time">Ngày &amp; Thời gian</string>
+    <string name="setting_sound_notification">Âm thanh &amp; Thông báo</string>
+    <string name="setting_general">Chung</string>
+
+    <!--  Profile  -->
+    <string name="profile_title">Tài khoản</string>
+    <string name="profile_avatar">Ảnh đại diện</string>
+    <string name="profile_sex">>Giới tính</string>
+    <string name="profile_birthday">Ngày sinh</string>
+    <string name="profile_input_hint">Nhập tên...</string>
+    <string name="profile_full_name">Họ và tên</string>
+    <string name="profile_female">Nữ</string>
+    <string name="profile_male">Nam</string>
+
+
 </resources>
 

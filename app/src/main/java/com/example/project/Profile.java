@@ -156,7 +156,7 @@ public class Profile extends Activity {
         input.setInputType(InputType.TYPE_CLASS_TEXT);
         input.setText(nameText.getText().toString());
         input.setTextColor(Color.WHITE);
-        input.setHint("Nhập tên...");
+        input.setHint(getResources().getString(R.string.profile_input_hint));
         input.setHintTextColor(Color.GRAY);
         input.setPadding(20, 10, 10, 30);
 
@@ -164,13 +164,13 @@ public class Profile extends Activity {
 
         // Tạo dialog
         AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle("Họ và tên")
+                .setTitle(getResources().getString(R.string.profile_full_name))
                 .setView(layout)
-                .setPositiveButton("Lưu", (d, which) -> {
+                .setPositiveButton(getResources().getString(R.string.note_save), (d, which) -> {
                     String newName = input.getText().toString().trim();
                     nameText.setText(newName);
                 })
-                .setNegativeButton("Hủy", (d, which) -> d.dismiss())
+                .setNegativeButton(getResources().getString(R.string.cancel), (d, which) -> d.dismiss())
                 .create();
 
         // Bo góc + nền màu tối
@@ -188,18 +188,18 @@ public class Profile extends Activity {
     }
 
     private void showSexSelectionDialog() {
-        final String[] options = {"Nam", "Nữ"};
+        final String[] options = {getResources().getString(R.string.profile_male), getResources().getString(R.string.profile_female)};
 
         AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle("Giới tính")
+                .setTitle(getResources().getString(R.string.profile_sex))
                 .setSingleChoiceItems(options,
-                        sexText.getText().toString().equals("Nam") ? 0 : 1,
+                        sexText.getText().toString().equals(getResources().getString(R.string.profile_male)) ? 0 : 1,
                         (d, which) -> {
                             sexText.setText(options[which]);
                             sexText.setTextColor(Color.WHITE);
                             d.dismiss();
                         })
-                .setNegativeButton("Hủy", (dialogInterface, i) -> dialogInterface.dismiss())
+                .setNegativeButton(getResources().getString(R.string.cancel), (dialogInterface, i) -> dialogInterface.dismiss())
                 .create();
 
         // Dark mode style
@@ -281,7 +281,7 @@ public class Profile extends Activity {
 
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setView(dialogView)
-                .setPositiveButton("Lưu", (dialogInterface, i) -> {
+                .setPositiveButton(getResources().getString(R.string.note_save), (dialogInterface, i) -> {
                     int selectedDay = dayPicker.getValue();
                     int selectedMonth = monthPicker.getValue();
                     int selectedYear = yearPicker.getValue();
@@ -290,7 +290,7 @@ public class Profile extends Activity {
                             "%02d - %02d - %04d", selectedDay, selectedMonth, selectedYear);
                     birthdayText.setText(formattedDate);
                 })
-                .setNegativeButton("Hủy", (dialogInterface, i) -> dialogInterface.dismiss())
+                .setNegativeButton(getResources().getString(R.string.cancel), (dialogInterface, i) -> dialogInterface.dismiss())
                 .create();
 
         dialog.setOnShowListener(d -> {
