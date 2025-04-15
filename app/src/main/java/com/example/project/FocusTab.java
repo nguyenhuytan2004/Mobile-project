@@ -66,7 +66,6 @@ public class FocusTab extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        Log.e("FocusTab", "onCreate called");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.focus);
 
@@ -214,12 +213,12 @@ public class FocusTab extends AppCompatActivity {
             popupWindow.showAsDropDown(view, -630, -100);
 
             popupView.findViewById(R.id.focusSetting).setOnClickListener(v -> {
-                Toast.makeText(FocusTab.this, "Cài đặt tập trung", Toast.LENGTH_SHORT).show();
+                Toast.makeText(FocusTab.this, getResources().getString(R.string.focus_setting), Toast.LENGTH_SHORT).show();
                 popupWindow.dismiss();
             });
 
             popupView.findViewById(R.id.addDedicatedRecord).setOnClickListener(v -> {
-                Toast.makeText(FocusTab.this, "Thêm bản ghi chuyên tâm", Toast.LENGTH_SHORT).show();
+                Toast.makeText(FocusTab.this, getResources().getString(R.string.focus_add_count_focus_time), Toast.LENGTH_SHORT).show();
                 popupWindow.dismiss();
             });
         });
@@ -406,9 +405,9 @@ public class FocusTab extends AppCompatActivity {
         TextView content = endFocusView.findViewById(R.id.content);
         TextView btnConfirm = endFocusView.findViewById(R.id.btnConfirm);
 
-        title.setText("Hoàn thành tập trung");
-        content.setText("Hãy nghỉ ngơi một chút trước khi bắt đầu lại!");
-        btnConfirm.setText("Ok");
+        title.setText(getResources().getString(R.string.focus_complete));
+        content.setText(getResources().getString(R.string.focus_advice));
+        btnConfirm.setText(getResources().getString(R.string.focus_got_it));
 
         AlertDialog dialog = builder.create();
         dialog.setOnDismissListener(dialogInterface -> {
@@ -444,8 +443,8 @@ public class FocusTab extends AppCompatActivity {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "focus_time_channel")
                 .setSmallIcon(R.drawable.ticktick_icon)
-                .setContentTitle("Focus Time Ended")
-                .setContentText("Your focus session has ended. Take a break!")
+                .setContentTitle(getResources().getString(R.string.focus_complete))
+                .setContentText(getResources().getString(R.string.focus_advice))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true);

@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="10dp"
-        android:text="Cài đặt tập trung"
+        android:text="@string/focus_setting"
         android:textSize="20sp"
         android:textColor="#FFFFFF"/>
 
@@ -21,7 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="10dp"
-        android:text="Thêm chế độ đếm giờ tập trung"
+        android:text="@string/focus_add_count_focus_time"
         android:textSize="20sp"
         android:textColor="#FFFFFF"/>
 </LinearLayout>

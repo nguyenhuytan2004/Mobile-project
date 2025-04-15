@@ -29,7 +29,7 @@
             android:id="@+id/textView31"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tiếng ồn trắng"
+            android:text="@string/focus_white_noise"
             android:textColor="#CCE9E9E8"
             android:textSize="30sp"
             android:layout_gravity="center"/>
@@ -59,7 +59,7 @@
                 android:id="@+id/textView40"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Không có"
+                android:text="@string/focus_none"
                 android:textColor="#CCE9E9E8"
                 android:textSize="16sp"/>
         </LinearLayout>
@@ -81,7 +81,7 @@
                 android:id="@+id/textView41"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Đồng hồ"
+                android:text="@string/focus_clock"
                 android:textColor="#CCE9E9E8"
                 android:textSize="16sp"/>
         </LinearLayout>
@@ -103,7 +103,7 @@
                 android:id="@+id/textView42"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Mưa"
+                android:text="@string/focus_rain"
                 android:textColor="#CCE9E9E8"
                 android:textSize="16sp" />
         </LinearLayout>

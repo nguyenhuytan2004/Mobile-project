@@ -239,4 +239,19 @@
     <string name="note_done">Done</string>
     <string name="note_constant_reminder">Constant reminder</string>
 
+    <!--  Focus  -->
+    <string name="focus_start">Start</string>
+    <string name="focus_setting">Focus setting</string>
+    <string name="focus_add_count_focus_time">Add focus time</string>
+    <string name="focus_add_focus_note">Add focus note</string>
+    <string name="focus_note_title">Note</string>
+    <string name="focus_note_hint">Write down your thoughts...</string>
+    <string name="focus_white_noise">White noise</string>
+    <string name="focus_none">None</string>
+    <string name="focus_clock">Clock</string>
+    <string name="focus_rain">Rain</string>
+    <string name="focus_complete">Focus complete</string>
+    <string name="focus_advice">Take a break before starting again!</string>
+    <string name="focus_got_it">OK</string>
+
 </resources>

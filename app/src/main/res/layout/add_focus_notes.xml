@@ -10,7 +10,7 @@
         android:id="@+id/textView49"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Tập trung ghi chú"
+        android:text="@string/focus_note_title"
         android:textColor="@color/white"
         android:textSize="20sp"
         android:layout_marginBottom="15dp"
@@ -26,7 +26,7 @@
         android:textSize="16dp"
         android:textColor="@color/white"
         android:textColorHint="@color/white"
-        android:hint="Hãy ghi lại những suy nghĩ của bạn..."
+        android:hint="@string/focus_note_hint"
         android:layout_marginBottom="15dp"
         android:background="#5c5b5b"
         android:padding="10dp"
@@ -43,7 +43,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="HUỶ BỎ"
+            android:text="@string/cancel"
             android:layout_marginRight="15dp"
             android:background="@drawable/button_custom"/>
 
@@ -52,7 +52,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="LƯU"
+            android:text="@string/note_save"
             android:background="@drawable/button_custom"
             />
     </LinearLayout>
