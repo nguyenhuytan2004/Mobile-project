@@ -1,7 +1,10 @@
 package com.example.project;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -31,9 +34,34 @@ public class MainActivity extends AppCompatActivity {
                         System.out.println("MainActivity ID Token: " + signInAccount.getIdToken());
                         auth.signInWithCredential(credential).addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
-                                // Đăng nhập thành công -> chuyển sang HomeActivity
-                                Intent intent = new Intent(MainActivity.this, HomeActivity.class);
-                                startActivity(intent);
+                                String email = signInAccount.getEmail();
+
+                                SQLiteDatabase db = null;
+                                Cursor cursor = null;
+                                try {
+                                    db = DatabaseHelper.getInstance(this).openDatabase();
+
+                                    String query = "SELECT id FROM tbl_user WHERE email = ?";
+                                    cursor = db.rawQuery(query, new String[]{email});
+
+                                    if (cursor == null || !cursor.moveToFirst()) {
+                                        String insertQuery = "INSERT INTO tbl_user (email, isGoogle, premium) VALUES (?, ?, ?)";
+                                        db.execSQL(insertQuery, new Object[]{email, 1, 0});
+                                        Log.d("DB", "Inserted new user: " + email);
+                                    } else {
+                                        Log.d("DB", "User already exists: " + email);
+                                    }
+
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    Toast.makeText(MainActivity.this, "Lỗi truy vấn người dùng", Toast.LENGTH_SHORT).show();
+                                } finally {
+                                    if (cursor != null) cursor.close();
+                                    if (db != null) db.close();
+                                }
+
+                                // Sau khi xử lý DB -> chuyển sang HomeActivity
+                                startActivity(new Intent(MainActivity.this, HomeActivity.class));
                                 finish();
                             } else {
                                 Toast.makeText(MainActivity.this, "Đăng nhập thất bại: " + task.getException(), Toast.LENGTH_SHORT).show();

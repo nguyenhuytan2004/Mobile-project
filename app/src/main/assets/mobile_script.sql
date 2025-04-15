@@ -5,7 +5,6 @@ CREATE TABLE "android_metadata" (
 	"locale"	TEXT
 );
 
-
 DROP TABLE IF EXISTS "tbl_note";
 CREATE TABLE "tbl_note" (
 	id INTEGER,
@@ -124,11 +123,10 @@ CREATE TABLE tbl_habit (
 
 DROP TABLE IF EXISTS "tbl_user";
 CREATE TABLE "tbl_user" (
-	id INTEGER,
-	email TEXT NOT NULL,
-	password_hash TEXT,
-	isGoogle INTEGER DEFAULT 0,
-	PRIMARY KEY("id" AUTOINCREMENT)
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email TEXT NOT NULL UNIQUE,
+    isGoogle INTEGER DEFAULT 0,
+    premium INTEGER DEFAULT 0
 );
 
 DROP TABLE IF EXISTS "tbl_weights";
@@ -140,9 +138,7 @@ CREATE TABLE "tbl_weights" (
 );
 
 INSERT INTO "android_metadata" VALUES ('en_US');
-INSERT INTO "tbl_user" VALUES (1,'alice@example.com','hashed_password_123',0);
-INSERT INTO "tbl_user" VALUES (2,'bob@example.com','hashed_password_456',0);
-INSERT INTO "tbl_user" VALUES (3,'alice@example.com',NULL,1);
+INSERT INTO "tbl_user" VALUES (1,'nvxanh75@gmail.com',0,0);
 
 INSERT INTO tbl_list VALUES
 (1, 'none' , NULL),
@@ -154,11 +150,8 @@ INSERT INTO tbl_category VALUES
 (2, 'Weekend', 3),
 (3, 'Daily work', 3);
 
-INSERT INTO "tbl_note" VALUES (1,1,'Tourism','Da Nang
-Nha Trang
-Phan Thiet', 2);
-INSERT INTO "tbl_note" VALUES (2,1,'Haha','ascnaocwnaocwnoawncoanwcaoiamacnon
-caoihwdohawdhaowdihoasdjpdsjapdwmawdpo', 2);
+INSERT INTO "tbl_note" VALUES (1,1,'Tourism','Da Nang Nha Trang Phan Thiet', 2);
+INSERT INTO "tbl_note" VALUES (2,1,'Haha','ascnaocwnaocwnoawncoanwcaoiamacnoncaoihwdohawdhaowdihoasdjpdsjapdwmawdpo', 2);
 
 INSERT INTO "tbl_note_photo" VALUES (13,1,'file:///data/user/0/com.example.project/files/note_img_1743490583956.jpg');
 
