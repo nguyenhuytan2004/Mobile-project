@@ -1,6 +1,9 @@
 package com.example.project;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -10,6 +13,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TAG = "DatabaseHelper";
@@ -89,6 +95,72 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
         }
         return database;
+    }
+
+    public boolean isPremiumUser(Context context, int userId) {
+        SQLiteDatabase db = null;
+        boolean isPremium = false;
+
+        try {
+            db = DatabaseHelper.getInstance(context).openDatabase();
+
+            // Query the correct column (is_premium) for the specified user
+            Cursor cursor = db.rawQuery(
+                    "SELECT is_premium FROM tbl_user WHERE id = ?", 
+                    new String[] { String.valueOf(userId) });
+
+            if (cursor.moveToFirst()) {
+                isPremium = cursor.getInt(0) == 1;
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Error checking premium status", e);
+        } finally {
+            if (db != null) {
+                DatabaseHelper.getInstance(context).closeDatabase();
+            }
+        }
+
+        return isPremium;
+    }
+
+    // Add this static method
+    public static boolean isPremiumUser(Context context) {
+        // Get current user ID (assuming you store it somewhere like SharedPreferences)
+        LoginSessionManager loginSessionManager = LoginSessionManager.getInstance(context);
+        int currentUserId = loginSessionManager.getUserId();
+
+        // Call the instance method with both parameters
+        return getInstance(context).isPremiumUser(context, currentUserId);
+    }
+
+    public void markTaskAsCompleted(int taskId, boolean isCompleted) {
+        SQLiteDatabase db = null;
+        try {
+            db = openDatabase();
+            ContentValues values = new ContentValues();
+            values.put("is_completed", isCompleted ? 1 : 0);
+
+            // Store completion datetime when marking as completed
+            if (isCompleted) {
+                // Get current datetime in ISO 8601 format
+                String completionDateTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US)
+                        .format(new Date());
+                values.put("completion_datetime", completionDateTime);
+            } else {
+                // If marking as not completed, clear the completion datetime
+                values.putNull("completion_datetime");
+            }
+
+            db.update("tbl_task", values, "id = ?", new String[] {String.valueOf(taskId)});
+        } catch (Exception e) {
+            Log.e(TAG, "Error marking task as completed", e);
+        } finally {
+            if (db != null) {
+                closeDatabase();
+            }
+        }
     }
 
     @Override

@@ -34,6 +34,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/profileLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -42,21 +43,24 @@
         >
 
         <ImageView
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:src="@drawable/ic_user_avatar"
+            android:id="@+id/avatar"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
             android:background="@drawable/circle_background"
-            android:padding="5dp"
-            />
+            android:src="@drawable/ic_user_avatar"
+            android:layout_marginRight="10dp"
+            android:scaleType="centerCrop"
+            android:clipToOutline="true" />
 
         <TextView
+            android:id="@+id/name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Nguyễn Huy Tấn"
             android:textColor="@color/white"
             android:textSize="25dp"
             android:layout_gravity="center"
-            android:layout_marginLeft="30dp"
+            android:layout_marginLeft="10dp"
             />
 
         <View
@@ -108,6 +112,7 @@
             />
 
         <TextView
+            android:id="@+id/btnUpgrade"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="NÂNG CẤP NGAY"

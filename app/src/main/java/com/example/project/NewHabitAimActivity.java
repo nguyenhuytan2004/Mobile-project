@@ -100,33 +100,41 @@ public class NewHabitAimActivity extends AppCompatActivity {
         Date today = calendar.getTime();
         habit.setStartDate(today);
 
-        habit.setGoal("5 Page daily");
-        habit.setGoalDays("Forever");
-        habit.setSection("Others");
-        habit.setReminder("13:00");
+        String defaultGoal = getString(R.string.default_goal);
+        String defaultGoalDays = getString(R.string.forever);
+        String defaultSection = getString(R.string.default_section);
+        
+        // Set default values using string resources
+        habit.setGoal(defaultGoal);
+        habit.setGoalDays(defaultGoalDays);
+        habit.setSection(defaultSection);
+        habit.setReminder("13:00");  // Time format can stay the same
 
         switchAutoPopup.setChecked(false);
         habit.setAutoPopup(false);
         
-        editTextGoal.setText("5 Page daily");
+        editTextGoal.setText(defaultGoal);
         
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy", Locale.US);
+        // Use device locale instead of hardcoded US locale
+        Locale currentLocale = getResources().getConfiguration().locale;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy", currentLocale);
         String formattedDate = dateFormat.format(calendar.getTime());
         tvStartDate.setText(formattedDate);
         
-        String[] goalDaysOptions = {"7 days", "14 days", "30 days", "90 days", "Forever"};
+        // Load arrays from resources
+        String[] goalDaysOptions = getResources().getStringArray(R.array.goal_days_options);
         ArrayAdapter<String> goalDaysAdapter = new ArrayAdapter<>(this, 
                 android.R.layout.simple_spinner_item, goalDaysOptions);
         goalDaysAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerGoalDays.setAdapter(goalDaysAdapter);
-        spinnerGoalDays.setSelection(4);
+        spinnerGoalDays.setSelection(4);  // Default to "Forever"
         
-        String[] sectionOptions = {"Sport", "Daily life", "Learning", "Others"};
+        String[] sectionOptions = getResources().getStringArray(R.array.section_options);
         ArrayAdapter<String> sectionAdapter = new ArrayAdapter<>(this, 
                 android.R.layout.simple_spinner_item, sectionOptions);
         sectionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerSection.setAdapter(sectionAdapter);
-        spinnerSection.setSelection(3);
+        spinnerSection.setSelection(3);  // Default to "Others"
         
         tvReminderTime.setText("13:00");
     }
@@ -298,16 +306,19 @@ public class NewHabitAimActivity extends AppCompatActivity {
 
     private void saveHabit() {
         // Update all habit data from UI input fields
-
         habit.setGoal(editTextGoal.getText().toString());
         habit.setGoalDays(spinnerGoalDays.getSelectedItem().toString());
         habit.setSection(spinnerSection.getSelectedItem().toString());
         
         // Handle frequency-related data
+        String daily = getString(R.string.chip_daily);
+        String weekly = getString(R.string.chip_weekly);
+        String interval = getString(R.string.chip_interval);
+        
         String frequency = null;
-        if (chipDaily.isChecked()) frequency = "Daily";
-        else if (chipWeekly.isChecked()) frequency = "Weekly";
-        else if (chipInterval.isChecked()) frequency = "Interval";
+        if (chipDaily.isChecked()) frequency = daily;
+        else if (chipWeekly.isChecked()) frequency = weekly;
+        else if (chipInterval.isChecked()) frequency = interval;
         habit.setFrequency(frequency);
         
         // Ensure weekdays are properly collected (especially important for Weekly frequency)
@@ -321,16 +332,19 @@ public class NewHabitAimActivity extends AppCompatActivity {
         weekDays[6] = chipSat.isChecked();
         habit.setWeekDays(weekDays);
         
-        long habitId = new HabitActivity().saveHabit(habit);
+        int habitId = (int) new HabitActivity().saveHabit(habit);
 
         if (habitId != -1) {
-            Toast.makeText(this, "Habit saved successfully!", Toast.LENGTH_SHORT).show();
+            // Update the habit with the new ID
+            habit.setId(habitId);
+            
+            Toast.makeText(this, R.string.habit_saved_success, Toast.LENGTH_SHORT).show();
 
             Intent intent = new Intent(this, HabitActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
         } else {
-            Toast.makeText(this, "Error saving habit", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.habit_saved_error, Toast.LENGTH_SHORT).show();
         }
     }
 }

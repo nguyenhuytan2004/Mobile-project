@@ -29,11 +29,21 @@ public class HabitActivity extends AppCompatActivity {
     private ArrayList<Habit> habitList;
     private HabitAdapter habitAdapter;
     private DatabaseHelper dbHelper;
+    
+    // Constants for habit sections to avoid hardcoding strings
+    private String SECTION_ALL;
+    private String SECTION_DAILY_LIFE;
+    private String SECTION_SPORT;
+    private String SECTION_LEARNING;
+    private String SECTION_OTHERS;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.habit);
+        
+        // Initialize section strings from resources
+        initSectionStrings();
 
         // Initialize database helper
         dbHelper = DatabaseHelper.getInstance(this);
@@ -53,6 +63,22 @@ public class HabitActivity extends AppCompatActivity {
 
         // Load habits from database
         loadHabitsFromDatabase();
+
+        // Create notification channel
+        HabitNotificationHelper.createNotificationChannel(this);
+
+        // Schedule all habit reminders
+        HabitNotificationHelper.scheduleHabitReminders(this);
+    }
+    
+    // Initialize section strings from resources to support multiple languages
+    private void initSectionStrings() {
+        SECTION_ALL = "all"; // This is a special filter value, not displayed
+        // Get localized section names from resources
+        SECTION_DAILY_LIFE = getString(R.string.btn_daily_life);
+        SECTION_SPORT = getString(R.string.btn_sport);
+        SECTION_LEARNING = getString(R.string.btn_learning);
+        SECTION_OTHERS = getString(R.string.others);
     }
 
     private void initializeUI() {
@@ -96,17 +122,18 @@ public class HabitActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // Filter buttons listeners
-        btnAll.setOnClickListener(v -> filterHabits("all"));
-        btnDailyLife.setOnClickListener(v -> filterHabits("Daily life"));
-        btnSport.setOnClickListener(v -> filterHabits("Sport"));
-        btnLearning.setOnClickListener(v -> filterHabits("Learning"));
+        // Filter buttons listeners - use constants instead of hardcoded strings
+        btnAll.setOnClickListener(v -> filterHabits(SECTION_ALL));
+        btnDailyLife.setOnClickListener(v -> filterHabits(SECTION_DAILY_LIFE));
+        btnSport.setOnClickListener(v -> filterHabits(SECTION_SPORT));
+        btnLearning.setOnClickListener(v -> filterHabits(SECTION_LEARNING));
 
         // GridView item click listener
         gridView.setOnItemClickListener((parent, view, position, id) -> {
             Habit selectedHabit = habitList.get(position);
-            // Show habit details
-            Toast.makeText(HabitActivity.this, "Selected: " + selectedHabit.getName(), Toast.LENGTH_SHORT).show();
+            // Show habit details with a localized message format
+            String message = getString(R.string.selected_habit, selectedHabit.getName());
+            Toast.makeText(HabitActivity.this, message, Toast.LENGTH_SHORT).show();
             
             // Here you can open a detail activity for the selected habit
             // Intent intent = new Intent(HabitActivity.this, HabitDetailActivity.class);
@@ -142,7 +169,7 @@ public class HabitActivity extends AppCompatActivity {
     @SuppressLint("RestrictedApi")
     public long saveHabit(Habit habit) {
         SQLiteDatabase db = DatabaseHelper.getInstance(this).openDatabase();
-        long newId = -1;
+        int newId = -1;
 
         try {
             ContentValues values = new ContentValues();
@@ -157,7 +184,7 @@ public class HabitActivity extends AppCompatActivity {
             values.put("reminder", habit.getReminder());
             values.put("auto_popup", habit.isAutoPopup() ? 1 : 0);
 
-            newId = db.insert("tbl_habit", null, values);
+            newId = (int) db.insert("tbl_habit", null, values);
             Log.d(TAG, "Habit saved with ID: " + newId);
         } catch (Exception e) {
             Log.e(TAG, "Error saving habit", e);
@@ -181,7 +208,7 @@ public class HabitActivity extends AppCompatActivity {
                     
                     // Get column indexes to avoid issues with column order
                     int idIndex = cursor.getColumnIndex("id");
-                    if (idIndex >= 0) habit.setId(cursor.getLong(idIndex));
+                    if (idIndex >= 0) habit.setId(cursor.getInt(idIndex));
                     
                     int nameIndex = cursor.getColumnIndex("name");
                     if (nameIndex >= 0) habit.setName(cursor.getString(nameIndex));
@@ -251,7 +278,8 @@ public class HabitActivity extends AppCompatActivity {
 
     private String dateToString(Date date) {
         if (date == null) return "";
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        // Use device locale for consistent date formatting
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         return sdf.format(date);
     }
 
@@ -259,7 +287,8 @@ public class HabitActivity extends AppCompatActivity {
     private Date stringToDate(String dateStr) {
         if (dateStr == null || dateStr.isEmpty()) return null;
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+            // Use device locale for consistent date parsing
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
             return sdf.parse(dateStr);
         } catch (Exception e) {
             Log.e(TAG, "Error parsing date", e);
@@ -270,7 +299,7 @@ public class HabitActivity extends AppCompatActivity {
     private void filterHabits(String filter) {
         ArrayList<Habit> filteredList = new ArrayList<>();
         
-        if (filter.equals("all")) {
+        if (filter.equals(SECTION_ALL)) {
             filteredList.addAll(habitList);
         } else {
             for (Habit habit : habitList) {

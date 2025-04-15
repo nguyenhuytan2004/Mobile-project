@@ -3,6 +3,7 @@ package com.example.project;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
                         GoogleSignInAccount signInAccount = accountTask.getResult(ApiException.class);
                         AuthCredential credential = GoogleAuthProvider.getCredential(signInAccount.getIdToken(), null);
                         System.out.println("MainActivity ID Token: " + signInAccount.getIdToken());
+
                         auth.signInWithCredential(credential).addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
                                 String email = signInAccount.getEmail();
@@ -45,8 +47,13 @@ public class MainActivity extends AppCompatActivity {
                                     cursor = db.rawQuery(query, new String[]{email});
 
                                     if (cursor == null || !cursor.moveToFirst()) {
-                                        String insertQuery = "INSERT INTO tbl_user (email, isGoogle, premium) VALUES (?, ?, ?)";
-                                        db.execSQL(insertQuery, new Object[]{email, 1, 0});
+                                        String insertQuery = "INSERT INTO tbl_user (email, isGoogle, is_premium) VALUES (?, ?, ?)";
+                                        SQLiteStatement stmt = db.compileStatement(insertQuery);
+                                        stmt.bindString(1, email);
+                                        stmt.bindLong(2, 1); // isGoogle = 1
+                                        stmt.bindLong(3, 0); // is_premium = 0
+                                        stmt.executeInsert();
+
                                         Log.d("DB", "Inserted new user: " + email);
                                     } else {
                                         Log.d("DB", "User already exists: " + email);
@@ -74,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
     );
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

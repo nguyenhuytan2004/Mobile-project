@@ -76,6 +76,11 @@ public class NoteActivity extends AppCompatActivity {
         }
 
         btnDate.setOnClickListener(view -> {
+            if (!DatabaseHelper.isPremiumUser(this)) {
+                startActivity(new Intent(NoteActivity.this, PremiumRequestActivity.class));
+                return;
+            }
+
             SetReminderDialog dialog = new SetReminderDialog(noteId);
             dialog.setOnDateSelectedListener(new SetReminderDialog.OnReminderSettingsListener() {
                 @Override
@@ -253,7 +258,7 @@ public class NoteActivity extends AppCompatActivity {
 
                 ImageView attachedPhoto = new ImageView(this);
                 attachedPhoto.setImageURI(localUri);
-                attachedPhoto.setTag(localUri.toString()); // Store local URI for saving
+                attachedPhoto.setTag(localUri.toString());
 
                 FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams(300, 300);
                 params.setMargins(0, 0, 10, 10);
@@ -299,7 +304,7 @@ public class NoteActivity extends AppCompatActivity {
                         "ORDER BY n.id DESC";
         Cursor cursor = db.rawQuery(query, new String[]{noteId});
 
-        if (cursor != null && cursor.moveToFirst()) {
+        if (cursor.moveToFirst()) {
             titleInput.setText(cursor.getString(cursor.getColumnIndexOrThrow("title")));
             contentInput.setText(cursor.getString(cursor.getColumnIndexOrThrow("content")));
             String date = "";

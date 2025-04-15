@@ -36,6 +36,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import java.util.Map;
 import java.util.Objects;
 
 public class FocusTab extends AppCompatActivity {
@@ -58,6 +59,10 @@ public class FocusTab extends AppCompatActivity {
     private int prefFocusTime;
     private String prefWhiteNoise;
     SharedPreferences sharedPreferences;
+    Map<String, Integer> sounds = Map.of(
+            "clock", R.raw.clock_sound,
+            "rain", R.raw.rain_sound
+    );
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -111,7 +116,6 @@ public class FocusTab extends AppCompatActivity {
         });
 
         btnStart.setOnClickListener(view -> {
-            Log.e("FocusTab", "Start button clicked");
             front.setVisibility(View.GONE);
             behind.setVisibility(View.VISIBLE);
 
@@ -120,8 +124,7 @@ public class FocusTab extends AppCompatActivity {
                 playLayout.setVisibility(View.GONE);
             }
 
-//            int totalSecond = Integer.parseInt(focusTime.getText().toString().substring(0, 2)) * 60;
-            int totalSecond = 20;
+            int totalSecond = Integer.parseInt(focusTime.getText().toString().substring(0, 2)) * 60;
             timeLeftInMillis = totalSecond * 1000L;
 
             progressBar2.setMax(totalSecond);
@@ -131,16 +134,20 @@ public class FocusTab extends AppCompatActivity {
 
             sharedPreferences = getSharedPreferences("whiteNoise", MODE_PRIVATE);
             prefWhiteNoise = sharedPreferences.getString("storage_sound", "none");
-            Log.e("FocusTab", "White noise preference: " + prefWhiteNoise);
+
+            if (!DatabaseHelper.isPremiumUser(FocusTab.this)) {
+                prefWhiteNoise = "none";
+            }
+
             if (prefWhiteNoise.equals("none")) {
                 if (mediaPlayer != null) {
                     mediaPlayer.stop();
                     mediaPlayer.release();
                     mediaPlayer = null;
                 }
-            } else if (prefWhiteNoise.equals("clock")) {
+            } else {
                 if (mediaPlayer == null) {
-                    mediaPlayer = MediaPlayer.create(this, R.raw.clock_sound);
+                    mediaPlayer = MediaPlayer.create(this, sounds.get(prefWhiteNoise));
                     mediaPlayer.setLooping(true);
                     mediaPlayer.start();
                 }
@@ -192,6 +199,12 @@ public class FocusTab extends AppCompatActivity {
         });
 
         btnWhiteNoise.setOnClickListener(view -> {
+            boolean isPremiumUser = DatabaseHelper.isPremiumUser(FocusTab.this);
+            if (!isPremiumUser) {
+                startActivity(new Intent(FocusTab.this, PremiumRequestActivity.class));
+                return;
+            }
+
             startActivity(new Intent(FocusTab.this, WhiteNoise.class));
         });
 
@@ -245,13 +258,13 @@ public class FocusTab extends AppCompatActivity {
 
             SeekBar seekBar = focusTimeView.findViewById(R.id.seekBar);
             pomoTime = focusTimeView.findViewById(R.id.pomoTime);
-            seekBar.setProgress(Integer.parseInt(focusTime.getText().toString().substring(0, 2)) - 5);
-            pomoTime.setText(String.valueOf(seekBar.getProgress() + 5));
+            seekBar.setProgress(Integer.parseInt(focusTime.getText().toString().substring(0, 2)) - 1);
+            pomoTime.setText(String.valueOf(seekBar.getProgress() + 1));
 
             seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                    int value = progress + 5;
+                    int value = progress + 1;
                     pomoTime.setText(String.valueOf(value));
                 }
 
@@ -274,7 +287,7 @@ public class FocusTab extends AppCompatActivity {
             });
 
             btnSave.setOnClickListener(v2 -> {
-                int newTime = seekBar.getProgress() + 5;
+                int newTime = seekBar.getProgress() + 1;
                 focusTime.setText(String.format("%02d:00", newTime));
                 prefFocusTime = newTime;
 
@@ -315,7 +328,12 @@ public class FocusTab extends AppCompatActivity {
         super.onResume();
         sharedPreferences = getSharedPreferences("whiteNoise", MODE_PRIVATE);
         if (countDownTimer != null) {
-            prefWhiteNoise = sharedPreferences.getString("storage_sound", "none");
+            Log.d("FocusTab", "onResume: countDownTimer is not null");
+            if (!DatabaseHelper.isPremiumUser(FocusTab.this)) {
+                prefWhiteNoise = "none";
+            } else {
+                prefWhiteNoise = sharedPreferences.getString("storage_sound", "none");
+            }
         } else {
             prefWhiteNoise = sharedPreferences.getString("sound", "none");
         }
@@ -325,12 +343,15 @@ public class FocusTab extends AppCompatActivity {
                 mediaPlayer.release();
                 mediaPlayer = null;
             }
-        } else if (prefWhiteNoise.equals("clock")) {
-            if (mediaPlayer == null) {
-                mediaPlayer = MediaPlayer.create(this, R.raw.clock_sound);
-                mediaPlayer.setLooping(true);
-                if (!isPaused)
-                    mediaPlayer.start();
+        } else {
+            if (mediaPlayer != null) {
+                mediaPlayer.stop();
+                mediaPlayer.release();
+            }
+            mediaPlayer = MediaPlayer.create(this, sounds.get(prefWhiteNoise));
+            mediaPlayer.setLooping(true);
+            if (!isPaused) {
+                mediaPlayer.start();
             }
         }
     }

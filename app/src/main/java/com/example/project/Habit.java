@@ -101,7 +101,10 @@ public class Habit implements Serializable {
         this.autoPopup = autoPopup;
     }
 
-    public void setId(long aLong) {
-        this.setID = (int) aLong;
+    public void setId(int aLong) {
+        this.setID = aLong;
+    }
+    public int getId() {
+        return setID;
     }
 }

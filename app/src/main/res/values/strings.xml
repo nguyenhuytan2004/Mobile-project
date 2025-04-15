@@ -1,14 +1,14 @@
 <resources>
-    <string name="app_name">Project</string>
+    <string name="app_name">ĐỒ ÁN</string>
     <string name="focus_text"><font color="#FFFFFF">Tập trung</font> <font color="#888888">&gt;</font></string>
     <string name="time_reminder_text"><font color="#FFFFFF">Đúng ngày</font> <font color="#888888">(09:00)</font></string>
-    <string name="time_reminder_text1"><font color="#FFFFFF">1 days early</font> <font color="#888888">(09:00)</font></string>
-    <string name="time_reminder_text2"><font color="#FFFFFF">2 days early</font> <font color="#888888">(09:00)</font></string>
-    <string name="time_reminder_text3"><font color="#FFFFFF">3 days early</font> <font color="#888888">(09:00)</font></string>
-    <string name="time_reminder_text4"><font color="#FFFFFF">4 days early</font> <font color="#888888">(09:00)</font></string>
-    <string name="time_reminder_text5"><font color="#FFFFFF">5 days early</font> <font color="#888888">(09:00)</font></string>
-    <string name="time_reminder_text6"><font color="#FFFFFF">6 days early</font> <font color="#888888">(09:00)</font></string>
-    <string name="time_reminder_text7"><font color="#FFFFFF">1 week early</font> <font color="#888888">(09:00)</font></string>
+    <string name="time_reminder_text1"><font color="#FFFFFF">Sớm 1 ngày</font> <font color="#888888">(09:00)</font></string>
+    <string name="time_reminder_text2"><font color="#FFFFFF">Sớm 2 ngày</font> <font color="#888888">(09:00)</font></string>
+    <string name="time_reminder_text3"><font color="#FFFFFF">Sớm 3 ngày</font> <font color="#888888">(09:00)</font></string>
+    <string name="time_reminder_text4"><font color="#FFFFFF">Sớm 4 ngày</font> <font color="#888888">(09:00)</font></string>
+    <string name="time_reminder_text5"><font color="#FFFFFF">Sớm 5 ngày</font> <font color="#888888">(09:00)</font></string>
+    <string name="time_reminder_text6"><font color="#FFFFFF">Sớm 6 ngày</font> <font color="#888888">(09:00)</font></string>
+    <string name="time_reminder_text7"><font color="#FFFFFF">Sớm 1 tuần</font> <font color="#888888">(09:00)</font></string>
     <string-array name="priority_levels">
         <item>1 - Quan trọng và Khẩn cấp</item>
         <item>2 - Quan trọng nhưng Không khẩn cấp</item>
@@ -18,5 +18,211 @@
 
     <string name="client_id">814608883132-3rjf27ov6f0277opa59d1nuugvque1ov.apps.googleusercontent.com</string>
 
+    <!-- Habit Gallery -->
+    <string name="title_habit_gallery">Danh sách thói quen</string>
+    <string name="btn_all">Tất cả</string>
+    <string name="btn_daily_life">Cuộc sống</string>
+    <string name="btn_sport">Thể thao</string>
+    <string name="btn_learning">Học tập</string>
+    <string name="btn_add_new_habit">Thêm thói quen mới</string>
+    
+    <!-- Habit Item -->
+    <string name="habit_name_placeholder">Tên thói quen</string>
+    <string name="habit_quote_placeholder">Câu trích</string>
+    <string name="daily">Hàng ngày</string>
+    <string name="others">Khác</string>
+    
+    <!-- New Habit -->
+    <string name="new_habit">Thói quen mới</string>
+    <string name="hint_name">Tên</string>
+    <string name="label_quote">Câu trích</string>
+    <string name="hint_quote">Số nhỏ, kết quả lớn</string>
+    <string name="btn_next_aim_habit">Tiếp theo</string>
+    
+    <!-- New Habit Aim -->
+    <string name="frequency">Tần suất</string>
+    <string name="chip_daily">Hàng ngày</string>
+    <string name="chip_weekly">Hàng tuần</string>
+    <string name="chip_interval">Định kỳ</string>
+    <string name="sun">CN</string>
+    <string name="mon">T2</string>
+    <string name="tue">T3</string>
+    <string name="wed">T4</string>
+    <string name="thu">T5</string>
+    <string name="fri">T6</string>
+    <string name="sat">T7</string>
+    <string name="goal">Mục tiêu</string>
+    <string name="hint_goal">Nhập mục tiêu (vd: 5 trang mỗi ngày)</string>
+    <string name="start_date">Ngày bắt đầu</string>
+    <string name="select_date">Chọn ngày...</string>
+    <string name="goal_days">Thời gian mục tiêu</string>
+    <string name="section">Danh mục</string>
+    <string name="reminder">Nhắc nhở</string>
+    <string name="auto_popup">Tự động hiển thị ghi nhận</string>
+    <string name="btn_save">Lưu</string>
+    
+    <!-- Habit Detail -->
+    <string name="habit_details">Chi tiết thói quen</string>
+    <string name="quote">Câu trích</string>
+    <string name="selected_days">Ngày đã chọn</string>
+    <string name="goal_details">Chi tiết mục tiêu</string>
+    <string name="label_goal">Mục tiêu: </string>
+    <string name="label_duration">Thời hạn: </string>
+    <string name="forever">Mãi mãi</string>
+    <string name="label_start_date">Ngày bắt đầu: </string>
+    <string name="label_category">Danh mục: </string>
+    <string name="label_time">Thời gian: </string>
+    <string name="auto_popup_switch">Tự động hiển thị</string>
+
+    <!-- Default Values -->
+    <string name="default_goal">5 trang mỗi ngày</string>
+    <string name="default_section">Khác</string>
+
+    <!-- Goal Days Options -->
+    <string-array name="goal_days_options">
+        <item>7 ngày</item>
+        <item>14 ngày</item>
+        <item>30 ngày</item>
+        <item>90 ngày</item>
+        <item>Mãi mãi</item>
+    </string-array>
+
+    <!-- Section Options -->
+    <string-array name="section_options">
+        <item>Thể thao</item>
+        <item>Cuộc sống</item>
+        <item>Học tập</item>
+        <item>Khác</item>
+    </string-array>
+    <string name="habit_saved_success">Đã lưu thói quen thành công!</string>
+    <string name="habit_saved_error">Lỗi khi lưu thói quen</string>
+    <string name="selected_habit">Đã chọn: %1$s</string>
+    <string name="error_empty_habit_name">Vui lòng nhập tên thói quen</string>
+
+    <!-- Habit Popup -->
+    <string name="habit_reminder">Nhắc nhở thói quen</string>
+    <string name="habit_name_default">Tên thói quen</string>
+    <string name="time_to_complete">Đã đến lúc hoàn thành thói quen của bạn!</string>
+    <string name="btn_skip">Bỏ qua</string>
+    <string name="btn_complete">Hoàn thành</string>
+
+    <!-- Notifications -->
+    <string name="notification_habit_title">Nhắc nhở thói quen</string>
+    <string name="notification_habit_text">Đã đến lúc thực hiện thói quen: %1$s</string>
+    <string name="notification_action_complete">Hoàn thành</string>
+
+    <!-- Task Statistics -->
+    <string name="stats_overview">Tổng quan</string>
+    <string name="stats_day">Ngày</string>
+    <string name="stats_week">Tuần</string>
+    <string name="stats_month">Tháng</string>
+    <string name="stats_today">Hôm nay</string>
+    <string name="stats_prev"><![CDATA[<]]></string>
+    <string name="stats_next"><![CDATA[>]]></string>
+    <string name="stats_completed">Đã hoàn thành</string>
+    <string name="stats_from_yesterday">%1$d từ hôm qua</string>
+    <string name="stats_more_than_yesterday">%1$d nhiều hơn hôm qua</string>
+    <string name="stats_fewer_than_yesterday">%1$d ít hơn hôm qua</string>
+    <string name="stats_total_task">Tổng nhiệm vụ</string>
+    <string name="stats_percent_from_yesterday">%1$.2f%% từ hôm qua</string>
+    <string name="stats_percent_more_than">%1$.2f%% nhiều hơn hôm qua</string>
+    <string name="stats_percent_less_than">%1$.2f%% ít hơn hôm qua</string>
+    <string name="stats_completion_rate_distribution">Phân phối tỷ lệ hoàn thành</string>
+    <string name="stats_overdue">Quá hạn</string>
+    <string name="stats_on_time">Đúng giờ</string>
+    <string name="stats_undate">Không có hạn</string>
+    <string name="stats_uncomplete">Chưa hoàn thành</string>
+    <string name="stats_completion_rate">Tỷ lệ hoàn thành</string>
+    <string name="stats_week_number">Tuần %1$d</string>
+    <string name="stats_all_time">Thống kê tất cả</string>
+    <string name="stats_completed_count">%1$d đã hoàn thành</string>
+
+    <!--side_bar.xml-->
+    <string name="btn_add_new_list">Thêm</string>
+    <string name="sidebar_new_list_hint">Tên danh sách mới</string>
+    <string name="sidebar_add_list_title">Thêm danh sách mới</string>
+    <string name="sidebar_btn_add">Thêm</string>
+    <string name="sidebar_btn_cancel">Hủy</string>
+    <string name="sidebar_list_added">Đã thêm danh sách: %1$s</string>
+    <string name="sidebar_list_add_failed">Không thể thêm danh sách</string>
+    <string name="sidebar_list_name_empty">Tên danh sách không thể trống</string>
+    <string name="sidebar_list_exists">Danh sách này đã tồn tại</string>
+
+    <!-- Premium rq Screen -->
+    <string name="premium_title">Nâng cấp lên Cao cấp</string>
+    <string name="premium_description">Mở khóa tất cả tính năng cao cấp bao gồm công cụ nâng cao, không quảng cáo và hơn thế nữa!</string>
+    <string name="premium_features_header">Tính năng Cao cấp</string>
+    <string name="premium_feature_share">Chia sẻ nhiệm vụ và ghi chú với người khác</string>
+    <string name="premium_feature_backup">Sao lưu đám mây không giới hạn</string>
+    <string name="premium_feature_custom">Tùy chọn tùy chỉnh nâng cao</string>
+    <string name="premium_feature_support">Hỗ trợ ưu tiên</string>
+    <string name="premium_btn_upgrade">Nâng cấp Ngay</string>
+    <string name="premium_btn_cancel">Hủy bỏ</string>
+
+    <!-- Share Tasks -->
+    <string name="share_title">Chia sẻ</string>
+    <string name="share_via_email">Chia sẻ qua Email</string>
+    <string name="share_via_messenger">Chia sẻ qua Messenger</string>
+    <string name="share_via_sms">Chia sẻ qua SMS</string>
+    <string name="share_tasks">Chia sẻ công việc</string>
+    <string name="share_task_list_subject">Danh sách công việc</string>
+    <string name="share_from">Shared from TickTick</string>
+
+    <!-- Task Details -->
+    <string name="priority_high">Ưu tiên: Cao (Quan trọng &amp; Khẩn cấp)</string>
+    <string name="priority_medium">Ưu tiên: Trung bình (Quan trọng, Không khẩn cấp)</string>
+    <string name="priority_low">Ưu tiên: Thấp (Không quan trọng, Khẩn cấp)</string>
+    <string name="priority_lowest">Ưu tiên: Rất thấp (Không quan trọng &amp; Không khẩn cấp)</string>
+    <string name="description_prefix">Mô tả: </string>
+    <string name="no_description">Không có mô tả</string>
+    <string name="due_date_prefix">Ngày đến hạn: </string>
+    <string name="no_due_date">Không có ngày đến hạn</string>
+    <string name="status_prefix">Trạng thái: </string>
+    <string name="status_completed">Đã hoàn thành</string>
+    <string name="status_incomplete">Chưa hoàn thành</string>
+
+    <!-- Share Content -->
+    <string name="notes_header">===== GHI CHÚ =====</string>
+    <string name="note_prefix">Ghi chú </string>
+    <string name="no_notes">Không có ghi chú</string>
+    <string name="content_prefix">Nội dung: </string>
+    <string name="due_prefix">Hạn: </string>
+    <string name="tasks_header">===== CÔNG VIỆC =====</string>
+    <string name="task_prefix">Công việc </string>
+    <string name="no_tasks">Không có công việc</string>
+    <string name="priority_prefix">Ưu tiên: </string>
+    <string name="priority_text_high">Cao</string>
+    <string name="priority_text_medium">Trung bình</string>
+    <string name="priority_text_low">Thấp</string>
+    <string name="priority_text_lowest">Rất thấp</string>
+
+    <!-- Task Input Dialog -->
+    <string name="add_new_task">Thêm nhiệm vụ mới</string>
+    <string name="title_hint">Tiêu đề</string>
+    <string name="description_hint">Mô tả</string>
+    <string name="priority_level">Mức độ ưu tiên</string>
+    <string name="priority_1">🔥 Khẩn cấp và Quan trọng</string>
+    <string name="priority_2">🌟 Không gấp mà quan trọng</string>
+    <string name="priority_3">⚡ Khẩn cấp nhưng không quan trọng</string>
+    <string name="priority_4">💡 Không cấp bách và không quan trọng</string>
+    <string name="add_reminder">Thêm lời nhắc</string>
+    <string name="set_reminder">Đặt lời nhắc</string>
+    <string name="reminder_format">Nhắc nhở: %1$s</string>
+    <string name="cancel">Hủy</string>
+    <string name="add">Thêm</string>
+
+    <!-- Matrix View -->
+    <string name="matrix_urgent_important">Khẩn cấp và quan trọng</string>
+    <string name="matrix_important_not_urgent">Không gấp mà quan trọng</string>
+    <string name="matrix_urgent_not_important">Khẩn cấp nhưng không quan trọng</string>
+    <string name="matrix_not_urgent_not_important">Không cấp bách và không quan trọng</string>
+
+    <!-- Eisenhower Matrix -->
+    <string name="eisenhower_matrix_title">Ma trận Eisenhower</string>
+    <string name="eisenhower_q1_title">I. Khẩn cấp và Quan trọng</string>
+    <string name="eisenhower_q2_title">II. Không khẩn cấp mà quan trọng</string>
+    <string name="eisenhower_q3_title">III. Khẩn cấp nhưng không quan trọng</string>
+    <string name="eisenhower_q4_title">IV. Không khẩn cấp và không quan trọng</string>
+    <string name="eisenhower_add_task">Thêm công việc</string>
 </resources>
 

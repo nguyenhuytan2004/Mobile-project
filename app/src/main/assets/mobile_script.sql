@@ -5,7 +5,21 @@ CREATE TABLE "android_metadata" (
 	"locale"	TEXT
 );
 
+DROP TABLE IF EXISTS "tbl_user_information";
 DROP TABLE IF EXISTS "tbl_note";
+DROP TABLE IF EXISTS "tbl_note_photo";
+DROP TABLE IF EXISTS "tbl_note_reminder";
+DROP TABLE IF EXISTS "tbl_note_tag";
+DROP TABLE IF EXISTS "tbl_task";
+DROP TABLE IF EXISTS "tbl_task_photo";
+DROP TABLE IF EXISTS "tbl_task_reminder";
+DROP TABLE IF EXISTS "tbl_task_tag";
+DROP TABLE IF EXISTS "tbl_category";
+DROP TABLE IF EXISTS "tbl_list";
+DROP TABLE IF EXISTS "tbl_habit";
+DROP TABLE IF EXISTS "tbl_user";
+DROP TABLE IF EXISTS "tbl_weights";
+
 CREATE TABLE "tbl_note" (
 	id INTEGER,
 	user_id	INTEGER NOT NULL,
@@ -16,7 +30,6 @@ CREATE TABLE "tbl_note" (
 	FOREIGN KEY("user_id") REFERENCES "tbl_user"("id") ON DELETE CASCADE
 );
 
-DROP TABLE IF EXISTS "tbl_note_photo";
 CREATE TABLE "tbl_note_photo" (
 	id INTEGER,
 	note_id INTEGER NOT NULL,
@@ -25,7 +38,6 @@ CREATE TABLE "tbl_note_photo" (
 	FOREIGN KEY("note_id") REFERENCES "tbl_note"("id") ON DELETE CASCADE
 );
 
-DROP TABLE IF EXISTS "tbl_note_reminder";
 CREATE TABLE "tbl_note_reminder" (
 	id INTEGER,
 	note_id INTEGER NOT NULL,
@@ -37,7 +49,6 @@ CREATE TABLE "tbl_note_reminder" (
 	FOREIGN KEY("note_id") REFERENCES "tbl_note"("id") ON DELETE CASCADE
 );
 
-DROP TABLE IF EXISTS "tbl_note_tag";
 CREATE TABLE "tbl_note_tag" (
 	id INTEGER,
 	note_id	INTEGER NOT NULL,
@@ -48,7 +59,6 @@ CREATE TABLE "tbl_note_tag" (
 );
 
 
-DROP TABLE IF EXISTS "tbl_task";
 CREATE TABLE tbl_task (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
@@ -56,11 +66,12 @@ CREATE TABLE tbl_task (
     content TEXT,
     priority INTEGER NOT NULL,
 	is_completed BOOL DEFAULT FALSE,
+	completion_datetime TEXT,
 	category_id INTEGER NOT NULL,
 	FOREIGN KEY (category_id) REFERENCES tbl_category(id),
 	FOREIGN KEY (user_id) REFERENCES tbl_user(id)
 );
-DROP TABLE IF EXISTS "tbl_task_photo";
+
 CREATE TABLE "tbl_task_photo" (
 	id INTEGER,
 	task_id INTEGER NOT NULL,
@@ -69,7 +80,6 @@ CREATE TABLE "tbl_task_photo" (
 	FOREIGN KEY("task_id") REFERENCES "tbl_task"("id") ON DELETE CASCADE
 );
 
-DROP TABLE IF EXISTS "tbl_task_reminder";
 CREATE TABLE "tbl_task_reminder" (
 	id INTEGER,
 	task_id INTEGER NOT NULL,
@@ -81,7 +91,6 @@ CREATE TABLE "tbl_task_reminder" (
 	FOREIGN KEY("task_id") REFERENCES "tbl_task"("id") ON DELETE CASCADE
 );
 
-DROP TABLE IF EXISTS "tbl_task_tag";
 CREATE TABLE "tbl_task_tag" (
 	id INTEGER,
 	task_id	INTEGER NOT NULL,
@@ -91,7 +100,6 @@ CREATE TABLE "tbl_task_tag" (
 	FOREIGN KEY("task_id") REFERENCES "tbl_task"("id") ON DELETE CASCADE
 );
 
-DROP TABLE IF EXISTS "tbl_category";
 CREATE TABLE tbl_category (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	name TEXT NOT NULL UNIQUE,
@@ -99,14 +107,12 @@ CREATE TABLE tbl_category (
 	FOREIGN KEY (list_id) REFERENCES tbl_list(id)
 );
 
-DROP TABLE IF EXISTS "tbl_list";
 CREATE TABLE tbl_list (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	name TEXT NOT NULL UNIQUE,
 	icon TEXT
 );
 
-DROP TABLE IF EXISTS "tbl_habit";
 CREATE TABLE tbl_habit (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -121,15 +127,23 @@ CREATE TABLE tbl_habit (
     auto_popup INTEGER     -- 0/1
 );
 
-DROP TABLE IF EXISTS "tbl_user";
 CREATE TABLE "tbl_user" (
-	id INTEGER PRIMARY KEY AUTOINCREMENT,
-    email TEXT NOT NULL UNIQUE,
-    isGoogle INTEGER DEFAULT 0,
-    premium INTEGER DEFAULT 0
+	id INTEGER,
+	email TEXT NOT NULL,
+	isGoogle INTEGER DEFAULT 0,
+	is_premium INTEGER DEFAULT 0,
+	PRIMARY KEY("id" AUTOINCREMENT)
 );
 
-DROP TABLE IF EXISTS "tbl_weights";
+CREATE TABLE "tbl_user_information" (
+	user_id INTEGER NOT NULL,
+	avatar TEXT,
+	full_name TEXT,
+	sex TEXT CHECK(sex IN ('Nam', 'Nữ')),
+	birthday TEXT,
+	FOREIGN KEY (user_id) REFERENCES tbl_user(id)
+);
+
 CREATE TABLE "tbl_weights" (
     class_id INTEGER,
     feature_index INTEGER,
@@ -138,7 +152,9 @@ CREATE TABLE "tbl_weights" (
 );
 
 INSERT INTO "android_metadata" VALUES ('en_US');
-INSERT INTO "tbl_user" VALUES (1,'nvxanh75@gmail.com',0,0);
+INSERT INTO "tbl_user" VALUES (1,'alice@example.com',0,0);
+
+INSERT INTO "tbl_user_information" VALUES (1, '', 'Nguyễn Văn Khoác', 'Nam', '27 - 08 - 2005');
 
 INSERT INTO tbl_list VALUES
 (1, 'none' , NULL),
@@ -150,8 +166,11 @@ INSERT INTO tbl_category VALUES
 (2, 'Weekend', 3),
 (3, 'Daily work', 3);
 
-INSERT INTO "tbl_note" VALUES (1,1,'Tourism','Da Nang Nha Trang Phan Thiet', 2);
-INSERT INTO "tbl_note" VALUES (2,1,'Haha','ascnaocwnaocwnoawncoanwcaoiamacnoncaoihwdohawdhaowdihoasdjpdsjapdwmawdpo', 2);
+INSERT INTO "tbl_note" VALUES (1,1,'Tourism','Da Nang
+Nha Trang
+Phan Thiet', 2);
+INSERT INTO "tbl_note" VALUES (2,1,'Haha','ascnaocwnaocwnoawncoanwcaoiamacnon
+caoihwdohawdhaowdihoasdjpdsjapdwmawdpo', 2);
 
 INSERT INTO "tbl_note_photo" VALUES (13,1,'file:///data/user/0/com.example.project/files/note_img_1743490583956.jpg');
 
@@ -165,8 +184,6 @@ INSERT INTO tbl_task (user_id,title, content, priority, category_id)
 VALUES
     (1,'Hoàn thành báo cáo', 'Báo cáo tài chính quý 1', 1, 3),
     (1,'Mua sách mới', 'Sách về lập trình Android', 3, 2);
-
-INSERT INTO "tbl_task_photo" VALUES (30,1,'file:///data/user/0/com.example.project/files/note_img_1743490583956.jpg');
 
 INSERT INTO "tbl_task_reminder" VALUES (21,2,'Ngày 1, tháng 4','15:15',0,0);
 INSERT INTO "tbl_task_reminder" VALUES (22,1,'Ngày 30, tháng 4','09:00',0,0);

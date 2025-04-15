@@ -1,0 +1,226 @@
+<resources>
+    <string name="app_name">Project</string>
+    <string name="focus_text"><font color="#FFFFFF">Focus</font> <font color="#888888">&gt;</font></string>
+    <string name="time_reminder_text"><font color="#FFFFFF">On time</font> <font color="#888888">(09:00)</font></string>
+    <string name="time_reminder_text1"><font color="#FFFFFF">1 day early</font> <font color="#888888">(09:00)</font></string>
+    <string name="time_reminder_text2"><font color="#FFFFFF">2 days early</font> <font color="#888888">(09:00)</font></string>
+    <string name="time_reminder_text3"><font color="#FFFFFF">3 days early</font> <font color="#888888">(09:00)</font></string>
+    <string name="time_reminder_text4"><font color="#FFFFFF">4 days early</font> <font color="#888888">(09:00)</font></string>
+    <string name="time_reminder_text5"><font color="#FFFFFF">5 days early</font> <font color="#888888">(09:00)</font></string>
+    <string name="time_reminder_text6"><font color="#FFFFFF">6 days early</font> <font color="#888888">(09:00)</font></string>
+    <string name="time_reminder_text7"><font color="#FFFFFF">1 week early</font> <font color="#888888">(09:00)</font></string>
+    <string-array name="priority_levels">
+        <item>1 - Important and Urgent</item>
+        <item>2 - Important but Not urgent</item>
+        <item>3 - Not important but Urgent</item>
+        <item>4 - Not important and Not urgent</item>
+    </string-array>
+    
+    <!-- Habit Gallery -->
+    <string name="title_habit_gallery">Habit Gallery</string>
+    <string name="btn_all">All</string>
+    <string name="btn_daily_life">Daily Life</string>
+    <string name="btn_sport">Sport</string>
+    <string name="btn_learning">Learning</string>
+    <string name="btn_add_new_habit">Add new habit</string>
+    
+    <!-- Habit Item -->
+    <string name="habit_name_placeholder">Habit Name</string>
+    <string name="habit_quote_placeholder">Habit Quote</string>
+    <string name="daily">Daily</string>
+    <string name="others">Others</string>
+    
+    <!-- New Habit -->
+    <string name="new_habit">New Habit</string>
+    <string name="hint_name">Name</string>
+    <string name="label_quote">Quote</string>
+    <string name="hint_quote">Small number, big result</string>
+    <string name="btn_next_aim_habit">Next</string>
+    
+    <!-- New Habit Aim -->
+    <string name="frequency">Frequency</string>
+    <string name="chip_daily">Daily</string>
+    <string name="chip_weekly">Weekly</string>
+    <string name="chip_interval">Interval</string>
+    <string name="sun">SU</string>
+    <string name="mon">M</string>
+    <string name="tue">T</string>
+    <string name="wed">W</string>
+    <string name="thu">TH</string>
+    <string name="fri">F</string>
+    <string name="sat">SA</string>
+    <string name="goal">Goal</string>
+    <string name="hint_goal">Enter your goal (e.g. 5 pages daily)</string>
+    <string name="start_date">Start Date</string>
+    <string name="select_date">Select date...</string>
+    <string name="goal_days">Goal Days</string>
+    <string name="section">Section</string>
+    <string name="reminder">Reminder</string>
+    <string name="auto_popup">Auto pop-up of habit log</string>
+    <string name="btn_save">Save</string>
+    
+    <!-- Habit Detail -->
+    <string name="habit_details">Habit Details</string>
+    <string name="quote">Quote</string>
+    <string name="selected_days">Selected Days</string>
+    <string name="goal_details">Goal Details</string>
+    <string name="label_goal">Goal: </string>
+    <string name="label_duration">Duration: </string>
+    <string name="forever">Forever</string>
+    <string name="label_start_date">Start Date: </string>
+    <string name="label_category">Category: </string>
+    <string name="label_time">Time: </string>
+    <string name="auto_popup_switch">Auto Popup</string>
+
+    <!-- Default Values -->
+    <string name="default_goal">5 Page daily</string>
+    <string name="default_section">Others</string>
+
+    <!-- Goal Days Options -->
+    <string-array name="goal_days_options">
+        <item>7 days</item>
+        <item>14 days</item>
+        <item>30 days</item>
+        <item>90 days</item>
+        <item>Forever</item>
+    </string-array>
+
+    <!-- Section Options -->
+    <string-array name="section_options">
+        <item>Sport</item>
+        <item>Daily life</item>
+        <item>Learning</item>
+        <item>Others</item>
+    </string-array>
+
+    <string name="habit_saved_success">Habit saved successfully!</string>
+    <string name="habit_saved_error">Error saving habit</string>
+    <string name="selected_habit">Selected: %1$s</string>
+    <string name="error_empty_habit_name">Please enter a habit name</string>
+
+    <!-- Habit Popup -->
+    <string name="habit_reminder">Habit Reminder</string>
+    <string name="habit_name_default">Habit Name</string>
+    <string name="time_to_complete">Time to complete your habit!</string>
+    <string name="btn_skip">Skip</string>
+    <string name="btn_complete">Complete</string>
+
+    <!-- Notifications -->
+    <string name="notification_habit_title">Habit Reminder</string>
+    <string name="notification_habit_text">Time for your habit: %1$s</string>
+    <string name="notification_action_complete">Complete</string>
+
+    <!-- Task Statistics -->
+    <string name="stats_overview">Overview</string>
+    <string name="stats_day">Day</string>
+    <string name="stats_week">Week</string>
+    <string name="stats_month">Month</string>
+    <string name="stats_today">Today</string>
+    <string name="stats_prev"><![CDATA[<]]></string>
+    <string name="stats_next"><![CDATA[>]]></string>
+    <string name="stats_completed">Completed</string>
+    <string name="stats_from_yesterday">%1$d from yesterday</string>
+    <string name="stats_more_than_yesterday">%1$d more than yesterday</string>
+    <string name="stats_fewer_than_yesterday">%1$d fewer than yesterday</string>
+    <string name="stats_total_task">Total Task</string>
+    <string name="stats_percent_from_yesterday">%1$.2f%% from yesterday</string>
+    <string name="stats_percent_more_than">%1$.2f%% more than yesterday</string>
+    <string name="stats_percent_less_than">%1$.2f%% less than yesterday</string>
+    <string name="stats_completion_rate_distribution">Completion Rate Distribution</string>
+    <string name="stats_overdue">Overdue</string>
+    <string name="stats_on_time">On-Time</string>
+    <string name="stats_undate">Undate</string>
+    <string name="stats_uncomplete">Uncomplete</string>
+    <string name="stats_completion_rate">Completion Rate</string>
+    <string name="stats_week_number">Week %1$d</string>
+    <string name="stats_all_time">All Time Statistics</string>
+    <string name="stats_completed_count">%1$d completed</string>
+
+    <!--side_bar.xml-->
+    <string name="btn_add_new_list">Add new list</string>
+    <string name="sidebar_new_list_hint">New list name</string>
+    <string name="sidebar_add_list_title">Add new list</string>
+    <string name="sidebar_btn_add">Add</string>
+    <string name="sidebar_btn_cancel">Cancel</string>
+    <string name="sidebar_list_added">Added list: %1$s</string>
+    <string name="sidebar_list_add_failed">Could not add list</string>
+    <string name="sidebar_list_name_empty">List name cannot be empty</string>
+    <string name="sidebar_list_exists">This list already exists</string>
+
+    <!-- Premium rq Screen -->
+    <string name="premium_title">Upgrade to Premium</string>
+    <string name="premium_description">Unlock all premium features including advanced tools, no ads, and more!</string>
+    <string name="premium_features_header">Premium Features</string>
+    <string name="premium_feature_share">Share tasks and notes with others</string>
+    <string name="premium_feature_backup">Unlimited cloud backups</string>
+    <string name="premium_feature_custom">Advanced customization options</string>
+    <string name="premium_feature_support">Priority support</string>
+    <string name="premium_btn_upgrade">Upgrade Now</string>
+    <string name="premium_btn_cancel">Cancel</string>
+
+    <!-- Share Tasks -->
+    <string name="share_title">Share</string>
+    <string name="share_via_email">Share via Email</string>
+    <string name="share_via_messenger">Share via Messenger</string>
+    <string name="share_via_sms">Share via SMS</string>
+    <string name="share_tasks">Share tasks</string>
+    <string name="share_task_list_subject">Task List</string>
+    <string name="share_from">Shared from TickTick</string>
+
+    <!-- Task Details -->
+    <string name="priority_high">Priority: High (Important &amp; Urgent)</string>
+    <string name="priority_medium">Priority: Medium (Important, Not urgent)</string>
+    <string name="priority_low">Priority: Low (Not important, Urgent)</string>
+    <string name="priority_lowest">Priority: Very low (Not important &amp; Not urgent)</string>
+    <string name="description_prefix">Description: </string>
+    <string name="no_description">No description</string>
+    <string name="due_date_prefix">Due date: </string>
+    <string name="no_due_date">No due date</string>
+    <string name="status_prefix">Status: </string>
+    <string name="status_completed">Completed</string>
+    <string name="status_incomplete">Incomplete</string>
+
+    <!-- Share Content -->
+    <string name="notes_header">===== NOTES =====</string>
+    <string name="note_prefix">Note </string>
+    <string name="no_notes">No notes</string>
+    <string name="content_prefix">Content: </string>
+    <string name="due_prefix">Due: </string>
+    <string name="tasks_header">===== TASKS =====</string>
+    <string name="task_prefix">Task </string>
+    <string name="no_tasks">No tasks</string>
+    <string name="priority_prefix">Priority: </string>
+    <string name="priority_text_high">High</string>
+    <string name="priority_text_medium">Medium</string>
+    <string name="priority_text_low">Low</string>
+    <string name="priority_text_lowest">Very low</string>
+
+    <!-- Task Input Dialog -->
+    <string name="add_new_task">Add new task</string>
+    <string name="title_hint">Title</string>
+    <string name="description_hint">Description</string>
+    <string name="priority_level">Priority level</string>
+    <string name="priority_1">🔥 Urgent and Important</string>
+    <string name="priority_2">🌟 Important but not urgent</string>
+    <string name="priority_3">⚡ Urgent but not important</string>
+    <string name="priority_4">💡 Not urgent and not important</string>
+    <string name="add_reminder">Add reminder</string>
+    <string name="set_reminder">Set reminder</string>
+    <string name="reminder_format">Reminder: %1$s</string>
+    <string name="cancel">Cancel</string>
+    <string name="add">Add</string>
+
+    <!-- Matrix View -->
+    <string name="matrix_urgent_important">Urgent and Important</string>
+    <string name="matrix_important_not_urgent">Important but not urgent</string>
+    <string name="matrix_urgent_not_important">Urgent but not important</string>
+    <string name="matrix_not_urgent_not_important">Not urgent and not important</string>
+
+    <!-- Eisenhower Matrix -->
+    <string name="eisenhower_matrix_title">Eisenhower Matrix</string>
+    <string name="eisenhower_q1_title">I. Urgent and Important</string>
+    <string name="eisenhower_q2_title">II. Important but not urgent</string>
+    <string name="eisenhower_q3_title">III. Urgent but not important</string>
+    <string name="eisenhower_q4_title">IV. Not urgent and not important</string>
+    <string name="eisenhower_add_task">Add Task</string>
+</resources>

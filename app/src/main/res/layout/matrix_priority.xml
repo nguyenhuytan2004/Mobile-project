@@ -1,143 +1,143 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/black"
-        tools:context=".MainActivity">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    tools:context=".MainActivity">
 
-        <!-- Tiêu đề -->
-
+    <!-- Title -->
     <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Ma trận Eisenhower"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@color/white"
-            android:padding="16dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/eisenhower_matrix_title"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:padding="16dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-        <!-- Grid Layout chứa 4 ô -->
-        <androidx.gridlayout.widget.GridLayout
-            android:id="@+id/gridLayout"
+    <!-- Grid Layout with 4 quadrants -->
+    <androidx.gridlayout.widget.GridLayout
+        android:id="@+id/gridLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:columnCount="2"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        app:layout_constraintBottom_toTopOf="@id/addButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="8dp"
+        app:rowCount="2">
+
+        <!-- Quadrant 1: Urgent & Important -->
+        <LinearLayout
+            android:id="@+id/priority_1"
             android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:columnCount="2"
-            app:layout_constraintTop_toBottomOf="@id/title"
-            app:layout_constraintBottom_toTopOf="@id/addButton"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_margin="8dp"
+            android:background="@drawable/rounded_quadrant_background"
+            android:orientation="vertical"
             android:padding="8dp"
-            app:rowCount="2">
+            app:layout_column="0"
+            app:layout_columnWeight="1"
+            app:layout_row="0"
+            app:layout_rowWeight="1">
 
-            <!-- Ô 1: Quan trọng & Khẩn cấp -->
-            <LinearLayout
-                android:id="@+id/priority_1"
-                android:layout_width="0dp"
-                android:layout_margin="8dp"
-                android:background="@drawable/rounded_quadrant_background"
-                android:orientation="vertical"
-                android:padding="8dp"
-                app:layout_column="0"
-                app:layout_columnWeight="1"
-                app:layout_row="0"
-                app:layout_rowWeight="1">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/eisenhower_q1_title"
+                android:textColor="#FF4A4A"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="I. Khẩn cấp và Quan trọng"
-                    android:textColor="#FF4A4A"
-                    android:textStyle="bold" />
+        </LinearLayout>
 
-            </LinearLayout>
+        <!-- Quadrant 2: Important but Not Urgent -->
+        <LinearLayout
+            android:id="@+id/priority_2"
+            android:layout_width="0dp"
+            android:background="@drawable/rounded_quadrant_background"
+            android:orientation="vertical"
+            android:padding="8dp"
+            app:layout_column="1"
+            app:layout_columnWeight="1"
+            app:layout_row="0"
+            app:layout_rowWeight="1"
+            android:layout_margin="8dp"
+            tools:ignore="GridLayout">
 
-            <!-- Ô 2: Quan trọng nhưng Không khẩn cấp -->
-            <LinearLayout
-                android:id="@+id/priority_2"
-                android:layout_width="0dp"
-                android:background="@drawable/rounded_quadrant_background"
-                android:orientation="vertical"
-                android:padding="8dp"
-                app:layout_column="1"
-                app:layout_columnWeight="1"
-                app:layout_row="0"
-                app:layout_rowWeight="1"
-                android:layout_margin="8dp"
-                tools:ignore="GridLayout">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/eisenhower_q2_title"
+                android:textColor="#FFC107"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="II. Không gấp mà quan trọng"
-                    android:textColor="#FFC107"
-                    android:textStyle="bold" />
+        </LinearLayout>
 
-            </LinearLayout>
+        <!-- Quadrant 3: Not Important but Urgent -->
+        <LinearLayout
+            android:id="@+id/priority_3"
+            android:layout_width="0dp"
+            android:layout_row="1"
+            android:background="@drawable/rounded_quadrant_background"
+            android:orientation="vertical"
+            android:padding="8dp"
+            app:layout_column="0"
+            app:layout_columnWeight="1"
+            app:layout_rowWeight="1"
+            android:layout_margin="8dp"
+            tools:ignore="GridLayout">
 
-            <!-- Ô 3: Không quan trọng nhưng Khẩn cấp -->
-            <LinearLayout
-                android:id="@+id/priority_3"
-                android:layout_width="0dp"
-                android:layout_row="1"
-                android:background="@drawable/rounded_quadrant_background"
-                android:orientation="vertical"
-                android:padding="8dp"
-                app:layout_column="0"
-                app:layout_columnWeight="1"
-                app:layout_rowWeight="1"
-                android:layout_margin="8dp"
-                tools:ignore="GridLayout">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/eisenhower_q3_title"
+                android:textColor="#4A90E2"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="III. Khẩn cấp nhưng không quan trọng"
-                    android:textColor="#4A90E2"
-                    android:textStyle="bold" />
+        </LinearLayout>
 
-            </LinearLayout>
+        <!-- Quadrant 4: Not Important & Not Urgent -->
+        <LinearLayout
+            android:id="@+id/priority_4"
+            android:layout_width="0dp"
+            android:background="@drawable/rounded_quadrant_background"
+            android:orientation="vertical"
+            android:padding="8dp"
+            app:layout_column="1"
+            app:layout_columnWeight="1"
+            app:layout_row="1"
+            android:layout_margin="8dp"
+            app:layout_rowWeight="1">
 
-            <!-- Ô 4: Không quan trọng & Không khẩn cấp -->
-            <LinearLayout
-                android:id="@+id/priority_4"
-                android:layout_width="0dp"
-                android:background="@drawable/rounded_quadrant_background"
-                android:orientation="vertical"
-                android:padding="8dp"
-                app:layout_column="1"
-                app:layout_columnWeight="1"
-                app:layout_row="1"
-                android:layout_margin="8dp"
-                app:layout_rowWeight="1">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/eisenhower_q4_title"
+                android:textColor="#28A745"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="IV. Không cấp bách và không quan trọng"
-                    android:textColor="#28A745"
-                    android:textStyle="bold" />
+        </LinearLayout>
 
-            </LinearLayout>
+    </androidx.gridlayout.widget.GridLayout>
 
-        </androidx.gridlayout.widget.GridLayout>
-
-        <!-- Nút thêm (+) -->
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/addButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_input_add"
-            android:backgroundTint="#FF9800"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginBottom="80dp"
-            android:layout_marginEnd="16dp"/>
+    <!-- Add button -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@android:drawable/ic_input_add"
+        android:backgroundTint="#FF9800"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="80dp"
+        android:layout_marginEnd="16dp"
+        android:contentDescription="@string/eisenhower_add_task"/>
 
     <LinearLayout
         android:id="@+id/navigationBar"
@@ -154,14 +154,14 @@
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:layout_weight="1"
-            android:src="@drawable/main_icon_1" />
+            android:src="@drawable/main_icon_1"/>
 
         <ImageView
             android:id="@+id/calendarTab2"
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:layout_weight="1"
-            android:src="@drawable/main_icon_2" />
+            android:src="@drawable/main_icon_2"/>
 
         <ImageView
             android:id="@+id/matrixTab"
@@ -175,14 +175,14 @@
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:layout_weight="1"
-            android:src="@drawable/main_icon_3" />
+            android:src="@drawable/main_icon_3"/>
 
         <ImageView
             android:id="@+id/habitTabCalender"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            app:srcCompat="@drawable/ic_healthy_lifestyle" />
+            app:srcCompat="@drawable/ic_healthy_lifestyle"/>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

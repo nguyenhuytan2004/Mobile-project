@@ -109,9 +109,11 @@ public class CalendarTab extends AppCompatActivity {
         try {
             // Truy vấn để lấy tất cả các ghi chú có nhắc nhở
             Cursor cursor = db.rawQuery(
-                    "SELECT n.id, n.title, n.content, r.date, r.time " +
+                    "SELECT n.id, n.title, n.content, r.date, r.time, n.category_id, c.list_id " +
                             "FROM tbl_note n " +
                             "JOIN tbl_note_reminder r ON n.id = r.note_id " +
+                            "JOIN tbl_category c ON n.category_id = c.id " +
+                            "JOIN tbl_list l ON c.list_id = l.id " +
                             "WHERE r.date IS NOT NULL AND r.date != ''" +
                             "ORDER BY n.id",
                     null);
@@ -121,6 +123,8 @@ public class CalendarTab extends AppCompatActivity {
                     String noteId = cursor.getString(cursor.getColumnIndexOrThrow("id"));
                     String title = cursor.getString(cursor.getColumnIndexOrThrow("title"));
                     String time = "";
+                    String categoryId = cursor.getString(cursor.getColumnIndexOrThrow("category_id"));
+                    String listId = cursor.getString(cursor.getColumnIndexOrThrow("list_id"));
                     int timeCursor = cursor.getColumnIndexOrThrow("time");
                     if (timeCursor != -1) {
                         time = cursor.getString(timeCursor);
@@ -136,7 +140,7 @@ public class CalendarTab extends AppCompatActivity {
                         if (!dateToNotesMap.containsKey(formattedDate)) {
                             dateToNotesMap.put(formattedDate, new ArrayList<>());
                         }
-                        dateToNotesMap.get(formattedDate).add(new NoteInfo(noteId, title, time));
+                        dateToNotesMap.get(formattedDate).add(new NoteInfo(noteId, title, time, categoryId, listId));
                     }
                 } while (cursor.moveToNext());
                 cursor.close();
@@ -397,6 +401,8 @@ public class CalendarTab extends AppCompatActivity {
                     // Mở ghi chú khi người dùng nhấp vào
                     Intent intent = new Intent(CalendarTab.this, NoteActivity.class);
                     intent.putExtra("noteId", note.id);
+                    intent.putExtra("categoryId", note.categoryId);
+                    intent.putExtra("listId", note.listId);
                     startActivity(intent);
                 });
 
@@ -474,6 +480,7 @@ public class CalendarTab extends AppCompatActivity {
     }
 
     private void updateTaskCompletionStatus(Task task, boolean isCompleted) {
+        DatabaseHelper.getInstance(this).markTaskAsCompleted(task.getId(), isCompleted);
         SQLiteDatabase db = DatabaseHelper.getInstance(this).openDatabase();
         if (db == null) {
             Log.e("CalendarTab", "Database không tồn tại hoặc không thể mở");
@@ -521,14 +528,16 @@ public class CalendarTab extends AppCompatActivity {
     }
     // Lớp để lưu trữ thông tin ghi chú
     private static class NoteInfo {
-        String id;
+        String id, categoryId, listId;
         String title;
         String time;
 
-        NoteInfo(String id, String title, String time) {
+        NoteInfo(String id, String title, String time, String categoryId, String listId) {
             this.id = id;
             this.title = title;
             this.time = time;
+            this.categoryId = categoryId;
+            this.listId = listId;
         }
     }
 }

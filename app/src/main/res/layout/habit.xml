@@ -20,7 +20,7 @@
             android:id="@+id/textView5"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Habit gallery"
+            android:text="@string/title_habit_gallery"
             android:textAlignment="center"
             android:textSize="24sp"
             android:textColor="@color/white"
@@ -41,7 +41,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Tất cả"
+                android:text="@string/btn_all"
                 android:textSize="10sp"
                 android:padding="4dp"/>
 
@@ -51,7 +51,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginStart="4dp"
-                android:text="Cuộc sống"
+                android:text="@string/btn_daily_life"
                 android:textSize="10sp"
                 android:padding="4dp"/>
 
@@ -61,7 +61,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginStart="4dp"
-                android:text="Thể thao"
+                android:text="@string/btn_sport"
                 android:textSize="10sp"
                 android:padding="4dp"/>
 
@@ -71,7 +71,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginStart="4dp"
-                android:text="Học tập"
+                android:text="@string/btn_learning"
                 android:textSize="10sp"
                 android:padding="4dp"/>
         </LinearLayout>
@@ -93,7 +93,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="30dp"
-        android:text="Thêm sở thích mới"
+        android:text="@string/btn_add_new_habit"
         app:layout_constraintBottom_toTopOf="@+id/navigationBar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

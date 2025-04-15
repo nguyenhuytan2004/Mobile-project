@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -19,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -28,9 +30,9 @@ import android.view.ViewGroup;
 import androidx.fragment.app.FragmentActivity;
 
 public class SideBarHelper {
-
     private static AlertDialog dialog;
-
+    private static ImageView imgUserProfile;
+    private static TextView tvUserName;
     public interface SideBarCallback {
         void onTaskCategorySelected(String category);
     }
@@ -39,6 +41,17 @@ public class SideBarHelper {
         List<Task> getAllTasks();
     }
 
+    private static boolean needsProfileRefresh;
+    public static void markProfileForRefresh() {
+        needsProfileRefresh = true;
+
+        if (dialog != null && dialog.isShowing() && imgUserProfile != null && tvUserName != null) {
+            Context context = imgUserProfile.getContext();
+            if (context != null) {
+                loadUserProfileData(context, imgUserProfile, tvUserName);
+            }
+        }
+    }
     public static void showSideBar(Context context, SideBarCallback callback, TaskProvider taskProvider) {
         // Create dialog if it doesn't exist
         if (dialog == null || !dialog.isShowing()) {
@@ -54,6 +67,13 @@ public class SideBarHelper {
             LinearLayout categorySection = view.findViewById(R.id.category_section);
             LinearLayout btnAddList = view.findViewById(R.id.btn_add_list);
 
+            imgUserProfile = view.findViewById(R.id.img_user_profile);
+            tvUserName = view.findViewById(R.id.tv_user_name);
+
+            // Load user profile data
+            loadUserProfileData(context, imgUserProfile, tvUserName);
+            needsProfileRefresh = false;
+
             btnSetting.setOnClickListener(v -> {
                 // Open settings activity
                 Intent intent = new Intent(context, Setting.class);
@@ -68,38 +88,48 @@ public class SideBarHelper {
             btnAddList.setOnClickListener(v -> {
                 // Create dialog to get new list name
                 final EditText input = new EditText(context);
-                input.setHint("Tên danh sách mới");
+                input.setHint(context.getString(R.string.sidebar_new_list_hint));
                 input.setTextColor(Color.WHITE);
                 input.setHintTextColor(Color.GRAY);
                 
                 AlertDialog.Builder addListDialog = new AlertDialog.Builder(context);
-                addListDialog.setTitle("Thêm danh sách mới");
+                addListDialog.setTitle(context.getString(R.string.sidebar_add_list_title));
                 addListDialog.setView(input);
                 
                 // Add buttons
-                addListDialog.setPositiveButton("Thêm", (dialogInterface, which) -> {
+                addListDialog.setPositiveButton(context.getString(R.string.sidebar_btn_add), (dialogInterface, which) -> {
                     String listName = input.getText().toString().trim();
                     if (!listName.isEmpty()) {
                         // Add list to database
                         int newListId = addListToDatabase(context, listName);
                         if (newListId != -1) {
-                            Toast.makeText(context, "Đã thêm danh sách: " + listName, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, 
+                                context.getString(R.string.sidebar_list_added, listName), 
+                                Toast.LENGTH_SHORT).show();
                             
                             // Refresh sidebar
                             List<String> updatedLists = getListsFromDatabase(context);
                             addCategoryItems(context, categorySection, updatedLists, callback);
                         } else {
-                            Toast.makeText(context, "Không thể thêm danh sách", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, 
+                                context.getString(R.string.sidebar_list_add_failed), 
+                                Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        Toast.makeText(context, "Tên danh sách không thể trống", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, 
+                            context.getString(R.string.sidebar_list_name_empty), 
+                            Toast.LENGTH_SHORT).show();
                     }
                 });
                 
-                addListDialog.setNegativeButton("Hủy", (dialogInterface, which) -> dialogInterface.cancel());
+                addListDialog.setNegativeButton(context.getString(R.string.sidebar_btn_cancel), 
+                    (dialogInterface, which) -> dialogInterface.cancel());
                 
                 addListDialog.show();
             });
+        } else if (needsProfileRefresh) {
+            loadUserProfileData(context, imgUserProfile, tvUserName);
+            needsProfileRefresh = false;
         }
 
         dialog.show();
@@ -112,7 +142,54 @@ public class SideBarHelper {
         params.x = 0;
         dialog.getWindow().setAttributes(params);
     }
-    
+
+    private static void loadUserProfileData(Context context, ImageView avatarImage, TextView nameTextView) {
+        SQLiteDatabase db = null;
+        LoginSessionManager sessionManager = LoginSessionManager.getInstance(context);
+
+        try {
+            db = DatabaseHelper.getInstance(context).openDatabase();
+            Cursor cursor = db.rawQuery("SELECT * FROM tbl_user_information WHERE user_id = ?",
+                    new String[]{String.valueOf(sessionManager.getUserId())});
+
+            if (cursor.moveToFirst()) {
+                // Load avatar
+                String avatarPath = cursor.getString(cursor.getColumnIndexOrThrow("avatar"));
+                if (avatarPath != null && !avatarPath.isEmpty()) {
+                    try {
+                        File imgFile = new File(avatarPath);
+                        if (imgFile.exists()) {
+                            Uri imageUri = Uri.fromFile(imgFile);
+                            avatarImage.setImageURI(imageUri);
+                            avatarImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                        } else {
+                            avatarImage.setImageResource(R.drawable.ic_user_avatar);
+                        }
+                    } catch (Exception e) {
+                        avatarImage.setImageResource(R.drawable.ic_user_avatar);
+                    }
+                } else {
+                    avatarImage.setImageResource(R.drawable.ic_user_avatar);
+                }
+
+                // Load name
+                String fullName = cursor.getString(cursor.getColumnIndexOrThrow("full_name"));
+                if (fullName != null && !fullName.isEmpty()) {
+                    nameTextView.setText(fullName);
+                } else {
+                    nameTextView.setText("Người dùng");
+                }
+            }
+            cursor.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("SideBarHelper", "Lỗi khi tải thông tin người dùng");
+        } finally {
+            if (db != null) {
+                DatabaseHelper.getInstance(context).closeDatabase();
+            }
+        }
+    }
     // New method to add a list to the database
     private static int addListToDatabase(Context context, String listName) {
         SQLiteDatabase db = null;
@@ -128,7 +205,7 @@ public class SideBarHelper {
             
             if (exists) {
                 // List already exists
-                Toast.makeText(context, "Danh sách này đã tồn tại", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, context.getString(R.string.sidebar_list_exists), Toast.LENGTH_SHORT).show();
                 return -1;
             }
             
@@ -273,4 +350,5 @@ public class SideBarHelper {
             dialog.dismiss();
         }
     }
+
 }
