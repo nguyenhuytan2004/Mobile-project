@@ -281,6 +281,7 @@
     <string name="profile_full_name">Họ và tên</string>
     <string name="profile_female">Nữ</string>
     <string name="profile_male">Nam</string>
+    <string name="profile_statistic">Thống kê</string>
 
 
 </resources>

@@ -282,5 +282,6 @@
     <string name="profile_full_name">Full name</string>
     <string name="profile_female">Female</string>
     <string name="profile_male">Male</string>
+    <string name="profile_statistic">Statistic</string>
 
 </resources>

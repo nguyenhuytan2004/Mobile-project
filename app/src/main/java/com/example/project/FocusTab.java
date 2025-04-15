@@ -115,6 +115,7 @@ public class FocusTab extends AppCompatActivity {
         });
 
         btnStart.setOnClickListener(view -> {
+            isPaused = false;
             front.setVisibility(View.GONE);
             behind.setVisibility(View.VISIBLE);
 
@@ -315,6 +316,8 @@ public class FocusTab extends AppCompatActivity {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("sound", sharedPreferences.getString("storage_sound", "none"));
         editor.apply();
+        if (mediaPlayer == null)
+            isPaused = true;
 
         if (Objects.equals(intent.getAction(), "START_FOCUS") && countDownTimer == null) {
             btnStart.performClick();
