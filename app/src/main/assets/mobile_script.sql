@@ -130,7 +130,6 @@ CREATE TABLE tbl_habit (
 CREATE TABLE "tbl_user" (
 	id INTEGER,
 	email TEXT NOT NULL,
-	password_hash TEXT,
 	isGoogle INTEGER DEFAULT 0,
 	is_premium INTEGER DEFAULT 0,
 	PRIMARY KEY("id" AUTOINCREMENT)
@@ -153,11 +152,9 @@ CREATE TABLE "tbl_weights" (
 );
 
 INSERT INTO "android_metadata" VALUES ('en_US');
-INSERT INTO "tbl_user" VALUES (1,'alice@example.com','hashed_password_123',0,0);
-INSERT INTO "tbl_user" VALUES (2,'bob@example.com','hashed_password_456',0,0);
-INSERT INTO "tbl_user" VALUES (3,'alice@example.com',NULL,1,0);
+INSERT INTO "tbl_user" VALUES (1,'alice@example.com',0,0);
 
-INSERT INTO "tbl_user_information" VALUES (2, '', 'Nguyễn Văn Khoác', 'Nam', '27 - 08 - 2005');
+INSERT INTO "tbl_user_information" VALUES (1, '', 'Nguyễn Văn Khoác', 'Nam', '27 - 08 - 2005');
 
 INSERT INTO tbl_list VALUES
 (1, 'none' , NULL),
