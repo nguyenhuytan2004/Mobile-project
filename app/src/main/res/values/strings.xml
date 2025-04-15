@@ -1,14 +1,13 @@
 <resources>
     <string name="app_name">ĐỒ ÁN</string>
     <string name="focus_text"><font color="#FFFFFF">Tập trung</font> <font color="#888888">&gt;</font></string>
-    <string name="time_reminder_text"><font color="#FFFFFF">Đúng ngày</font> <font color="#888888">(09:00)</font></string>
-    <string name="time_reminder_text1"><font color="#FFFFFF">Sớm 1 ngày</font> <font color="#888888">(09:00)</font></string>
-    <string name="time_reminder_text2"><font color="#FFFFFF">Sớm 2 ngày</font> <font color="#888888">(09:00)</font></string>
-    <string name="time_reminder_text3"><font color="#FFFFFF">Sớm 3 ngày</font> <font color="#888888">(09:00)</font></string>
-    <string name="time_reminder_text4"><font color="#FFFFFF">Sớm 4 ngày</font> <font color="#888888">(09:00)</font></string>
-    <string name="time_reminder_text5"><font color="#FFFFFF">Sớm 5 ngày</font> <font color="#888888">(09:00)</font></string>
-    <string name="time_reminder_text6"><font color="#FFFFFF">Sớm 6 ngày</font> <font color="#888888">(09:00)</font></string>
-    <string name="time_reminder_text7"><font color="#FFFFFF">Sớm 1 tuần</font> <font color="#888888">(09:00)</font></string>
+    <string name="time_reminder_text1">Sớm 1 ngày</string>
+    <string name="time_reminder_text2">Sớm 2 ngày</string>
+    <string name="time_reminder_text3">Sớm 3 ngày</string>
+    <string name="time_reminder_text4">Sớm 4 ngày</string>
+    <string name="time_reminder_text5">Sớm 5 ngày</string>
+    <string name="time_reminder_text6">Sớm 6 ngày</string>
+    <string name="time_reminder_text7">Sớm 7 ngày</string>
     <string-array name="priority_levels">
         <item>1 - Quan trọng và Khẩn cấp</item>
         <item>2 - Quan trọng nhưng Không khẩn cấp</item>
@@ -224,5 +223,22 @@
     <string name="eisenhower_q3_title">III. Khẩn cấp nhưng không quan trọng</string>
     <string name="eisenhower_q4_title">IV. Không khẩn cấp và không quan trọng</string>
     <string name="eisenhower_add_task">Thêm công việc</string>
+
+    <!--  Note  -->
+    <string name="note_title">Tiêu đề</string>
+    <string name="note_content">Nội dung</string>
+    <string name="note_save">Lưu</string>
+    <string name="note_delete">Xóa</string>
+    <string name="note_pin">Đính ghim</string>
+    <string name="note_convert_to_task">Chuyển đổi thành nhiệm vụ</string>
+    <string name="note_more">Nhiều hơn nữa</string>
+    <string name="note_date_and_reminder">Ngày và lời nhắc</string>
+    <string name="note_time">Thời gian</string>
+    <string name="note_reminder">Lời nhắc</string>
+    <string name="note_none">Không có &gt;</string>
+    <string name="note_tag_hint">Nhập một thẻ</string>
+    <string name="note_done">Xong</string>
+    <string name="note_constant_reminder">Nhắc nhở liên tục</string>
+
 </resources>
 

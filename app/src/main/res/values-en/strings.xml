@@ -1,14 +1,13 @@
 <resources>
     <string name="app_name">Project</string>
     <string name="focus_text"><font color="#FFFFFF">Focus</font> <font color="#888888">&gt;</font></string>
-    <string name="time_reminder_text"><font color="#FFFFFF">On time</font> <font color="#888888">(09:00)</font></string>
-    <string name="time_reminder_text1"><font color="#FFFFFF">1 day early</font> <font color="#888888">(09:00)</font></string>
-    <string name="time_reminder_text2"><font color="#FFFFFF">2 days early</font> <font color="#888888">(09:00)</font></string>
-    <string name="time_reminder_text3"><font color="#FFFFFF">3 days early</font> <font color="#888888">(09:00)</font></string>
-    <string name="time_reminder_text4"><font color="#FFFFFF">4 days early</font> <font color="#888888">(09:00)</font></string>
-    <string name="time_reminder_text5"><font color="#FFFFFF">5 days early</font> <font color="#888888">(09:00)</font></string>
-    <string name="time_reminder_text6"><font color="#FFFFFF">6 days early</font> <font color="#888888">(09:00)</font></string>
-    <string name="time_reminder_text7"><font color="#FFFFFF">1 week early</font> <font color="#888888">(09:00)</font></string>
+    <string name="time_reminder_text1">1 day early</string>
+    <string name="time_reminder_text2">2 days early</string>
+    <string name="time_reminder_text3">3 days early</string>
+    <string name="time_reminder_text4">4 days early</string>
+    <string name="time_reminder_text5">5 days early</string>
+    <string name="time_reminder_text6">6 days early</string>
+    <string name="time_reminder_text7">7 days early</string>
     <string-array name="priority_levels">
         <item>1 - Important and Urgent</item>
         <item>2 - Important but Not urgent</item>
@@ -223,4 +222,21 @@
     <string name="eisenhower_q3_title">III. Urgent but not important</string>
     <string name="eisenhower_q4_title">IV. Not urgent and not important</string>
     <string name="eisenhower_add_task">Add Task</string>
+
+    <!--  Note  -->
+    <string name="note_title">Title</string>
+    <string name="note_content">Content</string>
+    <string name="note_save">Save</string>
+    <string name="note_delete">Delete</string>
+    <string name="note_pin">Pin</string>
+    <string name="note_convert_to_task">Convert to task</string>
+    <string name="note_more">More</string>
+    <string name="note_date_and_reminder">Date and reminder</string>
+    <string name="note_time">Time</string>
+    <string name="note_reminder">Reminder</string>
+    <string name="note_none">None &gt;</string>
+    <string name="note_tag_hint">Input a tag</string>
+    <string name="note_done">Done</string>
+    <string name="note_constant_reminder">Constant reminder</string>
+
 </resources>

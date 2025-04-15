@@ -187,7 +187,7 @@ public class HabitActivity extends AppCompatActivity {
             newId = (int) db.insert("tbl_habit", null, values);
             Log.d(TAG, "Habit saved with ID: " + newId);
         } catch (Exception e) {
-            Log.e(TAG, "Error saving habit", e);
+            Log.d(TAG, "Error saving habit", e);
         }
 
         return newId;

@@ -20,7 +20,7 @@
             android:layout_weight="1"
             android:padding="12dp"
             android:textSize="18sp"
-            android:hint="Nhập một thẻ"
+            android:hint="@string/note_tag_hint"
             android:textColorHint="@android:color/darker_gray"
             android:textColor="@color/white"
             android:background="@drawable/border_custom2"
@@ -30,7 +30,7 @@
             android:id="@+id/doneTxt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Xong"
+            android:text="@string/note_done"
             android:textSize="20sp"
             android:textColor="@color/material_dynamic_neutral_variant80"
             android:paddingHorizontal="12dp"/>

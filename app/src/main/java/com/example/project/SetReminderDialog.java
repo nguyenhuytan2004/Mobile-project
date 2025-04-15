@@ -73,10 +73,8 @@ public class SetReminderDialog extends BottomSheetDialogFragment {
             weekDayTextAppearanceField.set(calendarView, R.style.CustomCalendarWeekDay);
 
             // Set custom weekday names
-            String[] vietnameseWeekDays = new String[]{"", "Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "CN"};
             Field field = calendarView.getClass().getDeclaredField("mDayNamesShort");
             field.setAccessible(true);
-            field.set(calendarView, vietnameseWeekDays);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -120,8 +118,13 @@ public class SetReminderDialog extends BottomSheetDialogFragment {
 
         // Apply days before value if available
         if (mDaysBefore > 0 && mDaysBefore <= 7) {
-            String[] reminderOptions = {"1 ngày trước", "2 ngày trước", "3 ngày trước",
-                    "4 ngày trước", "5 ngày trước", "6 ngày trước", "7 ngày trước"};
+            String[] reminderOptions = {getResources().getString(R.string.time_reminder_text1),
+                    getResources().getString(R.string.time_reminder_text2),
+                    getResources().getString(R.string.time_reminder_text3),
+                    getResources().getString(R.string.time_reminder_text4),
+                    getResources().getString(R.string.time_reminder_text5),
+                    getResources().getString(R.string.time_reminder_text6),
+                    getResources().getString(R.string.time_reminder_text7)};
             reminderValue.setText(reminderOptions[mDaysBefore - 1]);
             reminderValue.setTextColor(getResources().getColor(R.color.statistics_blue));
             reminderValue.setTextSize(18);
@@ -135,7 +138,7 @@ public class SetReminderDialog extends BottomSheetDialogFragment {
 
         timeValue.setOnClickListener(v -> {
             final int[] time = {12, 0};
-            if (!timeValue.getText().toString().equals("Không có >")) {
+            if (!timeValue.getText().toString().equals(getResources().getString(R.string.note_none))) {
                 time[0] = Integer.parseInt(timeValue.getText().toString().substring(0, 2));
                 time[1] = Integer.parseInt(timeValue.getText().toString().substring(3, 5));
             }
@@ -174,7 +177,7 @@ public class SetReminderDialog extends BottomSheetDialogFragment {
             AlertDialog dialog = builder.create();
 
             TextView[] textViews = {text1, text2, text3, text4, text5, text6, text7};
-            if (!reminderValue.getText().toString().equals("Không có >")) {
+            if (!reminderValue.getText().toString().equals(getResources().getString(R.string.note_none))) {
                 textViews[Integer.parseInt(reminderValue.getText().toString().substring(0, 1)) - 1].setTextColor(getResources().getColor(R.color.statistics_blue));
             }
 
@@ -191,11 +194,6 @@ public class SetReminderDialog extends BottomSheetDialogFragment {
                 });
             }
 
-            switchRepeatReminder.setOnClickListener(v1 -> {
-                boolean isChecked = switchRepeatReminder.isChecked();
-                Log.d("SetReminderDialog", isChecked ? "Repeat reminder enabled" : "Repeat reminder disabled");
-            });
-
             dialog.show();
         });
 
@@ -205,11 +203,11 @@ public class SetReminderDialog extends BottomSheetDialogFragment {
 
             selectedDate = "";
 
-            timeValue.setText("Không có >");
+            timeValue.setText(getResources().getString(R.string.note_none));
             timeValue.setTextColor(getResources().getColor(R.color.gray));
             timeValue.setTextSize(16);
 
-            reminderValue.setText("Không có >");
+            reminderValue.setText(getResources().getString(R.string.note_none));
             reminderValue.setTextColor(getResources().getColor(R.color.gray));
             reminderValue.setTextSize(16);
 
@@ -272,9 +270,9 @@ public class SetReminderDialog extends BottomSheetDialogFragment {
         super.onDestroyView();
         if (listener != null) {
             String date = selectedDate;
-            String time = !timeValue.getText().toString().equals("Không có >") ? timeValue.getText().toString() : "";
+            String time = !timeValue.getText().toString().equals(getResources().getString(R.string.note_none)) ? timeValue.getText().toString() : "";
             int daysBefore = 0;
-            if (!reminderValue.getText().toString().substring(0, 1).equals("K"))
+            if (!reminderValue.getText().toString().substring(0, 1).equals(String.valueOf(getResources().getString(R.string.note_none).charAt(0))))
             {
                 daysBefore = Integer.parseInt(reminderValue.getText().toString().substring(0, 1));
             }
