@@ -92,6 +92,8 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
             if (listName != null) {
                 tvWelcome.setText("📋 " + listName);
             }
+        } else {
+            tvWelcome.setText("📋 Welcome");
         }
 
         loadCategoriesAndTasks(currentListId);
@@ -532,7 +534,6 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
                         String content = noteCursor.isNull(2) ? "" : noteCursor.getString(2);
                         String date = noteCursor.isNull(3) ? "" : noteCursor.getString(3);
 
-                        Log.d("SearchFilter", "Note title: " + title);
                         addNoteView(taskListLayout, categoryId, noteId, title, content, date);
                     }
                     noteCursor.close();
@@ -563,7 +564,6 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
                         String reminderDate = taskCursor.isNull(4) ? "" : taskCursor.getString(4);
                         boolean isCompleted = taskCursor.getInt(5) > 0;
 
-                        Log.d("SearchFilter", "Task title: " + title + "task id"+taskId);
                         addTaskView(taskListLayout,listId,categoryId, taskId, title, content, priority, reminderDate, isCompleted);
                     }
                     taskCursor.close();
@@ -615,7 +615,6 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
                     String reminderDate = completedCursor.isNull(4) ? "" : completedCursor.getString(4);
                     boolean isCompleted = completedCursor.getInt(5) > 0;
 
-                    Log.d("SearchFilter", "Completed Task: " + title);
                     addTaskView(completedTaskLayout,listId,-1, taskId, title, content, priority, reminderDate, isCompleted);
                 }
 

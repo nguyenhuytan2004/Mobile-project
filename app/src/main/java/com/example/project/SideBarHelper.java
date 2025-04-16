@@ -243,8 +243,8 @@ public class SideBarHelper {
         
         try {
             db = DatabaseHelper.getInstance(context).openDatabase();
-            Cursor cursor = db.rawQuery("SELECT name FROM tbl_list", null);
-            
+            Cursor cursor = db.rawQuery("SELECT name FROM tbl_list ORDER BY id", null);
+
             while (cursor.moveToNext()) {
                 String listName = cursor.getString(0);
                 lists.add(listName);

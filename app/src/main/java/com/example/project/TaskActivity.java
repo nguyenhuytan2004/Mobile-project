@@ -40,7 +40,7 @@ import java.util.regex.Pattern;
 public class TaskActivity extends  AppCompatActivity{
 
     ImageView btnDate, btnTag, btnImage;
-    TextView txtDate, btnBack, btnOption, btnSave, btnlistName, btnDropDownList;
+    TextView txtDate, btnBack, btnOption, btnSave, btnListName, btnDropDownList;
     EditText titleInput, contentInput;
     FlexboxLayout tagContainer, attachmentContainer;
 
@@ -69,7 +69,7 @@ public class TaskActivity extends  AppCompatActivity{
         btnDate = findViewById(R.id.icon4);
         btnTag = findViewById(R.id.cardIcon);
         btnImage = findViewById(R.id.imageIcon);
-        btnlistName = findViewById(R.id.listNameText);
+        btnListName = findViewById(R.id.listNameText);
         btnDropDownList = findViewById(R.id.dropDownList);
 
         tagContainer = findViewById(R.id.tagContainer);
@@ -102,9 +102,9 @@ public class TaskActivity extends  AppCompatActivity{
 
             if (cursor.moveToFirst()) {
                 String listName = cursor.getString(0);
-                btnlistName.setText(listName);
+                btnListName.setText(listName);
             } else {
-                btnlistName.setText("(Không tìm thấy)");
+                btnListName.setText("(Không tìm thấy)");
             }
 
             cursor.close();
@@ -167,9 +167,9 @@ public class TaskActivity extends  AppCompatActivity{
 
             db = DatabaseHelper.getInstance(this).openDatabase();
 
-            Cursor listCursor = db.rawQuery("SELECT id, name FROM tbl_list", null);
+            Cursor listCursor = db.rawQuery("SELECT id, name FROM tbl_list ORDER BY id", null);
 
-            if (listCursor != null && listCursor.moveToFirst()) {
+            if (listCursor.moveToFirst()) {
                 do {
                     int listIdFromDB = listCursor.getInt(0);
                     String listName = listCursor.getString(1);
@@ -202,9 +202,9 @@ public class TaskActivity extends  AppCompatActivity{
                         categoryView.setOnClickListener(catView -> {
                             listId = String.valueOf(listIdFromDB);
                             categoryId = String.valueOf(categoryIdFromDB);
-                            btnlistName.setText(listName);
+                            btnListName.setText(listName);
 
-                            //Toast.makeText(this, "Chuyển đến: " + listName + " / " + categoryName, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, getResources().getString(R.string.note_move) + ": " + listName + " / " + categoryName, Toast.LENGTH_SHORT).show();
                             bottomSheetDialog.dismiss();
                         });
 

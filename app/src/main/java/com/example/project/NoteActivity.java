@@ -10,9 +10,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,7 +38,8 @@ import java.util.regex.Pattern;
 
 public class NoteActivity extends AppCompatActivity {
     ImageView btnDate, btnTag, btnImage;
-    TextView txtDate, btnBack, btnOption, btnSave;
+    TextView txtDate, btnBack, btnOption, btnSave, btnDropdownList;
+    TextView listNameTxt;
     EditText titleInput, contentInput;
     FlexboxLayout tagContainer, attachmentContainer;
 
@@ -56,6 +59,7 @@ public class NoteActivity extends AppCompatActivity {
         btnBack = findViewById(R.id.textView);
         btnOption = findViewById(R.id.textView2);
         btnSave = findViewById(R.id.saveButton);
+        listNameTxt = findViewById(R.id.listName);
 
         titleInput = findViewById(R.id.titleInput);
         contentInput = findViewById(R.id.contentInput);
@@ -63,6 +67,7 @@ public class NoteActivity extends AppCompatActivity {
         btnDate = findViewById(R.id.icon4);
         btnTag = findViewById(R.id.cardIcon);
         btnImage = findViewById(R.id.imageIcon);
+        btnDropdownList = findViewById(R.id.btnDropDownList);
 
         tagContainer = findViewById(R.id.tagContainer);
         attachmentContainer = findViewById(R.id.attachmentContainer);
@@ -71,9 +76,90 @@ public class NoteActivity extends AppCompatActivity {
         categoryId = getIntent().getStringExtra("categoryId");
         noteId = getIntent().getStringExtra("noteId");
 
+        db = DatabaseHelper.getInstance(this).openDatabase();
+        Cursor listCursor = db.rawQuery("SELECT name FROM tbl_list WHERE id = ?", new String[]{listId});
+        if (listCursor.moveToFirst()) {
+            String listName = listCursor.getString(0);
+            listNameTxt.setText(listName);
+        }
+        listCursor.close();
+
         if (noteId != null && !noteId.equals("-1")) {
             loadNote();
         }
+
+        btnDropdownList.setOnClickListener(v -> {
+            BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
+            View view = getLayoutInflater().inflate(R.layout.popup_move_to, null);
+            bottomSheetDialog.setContentView(view);
+            bottomSheetDialog.show();
+
+            LinearLayout container = view.findViewById(R.id.listCategoryContainer);
+            TextView btnCancel = view.findViewById(R.id.btnCancel);
+            btnCancel.setOnClickListener(v1 -> bottomSheetDialog.dismiss());
+
+            db = DatabaseHelper.getInstance(this).openDatabase();
+
+            Cursor listsCursor = db.rawQuery("SELECT id, name FROM tbl_list ORDER BY id", null);
+
+            if (listsCursor.moveToFirst()) {
+                do {
+                    int listIdFromDB = listsCursor.getInt(0);
+                    String listName = listsCursor.getString(1);
+
+                    // Inflate layout block cho từng list
+                    View listBlockView = LayoutInflater.from(this).inflate(R.layout.item_list_block, container, false);
+                    TextView listTitle = listBlockView.findViewById(R.id.list_title);
+                    LinearLayout categoryListLayout = listBlockView.findViewById(R.id.category_list_layout);
+
+                    listTitle.setText(listName);
+
+                    // Truy vấn category thuộc list đó
+                    Cursor categoryCursor = db.rawQuery(
+                            "SELECT id, name FROM tbl_category WHERE list_id = ?",
+                            new String[]{String.valueOf(listIdFromDB)}
+                    );
+
+                    while (categoryCursor.moveToNext()) {
+                        int categoryIdFromDB = categoryCursor.getInt(0);
+                        String categoryName = categoryCursor.getString(1);
+
+                        // Tạo TextView cho mỗi category
+                        TextView categoryView = new TextView(this);
+                        categoryView.setText("\uD81A\uDD18 " + categoryName);
+                        categoryView.setTextColor(Color.parseColor("#CCCCCC"));
+                        categoryView.setTextSize(16);
+                        categoryView.setPadding(24, 12, 0, 12);
+
+                        // Gắn sự kiện click
+                        categoryView.setOnClickListener(catView -> {
+                            listId = String.valueOf(listIdFromDB);
+                            categoryId = String.valueOf(categoryIdFromDB);
+                            listNameTxt.setText(listName);
+
+                            Toast.makeText(this, getResources().getString(R.string.note_move) + ": " + listName + " / " + categoryName, Toast.LENGTH_SHORT).show();
+
+                            if (noteId != null && !noteId.equals("-1")) {
+                                db.execSQL("UPDATE tbl_note SET category_id = ? WHERE id = ?",
+                                        new Object[]{categoryId, noteId});
+                                db.execSQL("UPDATE tbl_category SET list_id = ? WHERE id = ?",
+                                        new Object[]{listId, categoryId});
+                            }
+
+                            bottomSheetDialog.dismiss();
+                        });
+
+                        categoryListLayout.addView(categoryView);
+                    }
+                    categoryCursor.close();
+
+                    container.addView(listBlockView);
+                } while (listsCursor.moveToNext());
+
+                listsCursor.close();
+            }
+        });
+
 
         btnDate.setOnClickListener(view -> {
             if (!DatabaseHelper.isPremiumUser(this)) {
@@ -296,7 +382,6 @@ public class NoteActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         String noteId = bundle.getString("noteId");
 
-        db = DatabaseHelper.getInstance(this).openDatabase();
         String query = "SELECT n.id, n.title, n.content, r.date " +
                         "FROM tbl_note n " +
                         "LEFT JOIN tbl_note_reminder r ON n.id = r.note_id " +
@@ -406,7 +491,6 @@ public class NoteActivity extends AppCompatActivity {
                 reminderRepeatEnabled = isRepeat == 1;
             }
         }
-        DatabaseHelper.getInstance(this).closeDatabase();
     }
 
     private void saveNote() {
@@ -444,12 +528,11 @@ public class NoteActivity extends AppCompatActivity {
                         new String[]{String.valueOf(noteId)});
             } else {
                 // Insert new note
-                Cursor categoryCursor = db.rawQuery("SELECT * FROM tbl_category WHERE list_id = ?", new String[]{listId});
-                if (categoryCursor.moveToFirst()) {
-                    Log.d("NoteActivity", listId);
-                    Log.d("NoteActivity", String.valueOf(categoryCursor.getColumnIndexOrThrow("id")));
-                    Log.d("NoteActivity", categoryCursor.getString(categoryCursor.getColumnIndexOrThrow("id")));
-                    noteValues.put("category_id", categoryCursor.getInt(categoryCursor.getColumnIndexOrThrow("id")));
+                if (categoryId == null) {
+                    Cursor categoryCursor = db.rawQuery("SELECT * FROM tbl_category WHERE list_id = ?", new String[]{listId});
+                    if (categoryCursor.moveToFirst()) {
+                        noteValues.put("category_id", categoryCursor.getInt(categoryCursor.getColumnIndexOrThrow("id")));
+                    }
                 }
 
                 noteId = String.valueOf(db.insert("tbl_note", null, noteValues));
@@ -535,5 +618,9 @@ public class NoteActivity extends AppCompatActivity {
         }
     }
 
-
+    @Override
+    protected void onStop() {
+        super.onStop();
+        DatabaseHelper.getInstance(this).closeDatabase();
+    }
 }

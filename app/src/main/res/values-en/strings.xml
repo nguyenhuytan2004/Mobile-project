@@ -241,6 +241,7 @@
     <string name="note_tag_hint">Input a tag</string>
     <string name="note_done">Done</string>
     <string name="note_constant_reminder">Constant reminder</string>
+    <string name="note_move">Move to</string>
 
     <!--  Focus  -->
     <string name="focus_start">Start</string>
