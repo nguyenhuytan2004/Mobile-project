@@ -354,7 +354,7 @@ public class CalendarTab extends AppCompatActivity {
         List<NoteInfo> notes = dateToNotesMap.get(date);
         if (notes != null && !notes.isEmpty()) {
             TextView title = new TextView(this);
-            title.setText("Ghi chú");
+            title.setText(getResources().getString(R.string.calendar_note));
             title.setTextColor(Color.parseColor("#d5d5d5"));
             title.setTextSize(20);
             title.setPadding(20, 20, 0, 50);
@@ -411,7 +411,7 @@ public class CalendarTab extends AppCompatActivity {
         } else {
             // Hiển thị thông báo không có ghi chú
             TextView emptyText = new TextView(this);
-            emptyText.setText("Không có ghi chú cho ngày này");
+            emptyText.setText(getResources().getString(R.string.calendar_note_none));
             emptyText.setTextColor(Color.parseColor("#d5d5d5"));
             emptyText.setTextSize(16);
             emptyText.setPadding(20, 20, 20, 20);
@@ -425,7 +425,7 @@ public class CalendarTab extends AppCompatActivity {
         List<Task> tasks = loadTaskByDate(date);
         if (tasks != null && !tasks.isEmpty()) {
             TextView title = new TextView(this);
-            title.setText("Nhiệm vụ");
+            title.setText(getResources().getString(R.string.calendar_task));
             title.setTextColor(Color.parseColor("#d5d5d5"));
             title.setTextSize(20);
             title.setPadding(20, 20, 0, 30);
@@ -471,7 +471,7 @@ public class CalendarTab extends AppCompatActivity {
             }
         } else {
             TextView emptyText = new TextView(this);
-            emptyText.setText("Không có nhiệm vụ cho ngày này");
+            emptyText.setText(getResources().getString(R.string.calendar_task_none));
             emptyText.setTextColor(Color.parseColor("#d5d5d5"));
             emptyText.setTextSize(16);
             emptyText.setPadding(20, 20, 20, 20);

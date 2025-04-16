@@ -8,6 +8,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -26,6 +28,8 @@ import androidx.appcompat.widget.PopupMenu;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -109,22 +113,24 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
         // Set up the more options menu
         ivMoreHome.setOnClickListener(v -> {
             PopupMenu popupMenu = new PopupMenu(this, v);
-            popupMenu.getMenu().add("Xoá");
-            popupMenu.getMenu().add("Chia sẻ");
+            final String removeString = getResources().getString(R.string.note_delete);
+            final String shareString = getResources().getString(R.string.home_share);
+            popupMenu.getMenu().add(removeString);
+            popupMenu.getMenu().add(shareString);
 
             popupMenu.setOnMenuItemClickListener(item -> {
                 String title = item.getTitle().toString();
-                switch (title) {
-                    case "Xoá":
-                        // Show confirmation dialog
-                        showDeleteConfirmationDialog();
-                        return true;
-                    case "Chia sẻ":
-                        // Check premium status before sharing
-                        checkPremiumAndShare();
-                        return true;
-                    default:
-                        return false;
+
+                if (title.equals(removeString)) {
+                    // Show confirmation dialog
+                    showDeleteConfirmationDialog();
+                    return true;
+                } else if (title.equals(shareString)) {
+                    // Check premium status before sharing
+                    checkPremiumAndShare();
+                    return true;
+                } else {
+                    return false;
                 }
             });
 
@@ -164,19 +170,19 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
 
     private void showDeleteConfirmationDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Xác nhận xóa");
-        builder.setMessage("Bạn có chắc chắn muốn xóa danh sách này không?");
+        builder.setTitle(getResources().getString(R.string.home_delete_title));
+        builder.setMessage(getResources().getString(R.string.home_delete_message));
         
-        builder.setPositiveButton("Xóa", (dialog, which) -> {
+        builder.setPositiveButton(getResources().getString(R.string.note_delete), (dialog, which) -> {
             // Only delete if not the default Welcome list (id 3)
             if (currentListId != 2 && currentListId != 1) {
                 deleteCurrentList();
             } else {
-                Toast.makeText(this, "Không thể xóa danh sách mặc định", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getResources().getString(R.string.home_cant_delete), Toast.LENGTH_SHORT).show();
             }
         });
         
-        builder.setNegativeButton("Hủy", (dialog, which) -> dialog.dismiss());
+        builder.setNegativeButton(getResources().getString(R.string.cancel), (dialog, which) -> dialog.dismiss());
         
         builder.show();
     }
@@ -200,7 +206,7 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
             // Delete the list - this should cascade and delete related categories and tasks
             db.execSQL("DELETE FROM tbl_list WHERE id = ?", new String[]{String.valueOf(currentListId)});
             
-            Toast.makeText(this, "Đã xóa danh sách: " + listName, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.home_delete_success) + listName, Toast.LENGTH_SHORT).show();
             
             // Navigate back to the Welcome list
             currentListId = 3;
@@ -209,7 +215,6 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
             
         } catch (Exception e) {
             Log.e("HomeActivity", "Error deleting list", e);
-            Toast.makeText(this, "Lỗi khi xóa danh sách", Toast.LENGTH_SHORT).show();
         } finally {
             if (db != null) {
                 DatabaseHelper.getInstance(this).closeDatabase();
@@ -306,12 +311,11 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
                 shareIntent.putExtra("list_name", listName);
                 startActivity(shareIntent);
             } else {
-                Toast.makeText(this, "Không có ghi chú hoặc công việc nào để chia sẻ", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getResources().getString(R.string.home_share_none), Toast.LENGTH_SHORT).show();
             }
             
         } catch (Exception e) {
             Log.e("HomeActivity", "Error preparing tasks for sharing", e);
-            Toast.makeText(this, "Lỗi khi chia sẻ danh sách", Toast.LENGTH_SHORT).show();
         } finally {
             if (db != null) {
                 DatabaseHelper.getInstance(this).closeDatabase();
@@ -330,8 +334,6 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
             // User is not premium, show upgrade screen
             Intent premiumIntent = new Intent(this, PremiumRequestActivity.class);
             startActivity(premiumIntent);
-            Toast.makeText(this, "Chia sẻ là tính năng cao cấp. Vui lòng nâng cấp tài khoản!",
-                    Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -569,7 +571,7 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
                     // Nếu không có note/task thì thêm dòng "Không có nội dung"
                     if (taskListLayout.getChildCount() == 0) {
                         TextView emptyView = new TextView(this);
-                        emptyView.setText("Không có nội dung");
+                        emptyView.setText(getResources().getString(R.string.home_none));
                         emptyView.setTextColor(Color.WHITE);
                         emptyView.setPadding(16, 16, 16, 16);
                         taskListLayout.addView(emptyView);
@@ -583,7 +585,7 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
                 TextView completedTitle = completedView.findViewById(R.id.category_title);
                 LinearLayout completedTaskLayout = completedView.findViewById(R.id.task_list_layout);
 
-                completedTitle.setText("Đã hoàn thành");
+                completedTitle.setText(getResources().getString(R.string.home_complete));
 
                 // --- Query các task đã hoàn thành ---
                 String completedQuery = "SELECT t.id, t.title, t.content, t.priority, " +
@@ -621,7 +623,7 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
 
                 if (completedTaskLayout.getChildCount() == 0) {
                     TextView emptyView = new TextView(this);
-                    emptyView.setText("Không có nhiệm vụ đã hoàn thành");
+                    emptyView.setText(getResources().getString(R.string.home_complete_none));
                     emptyView.setTextColor(Color.WHITE);
                     emptyView.setPadding(16, 16, 16, 16);
                     completedTaskLayout.addView(emptyView);
@@ -634,7 +636,6 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
 
         } catch (Exception e) {
             Log.e("HomeActivity", "Lỗi load category/note: " + e.getMessage(), e);
-            Toast.makeText(this, "Lỗi khi tải dữ liệu", Toast.LENGTH_SHORT).show();
         } finally {
             if (db != null) DatabaseHelper.getInstance(this).closeDatabase();
         }

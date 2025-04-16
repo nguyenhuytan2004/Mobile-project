@@ -283,6 +283,24 @@
     <string name="profile_male">Nam</string>
     <string name="profile_statistic">Thống kê</string>
 
+    <!--  Home  -->
+    <string name="home_search">Tìm kiếm</string>
+    <string name="home_share">Chia sẻ</string>
+    <string name="home_delete_title">Xác nhận xóa</string>
+    <string name="home_delete_message">Bạn có chắc chắn muốn xóa danh sách này không?</string>
+    <string name="home_cant_delete">Không thể xoá danh sách mặc định</string>
+    <string name="home_delete_success">Đã xóa danh sách: </string>
+    <string name="home_share_none">Không có ghi chú hoặc công việc nào để chia sẻ</string>
+    <string name="home_none">Không có nội dung</string>
+    <string name="home_complete">Đã hoàn thành</string>
+    <string name="home_complete_none">Không có nhiệm vụ nào được hoàn thành</string>
+
+    <!--  Calendar  -->
+    <string name="calendar_title">Lịch</string>
+    <string name="calendar_task">Nhiệm vụ</string>
+    <string name="calendar_note">Ghi chú</string>
+    <string name="calendar_task_none">Không có nhiệm vụ cho ngày này</string>
+    <string name="calendar_note_none">Không có ghi chú cho ngày này</string>
 
 </resources>
 

@@ -112,7 +112,9 @@ public class Profile extends Activity {
             }
 
             nameText.setText(cursor.getString(cursor.getColumnIndexOrThrow("full_name")));
-            sexText.setText(cursor.getString(cursor.getColumnIndexOrThrow("sex")));
+            sexText.setText(cursor.getString(cursor.getColumnIndexOrThrow("sex")).equals("Nam")
+                     ? getResources().getString(R.string.profile_male)
+                     : getResources().getString(R.string.profile_female));
             birthdayText.setText(cursor.getString(cursor.getColumnIndexOrThrow("birthday")));
         }
         cursor.close();
@@ -344,7 +346,7 @@ public class Profile extends Activity {
 
             ContentValues values = new ContentValues();
             values.put("full_name", nameText.getText().toString());
-            values.put("sex", sexText.getText().toString());
+            values.put("sex", sexText.getText().toString().equals(getResources().getString(R.string.profile_male)) ? "Nam" : "Nữ");
             values.put("birthday", birthdayText.getText().toString());
 
             // Save avatar if it was changed

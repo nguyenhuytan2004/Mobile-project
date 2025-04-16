@@ -43,7 +43,7 @@
         android:background="@drawable/search_bar_background"
         android:drawableStart="@android:drawable/ic_menu_search"
         android:drawablePadding="8dp"
-        android:hint="Tìm kiếm"
+        android:hint="@string/home_search"
         android:padding="10dp"
         android:textColor="#FFFFFF"
         android:textColorHint="#888888"
