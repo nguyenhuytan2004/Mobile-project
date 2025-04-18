@@ -10,7 +10,7 @@ android {
     defaultConfig {
         applicationId = "com.example.project"
         minSdk = 29
-        targetSdk = 35
+        targetSdk = 33
         versionCode = 1
         versionName = "1.0"
 
@@ -48,6 +48,8 @@ dependencies {
     // google login
     implementation ("com.github.bumptech.glide:glide:4.16.0")
     implementation ("com.google.android.gms:play-services-auth:21.1.0")
+
+    implementation ("com.squareup.okhttp3:okhttp:4.12.0")
 
 
     testImplementation(libs.junit)

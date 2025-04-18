@@ -13,11 +13,17 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+//import com.example.project.network.SecureHttpClient;
 import com.google.android.gms.auth.api.signin.*;
 import com.google.android.gms.common.api.ApiException;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.*;
 import com.google.android.gms.tasks.Task;
+
+import okhttp3.*;
+import org.json.JSONObject;
+
+import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,40 +42,92 @@ public class MainActivity extends AppCompatActivity {
 
                         auth.signInWithCredential(credential).addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
-                                String email = signInAccount.getEmail();
+                                String idToken = signInAccount.getIdToken();
 
-                                SQLiteDatabase db = null;
-                                Cursor cursor = null;
+                                //OkHttpClient client = SecureHttpClient.getSecureClient(MainActivity.this);
+                                OkHttpClient client = new OkHttpClient();
+                                JSONObject json = new JSONObject();
                                 try {
-                                    db = DatabaseHelper.getInstance(this).openDatabase();
-
-                                    String query = "SELECT id FROM tbl_user WHERE email = ?";
-                                    cursor = db.rawQuery(query, new String[]{email});
-
-                                    if (cursor == null || !cursor.moveToFirst()) {
-                                        String insertQuery = "INSERT INTO tbl_user (email, isGoogle, is_premium) VALUES (?, ?, ?)";
-                                        SQLiteStatement stmt = db.compileStatement(insertQuery);
-                                        stmt.bindString(1, email);
-                                        stmt.bindLong(2, 1); // isGoogle = 1
-                                        stmt.bindLong(3, 0); // is_premium = 0
-                                        stmt.executeInsert();
-
-                                        Log.d("DB", "Inserted new user: " + email);
-                                    } else {
-                                        Log.d("DB", "User already exists: " + email);
-                                    }
-
+                                    json.put("idToken", idToken);
                                 } catch (Exception e) {
                                     e.printStackTrace();
-                                    Toast.makeText(MainActivity.this, "Lỗi truy vấn người dùng", Toast.LENGTH_SHORT).show();
-                                } finally {
-                                    if (cursor != null) cursor.close();
-                                    if (db != null) db.close();
                                 }
 
-                                // Sau khi xử lý DB -> chuyển sang HomeActivity
-                                startActivity(new Intent(MainActivity.this, HomeActivity.class));
-                                finish();
+                                RequestBody body = RequestBody.create(
+                                        json.toString(),
+                                        MediaType.parse("application/json")
+                                );
+
+                                Request request = new Request.Builder()
+                                        .url("https://ticktickserver.onrender.com/api/auth/google")
+                                        .post(body)
+                                        .build();
+
+                                client.newCall(request).enqueue(new Callback() {
+                                    @Override
+                                    public void onFailure(Call call, IOException e) {
+                                        e.printStackTrace();
+                                        runOnUiThread(() -> Toast.makeText(MainActivity.this, "Không kết nối được server", Toast.LENGTH_SHORT).show());
+                                    }
+
+                                    @Override
+                                    public void onResponse(Call call, Response response) throws IOException {
+                                        if (!response.isSuccessful()) {
+                                            runOnUiThread(() -> Toast.makeText(MainActivity.this, "Xác minh token thất bại", Toast.LENGTH_SHORT).show());
+                                            return;
+                                        }
+
+                                        String resBody = response.body().string();
+                                        try {
+                                            JSONObject resJson = new JSONObject(resBody);
+                                            String email = resJson.getString("email");
+                                            boolean isGoogle = resJson.getBoolean("isGoogle");
+                                            boolean isPremium = resJson.getBoolean("isPremium");
+
+                                            // Cập nhật vào DB local
+                                            SQLiteDatabase db = null;
+                                            Cursor cursor = null;
+                                            try {
+                                                db = DatabaseHelper.getInstance(MainActivity.this).openDatabase();
+
+                                                String query = "SELECT id FROM tbl_user WHERE email = ?";
+                                                cursor = db.rawQuery(query, new String[]{email});
+
+                                                if (cursor == null || !cursor.moveToFirst()) {
+                                                    String insertQuery = "INSERT INTO tbl_user (email, isGoogle, is_premium) VALUES (?, ?, ?)";
+                                                    SQLiteStatement stmt = db.compileStatement(insertQuery);
+                                                    stmt.bindString(1, email);
+                                                    stmt.bindLong(2, isGoogle ? 1 : 0);
+                                                    stmt.bindLong(3, isPremium ? 1 : 0);
+                                                    stmt.executeInsert();
+                                                } else {
+                                                    // Cập nhật nếu cần (vd: từ free lên premium)
+                                                    String updateQuery = "UPDATE tbl_user SET isGoogle = ?, is_premium = ? WHERE email = ?";
+                                                    SQLiteStatement stmt = db.compileStatement(updateQuery);
+                                                    stmt.bindLong(1, isGoogle ? 1 : 0);
+                                                    stmt.bindLong(2, isPremium ? 1 : 0);
+                                                    stmt.bindString(3, email);
+                                                    stmt.executeUpdateDelete();
+                                                }
+
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            } finally {
+                                                if (cursor != null) cursor.close();
+                                                if (db != null) db.close();
+                                            }
+
+                                            // Sau khi cập nhật DB -> chuyển sang HomeActivity
+                                            runOnUiThread(() -> {
+                                                startActivity(new Intent(MainActivity.this, HomeActivity.class));
+                                                finish();
+                                            });
+
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });
                             } else {
                                 Toast.makeText(MainActivity.this, "Đăng nhập thất bại: " + task.getException(), Toast.LENGTH_SHORT).show();
                             }

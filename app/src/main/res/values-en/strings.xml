@@ -38,7 +38,7 @@
     <string name="label_quote">Quote</string>
     <string name="hint_quote">Small number, big result</string>
     <string name="btn_next_aim_habit">Next</string>
-    
+    home_complete_none
     <!-- New Habit Aim -->
     <string name="frequency">Frequency</string>
     <string name="chip_daily">Daily</string>
