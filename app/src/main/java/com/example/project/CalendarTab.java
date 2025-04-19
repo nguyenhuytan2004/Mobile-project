@@ -123,7 +123,7 @@ public class CalendarTab extends AppCompatActivity {
                             "ORDER BY n.id",
                     new String[]{String.valueOf(userId)});
 
-            if (cursor != null && cursor.moveToFirst()) {
+            if (cursor.moveToFirst()) {
                 do {
                     String noteId = cursor.getString(cursor.getColumnIndexOrThrow("id"));
                     String title = cursor.getString(cursor.getColumnIndexOrThrow("title"));

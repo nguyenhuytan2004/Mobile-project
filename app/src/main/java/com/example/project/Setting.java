@@ -17,7 +17,7 @@ import java.io.File;
 public class Setting extends Activity {
     LinearLayout btnWidget;
     LinearLayout btnMusic_Notify, profileLayout, btnTaskStatistic;
-    TextView btnBack, btnUpgrade, nameTextView;
+    TextView btnBack, btnUpgrade, btnLogout, nameTextView;
     ImageView avatarImage;
     SQLiteDatabase db;
     LoginSessionManager sessionManager;
@@ -33,6 +33,7 @@ public class Setting extends Activity {
         btnUpgrade = findViewById(R.id.btnUpgrade);
         profileLayout = findViewById(R.id.profileLayout);
         btnTaskStatistic = findViewById(R.id.btnTaskStatistic);
+        btnLogout = findViewById(R.id.btnLogout);
 
         avatarImage = findViewById(R.id.avatar);
         nameTextView = findViewById(R.id.name);
@@ -75,6 +76,15 @@ public class Setting extends Activity {
                 Intent intent = new Intent(Setting.this, TaskStatistics.class);
                 startActivity(intent);
             }
+        });
+        btnLogout.setOnClickListener(v -> {
+            sessionManager.logout();
+
+            Intent intent = new Intent(Setting.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Clear activity stack
+            startActivity(intent);
+
+            finish();
         });
     }
 

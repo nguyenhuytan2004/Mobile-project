@@ -56,16 +56,16 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
 
     private EditText searchBar;
     private String searchKeyword = "";
-
+    private AlertDialog alertDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home);
 
         loginSessionManager = LoginSessionManager.getInstance(this);
-        /*if (!loginSessionManager.isLoggedIn()) {
+        if (!loginSessionManager.isLoggedIn()) {
             loginSessionManager.createSession(1); // tạo giả user
-        }*/
+        }
         Log.d("HomeActivity", "User ID: " + loginSessionManager.getUserId());
 
         ReminderService.scheduleReminders(this);
@@ -170,6 +170,16 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
         matrixView.setOnClickListener(v -> startActivity(new Intent(this, Matrix_Eisenhower.class)));
         habitTab.setOnClickListener(v -> startActivity(new Intent(this, HabitActivity.class)));
     }
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
+        if (alertDialog != null && alertDialog.isShowing()) {
+            alertDialog.dismiss();
+            alertDialog = null;
+        }
+        SideBarHelper.dismissSideBar();
+    }
 
     private void showDeleteConfirmationDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -187,7 +197,8 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
         
         builder.setNegativeButton(getResources().getString(R.string.cancel), (dialog, which) -> dialog.dismiss());
         
-        builder.show();
+        alertDialog = builder.create();
+        alertDialog.show();
     }
 
     private void deleteCurrentList() {

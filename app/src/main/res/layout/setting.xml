@@ -398,8 +398,23 @@
 
         </LinearLayout>
 
-
-
     </LinearLayout>
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <TextView
+        android:id="@+id/btnLogout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/logout"
+        android:textColor="@color/red"
+        android:textSize="20dp"
+        android:gravity="center"
+        android:background="@drawable/button_custom2"
+        android:paddingVertical="12dp"
+        />
 
 </LinearLayout>
