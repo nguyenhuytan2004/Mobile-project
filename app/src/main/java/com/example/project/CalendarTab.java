@@ -107,16 +107,21 @@ public class CalendarTab extends AppCompatActivity {
     private void loadNotesFromDatabase() {
         SQLiteDatabase db = DatabaseHelper.getInstance(this).openDatabase();
         try {
-            // Truy vấn để lấy tất cả các ghi chú có nhắc nhở
+            // Get current user ID
+            LoginSessionManager loginSessionManager = LoginSessionManager.getInstance(this);
+            int userId = loginSessionManager.getUserId();
+            
+            // Updated query to filter by user ID
             Cursor cursor = db.rawQuery(
                     "SELECT n.id, n.title, n.content, r.date, r.time, n.category_id, c.list_id " +
                             "FROM tbl_note n " +
                             "JOIN tbl_note_reminder r ON n.id = r.note_id " +
                             "JOIN tbl_category c ON n.category_id = c.id " +
                             "JOIN tbl_list l ON c.list_id = l.id " +
-                            "WHERE r.date IS NOT NULL AND r.date != ''" +
+                            "WHERE r.date IS NOT NULL AND r.date != '' " +
+                            "AND n.user_id = ? " +
                             "ORDER BY n.id",
-                    null);
+                    new String[]{String.valueOf(userId)});
 
             if (cursor != null && cursor.moveToFirst()) {
                 do {
@@ -155,15 +160,20 @@ public class CalendarTab extends AppCompatActivity {
     private void loadTasksFromDatabase() {
         SQLiteDatabase db = DatabaseHelper.getInstance(this).openDatabase();
         try {
-            // Query all tasks with reminders
+            // Get current user ID
+            LoginSessionManager loginSessionManager = LoginSessionManager.getInstance(this);
+            int userId = loginSessionManager.getUserId();
+            
+            // Updated query to filter by user ID
             Cursor cursor = db.rawQuery(
                     "SELECT t.id, t.title, t.content, t.priority, t.is_completed, " +
                     "t.category_id, r.date, r.time " +
                     "FROM tbl_task t " +
                     "JOIN tbl_task_reminder r ON t.id = r.task_id " +
                     "WHERE r.date IS NOT NULL AND r.date != '' " +
+                    "AND t.user_id = ? " +
                     "ORDER BY t.id",
-                    null);
+                    new String[]{String.valueOf(userId)});
 
             if (cursor != null && cursor.moveToFirst()) {
                 do {
@@ -221,6 +231,10 @@ public class CalendarTab extends AppCompatActivity {
         try {
             db = DatabaseHelper.getInstance(this).openDatabase();
             
+            // Get current user ID
+            LoginSessionManager loginSessionManager = LoginSessionManager.getInstance(this);
+            int userId = loginSessionManager.getUserId();
+            
             // Format the date for SQL query - look for exact date or pattern containing the date
             String formattedDate = date; // Already in dd/MM/yyyy format
             
@@ -228,10 +242,11 @@ public class CalendarTab extends AppCompatActivity {
                     "t.is_completed, t.category_id, r.date, r.time " +
                     "FROM tbl_task t " +
                     "JOIN tbl_task_reminder r ON t.id = r.task_id " +
-                    "WHERE r.date LIKE ? OR r.date LIKE ?";
+                    "WHERE (r.date LIKE ? OR r.date LIKE ?) " +
+                    "AND t.user_id = ?";
             
             Cursor cursor = db.rawQuery(query, 
-                    new String[]{ formattedDate + "%", "%" + formattedDate + "%" });
+                    new String[]{ formattedDate + "%", "%" + formattedDate + "%", String.valueOf(userId) });
             
             if (cursor != null && cursor.getCount() > 0) {
                 while (cursor.moveToNext()) {
@@ -488,6 +503,10 @@ public class CalendarTab extends AppCompatActivity {
         }
 
         try {
+            // Get current user ID
+            LoginSessionManager loginSessionManager = LoginSessionManager.getInstance(this);
+            int userId = loginSessionManager.getUserId();
+            
             // Update the Task object's completion status
             task.setCompleted(isCompleted);
 
@@ -495,9 +514,9 @@ public class CalendarTab extends AppCompatActivity {
             ContentValues values = new ContentValues();
             values.put("is_completed", isCompleted ? 1 : 0);
 
-            // First try to update using task ID (most reliable)
-            String whereClause = "id = ?";
-            String[] whereArgs = {String.valueOf(task.getId())};
+            // First try to update using task ID and user ID (most reliable)
+            String whereClause = "id = ? AND user_id = ?";
+            String[] whereArgs = {String.valueOf(task.getId()), String.valueOf(userId)};
 
             long result = db.update("tbl_task", values, whereClause, whereArgs);
 
@@ -506,10 +525,10 @@ public class CalendarTab extends AppCompatActivity {
             } else if (result == 0) {
                 // If no rows updated, try with title and content as fallback
                 Log.w("CalendarTab", "Không tìm thấy task với ID: " + task.getId());
-                whereClause = "title = ? AND content = ?";
-                whereArgs = new String[]{task.getTitle(), task.getDescription()};
+                String whereClauseFallback = "title = ? AND content = ?";
+                String[] whereArgsFallback = new String[]{task.getTitle(), task.getDescription()};
                 
-                result = db.update("tbl_task", values, whereClause, whereArgs);
+                result = db.update("tbl_task", values, whereClauseFallback, whereArgsFallback);
                 
                 if (result > 0) {
                     Log.d("CalendarTab", "Task đã được cập nhật bằng title và content");
