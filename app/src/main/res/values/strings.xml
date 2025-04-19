@@ -242,6 +242,26 @@
     <string name="note_constant_reminder">Nhắc nhở liên tục</string>
     <string name="note_move">Chuyển đến</string>
 
+    <!--  Task  -->
+    <string name="task_date">Ngày</string>
+    <string name="task_month">tháng</string>
+    <string name="task_repeat">Ngày và lặp lại</string>
+    <string name="task_title">Tiêu đề</string>
+    <string name="task_content">Nội dung</string>
+    <string name="task_save">Lưu</string>
+    <string name="task_delete">Xóa</string>
+    <string name="task_pin">Đính ghim</string>
+    <string name="task_convert_to_note">Chuyển đổi thành ghi chú</string>
+    <string name="task_more">Nhiều hơn nữa</string>
+    <string name="task_date_and_reminder">Ngày và lời nhắc</string>
+    <string name="task_time">Thời gian</string>
+    <string name="task_reminder">Lời nhắc</string>
+    <string name="task_none">Không có &gt;</string>
+    <string name="task_tag_hint">Nhập một thẻ</string>
+    <string name="task_done">Xong</string>
+    <string name="task_constant_reminder">Nhắc nhở liên tục</string>
+    <string name="task_move">Chuyển đến</string>
+
     <!--  Focus  -->
     <string name="focus_start">Bắt đầu</string>
     <string name="focus_setting">Cài đặt tập trung</string>

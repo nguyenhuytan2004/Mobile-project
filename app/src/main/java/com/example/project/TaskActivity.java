@@ -34,6 +34,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -236,19 +237,24 @@ public class TaskActivity extends  AppCompatActivity{
                         return;
                     }
 
-                    // Store the reminder settings
+                    // Lưu các thiết lập
                     reminderTime = time;
                     reminderDaysBefore = daysBefore;
                     reminderRepeatEnabled = isRepeat;
 
-                    // Existing date formatting code
+                    // Parse và format ngày theo Locale hệ thống
                     LocalDate selectedDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
                     LocalDate today = LocalDate.now();
 
-                    int day = selectedDate.getDayOfMonth();
-                    int month = selectedDate.getMonthValue();
-                    txtDate.setText("Ngày " + day + ", tháng " + month);
 
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMMM", Locale.getDefault());
+                    String formattedDate = selectedDate.format(formatter);
+
+                    // Thêm prefix "Ngày" nếu có (chỉ có trong tiếng Việt)
+                    String prefix = getString(R.string.task_date);
+                    txtDate.setText(prefix.isEmpty() ? formattedDate : prefix + " " + formattedDate);
+
+                    // Đổi màu nếu là quá khứ
                     if (selectedDate.isBefore(today)) {
                         txtDate.setTextColor(getResources().getColor(R.color.red));
                     } else {
@@ -282,7 +288,14 @@ public class TaskActivity extends  AppCompatActivity{
             });
 
             convertTask.setOnClickListener(v -> {
-                //Toast.makeText(TaskActivity.this, "Nhiệm vụ đã được chuyển thành ghi chú!", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(TaskActivity.this, NoteActivity.class);
+                intent.putExtra("title", titleInput.getText().toString());
+                intent.putExtra("content", contentInput.getText().toString());
+                intent.putExtra("noteId", taskId);
+                intent.putExtra("listId", listId);
+                intent.putExtra("categoryId", categoryId);
+                startActivity(intent);
+
                 bottomSheetDialog.dismiss();
             });
 

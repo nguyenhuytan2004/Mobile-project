@@ -243,6 +243,26 @@
     <string name="note_constant_reminder">Constant reminder</string>
     <string name="note_move">Move to</string>
 
+    <!--  Task  -->
+    <string name="task_date"></string>
+    <string name="task_month">Month</string>
+    <string name="task_repeat">Date and Repeat</string>
+    <string name="task_title">Title</string>
+    <string name="task_content">Content</string>
+    <string name="task_save">Save</string>
+    <string name="task_delete">Delete</string>
+    <string name="task_pin">Pin</string>
+    <string name="task_convert_to_note">Convert to note</string>
+    <string name="task_more">More</string>
+    <string name="task_date_and_reminder">Date and reminder</string>
+    <string name="task_time">Time</string>
+    <string name="task_reminder">Reminder</string>
+    <string name="task_none">None &gt;</string>
+    <string name="task_tag_hint">Input a tag</string>
+    <string name="task_done">Done</string>
+    <string name="task_constant_reminder">Constant reminder</string>
+    <string name="task_move">Move to</string>
+
     <!--  Focus  -->
     <string name="focus_start">Start</string>
     <string name="focus_setting">Focus setting</string>
