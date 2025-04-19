@@ -27,6 +27,10 @@ public class ShareTaskActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.share_tasks);
 
+        // Get user info
+        LoginSessionManager loginSessionManager = LoginSessionManager.getInstance(this);
+        int userId = loginSessionManager.getUserId();
+        
         // Initialize views
         ivMailShare = findViewById(R.id.ivMailShare);
         ivMessShare = findViewById(R.id.ivMessShare);

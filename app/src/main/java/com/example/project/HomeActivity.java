@@ -63,10 +63,9 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
         setContentView(R.layout.home);
 
         loginSessionManager = LoginSessionManager.getInstance(this);
-        if (!loginSessionManager.isLoggedIn()) {
-            Log.d("HomeActivity", "User not logged in, creating a session");
-            loginSessionManager.createSession(1);
-        }
+        /*if (!loginSessionManager.isLoggedIn()) {
+            loginSessionManager.createSession(1); // tạo giả user
+        }*/
         Log.d("HomeActivity", "User ID: " + loginSessionManager.getUserId());
 
         ReminderService.scheduleReminders(this);
@@ -446,18 +445,16 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
                         "FROM tbl_task t " +
                         "JOIN tbl_category c ON t.category_id = c.id " +
                         "LEFT JOIN tbl_task_reminder r ON t.id = r.task_id " +
-                        "WHERE (r.date LIKE ? OR r.date LIKE ? OR r.date LIKE ?)";
-
-                if (!searchKeyword.isEmpty()) {
-                    taskQuery += " AND (t.title LIKE ? OR t.content LIKE ?)";
-                }
+                        "WHERE t.user_id = ? AND (r.date LIKE ? OR r.date LIKE ? OR r.date LIKE ?)";
 
                 List<String> argsList = new ArrayList<>();
+                argsList.add(String.valueOf(userId)); // ✅ Thêm userId
                 argsList.add(todayFormatted + "%");
                 argsList.add("%" + todayFormatted + "%");
                 argsList.add("%" + todayPattern + "%");
 
                 if (!searchKeyword.isEmpty()) {
+                    taskQuery += " AND (t.title LIKE ? OR t.content LIKE ?)";
                     argsList.add("%" + searchKeyword + "%");
                     argsList.add("%" + searchKeyword + "%");
                 }
@@ -545,10 +542,11 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
                             "r.date, t.is_completed " +
                             "FROM tbl_task t " +
                             "LEFT JOIN tbl_task_reminder r ON t.id = r.task_id " +
-                            "WHERE t.category_id = ? AND t.is_completed = 0";
+                            "WHERE t.category_id = ? AND t.is_completed = 0 AND t.user_id = ?";
 
                     List<String> taskArgs = new ArrayList<>();
                     taskArgs.add(String.valueOf(categoryId));
+                    taskArgs.add(String.valueOf(userId));
 
                     if (!searchKeyword.isEmpty()) {
                         taskQuery += " AND (t.title LIKE ? OR t.content LIKE ?)";
