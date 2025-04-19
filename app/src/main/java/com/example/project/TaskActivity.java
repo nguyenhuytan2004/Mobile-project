@@ -569,7 +569,19 @@ public class TaskActivity extends  AppCompatActivity{
             int calculatedPriority = calculatePriority(title, contentInput.getText().toString(), db);
             taskValues.put("priority", calculatedPriority);
 
-            taskValues.put("category_id", Integer.parseInt(categoryId));
+            if (categoryId == null || categoryId.isEmpty()) {
+                Cursor categoryCursor = db.rawQuery("SELECT * FROM tbl_category WHERE list_id = ?", new String[]{listId});
+                if (categoryCursor.moveToFirst()) {
+                    taskValues.put("category_id", categoryCursor.getInt(categoryCursor.getColumnIndexOrThrow("id")));
+                }
+                categoryCursor.close();
+            } else {
+                try {
+                    taskValues.put("category_id", Integer.parseInt(categoryId));
+                } catch (NumberFormatException e) {
+                    Log.e("TaskSave", "Invalid categoryId: " + categoryId);
+                }
+            }
 
             Log.d("TaskSave", "Task Values:");
             Log.d("TaskSave", "Title: " + title);
