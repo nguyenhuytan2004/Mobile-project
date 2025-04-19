@@ -63,9 +63,9 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
         setContentView(R.layout.home); // Layout chính sau đăng nhập
 
         loginSessionManager = LoginSessionManager.getInstance(this);
-        if (!loginSessionManager.isLoggedIn()) {
+        /*if (!loginSessionManager.isLoggedIn()) {
             loginSessionManager.createSession(1); // tạo giả user
-        }
+        }*/
         Log.d("HomeActivity", "User ID: " + loginSessionManager.getUserId());
 
         ReminderService.scheduleReminders(this);

@@ -30,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
     FirebaseAuth auth;
     GoogleSignInClient googleSignInClient;
 
+    LoginSessionManager loginSessionManager;
+
     private final ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -93,6 +95,8 @@ public class MainActivity extends AppCompatActivity {
                                                 String query = "SELECT id FROM tbl_user WHERE email = ?";
                                                 cursor = db.rawQuery(query, new String[]{email});
 
+                                                int userId = -1;
+
                                                 if (cursor == null || !cursor.moveToFirst()) {
                                                     String insertQuery = "INSERT INTO tbl_user (email, isGoogle, is_premium) VALUES (?, ?, ?)";
                                                     SQLiteStatement stmt = db.compileStatement(insertQuery);
@@ -100,8 +104,14 @@ public class MainActivity extends AppCompatActivity {
                                                     stmt.bindLong(2, isGoogle ? 1 : 0);
                                                     stmt.bindLong(3, isPremium ? 1 : 0);
                                                     stmt.executeInsert();
+
+                                                    // Lấy lại userId sau khi insert
+                                                    cursor = db.rawQuery(query, new String[]{email});
+                                                    if (cursor.moveToFirst()) {
+                                                        userId = cursor.getInt(0);
+                                                    }
                                                 } else {
-                                                    // Cập nhật nếu cần (vd: từ free lên premium)
+                                                    userId = cursor.getInt(0);
                                                     String updateQuery = "UPDATE tbl_user SET isGoogle = ?, is_premium = ? WHERE email = ?";
                                                     SQLiteStatement stmt = db.compileStatement(updateQuery);
                                                     stmt.bindLong(1, isGoogle ? 1 : 0);
@@ -110,14 +120,17 @@ public class MainActivity extends AppCompatActivity {
                                                     stmt.executeUpdateDelete();
                                                 }
 
+                                                if (userId != -1) {
+                                                    // Gọi LoginSessionManager để tạo session
+                                                    LoginSessionManager.getInstance(MainActivity.this).createSession(userId);
+                                                }
+
                                             } catch (Exception e) {
                                                 e.printStackTrace();
                                             } finally {
                                                 if (cursor != null) cursor.close();
                                                 if (db != null) db.close();
                                             }
-
-                                            // Sau khi cập nhật DB -> chuyển sang HomeActivity
                                             runOnUiThread(() -> {
                                                 startActivity(new Intent(MainActivity.this, HomeActivity.class));
                                                 finish();
@@ -149,6 +162,8 @@ public class MainActivity extends AppCompatActivity {
         FirebaseApp.initializeApp(this);
         auth = FirebaseAuth.getInstance();
 
+        loginSessionManager = LoginSessionManager.getInstance(this);
+
         // Nếu đã đăng nhập -> chuyển thẳng đến HomeActivity
         if (auth.getCurrentUser() != null) {
             startActivity(new Intent(this, HomeActivity.class));
@@ -169,10 +184,10 @@ public class MainActivity extends AppCompatActivity {
             activityResultLauncher.launch(intent);
         });
 
-        // Đăng nhập Email (nếu có)
+        /*
         Button btnEmail = findViewById(R.id.btnLoginEmail);
         btnEmail.setOnClickListener(view ->
                 Toast.makeText(this, "Email login chưa được xử lý", Toast.LENGTH_SHORT).show()
-        );
+        );*/
     }
 }
