@@ -125,16 +125,20 @@ public class SingleMatrix extends AppCompatActivity implements TaskAdapter.TaskC
         }
 
         try {
-            // Use proper JOIN with task_reminder table to get reminder dates
+            // Get current user ID
+            LoginSessionManager loginSessionManager = LoginSessionManager.getInstance(this);
+            int userId = loginSessionManager.getUserId();
+            
+            // Use proper JOIN with task_reminder table to get reminder dates and filter by userId
             String query = "SELECT t.id, t.title, t.content, t.priority, r.date, " +
                   "t.is_completed, t.category_id " +
                   "FROM tbl_task t " +
                   "LEFT JOIN tbl_task_reminder r ON t.id = r.task_id " +
-                  "WHERE t.priority = ?";
+                  "WHERE t.priority = ? AND t.user_id = ?";
                   
-            Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(priority)});
+            Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(priority), String.valueOf(userId)});
             
-            Log.d("SingleMatrix", "Found " + cursor.getCount() + " tasks with priority " + priority);
+            Log.d("SingleMatrix", "Found " + cursor.getCount() + " tasks with priority " + priority + " for user " + userId);
             
             if (cursor.moveToFirst()) {
                 do {
