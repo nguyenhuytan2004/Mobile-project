@@ -133,6 +133,7 @@ CREATE TABLE "tbl_user" (
 	email TEXT NOT NULL,
 	isGoogle INTEGER DEFAULT 0,
 	is_premium INTEGER DEFAULT 0,
+	premium_expiration_date TEXT,
 	PRIMARY KEY("id" AUTOINCREMENT)
 );
 
@@ -153,17 +154,17 @@ CREATE TABLE "tbl_weights" (
 );
 
 INSERT INTO "android_metadata" VALUES ('en_US');
-INSERT INTO "tbl_user" VALUES (1,'alice@example.com',0,1);
+INSERT INTO "tbl_user" VALUES (1,'alice@example.com',0,0,NULL);
 
 INSERT INTO "tbl_user_information" VALUES (1, '', 'Nguyễn Văn Khoác', 'Nam', '27 - 08 - 2005');
 
 INSERT INTO tbl_list VALUES
-(1, 'None' , NULL),
+(1, 'none' , NULL),
 (2, 'Hôm nay', NULL),
 (3, 'Welcome', NULL);
 
 INSERT INTO tbl_category VALUES
-(1, 'None', 1),
+(1, 'none', 1),
 (2, 'Weekend', 3),
 (3, 'Daily work', 3);
 

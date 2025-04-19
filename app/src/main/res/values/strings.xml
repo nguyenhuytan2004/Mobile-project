@@ -303,5 +303,9 @@
     <string name="calendar_task_none">Không có nhiệm vụ cho ngày này</string>
     <string name="calendar_note_none">Không có ghi chú cho ngày này</string>
 
+    <string name="register_premium_success">Đã đăng ký premium cho 30 ngày</string>
+    <string name="extend_premium_success">Đã gia hạn premium thêm 30 ngày</string>
+
+
 </resources>
 

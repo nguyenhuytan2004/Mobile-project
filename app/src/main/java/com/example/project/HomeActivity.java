@@ -52,7 +52,7 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
 
     TextView tvWelcome;
     private LinearLayout categoryContainer;
-    private int currentListId = 3; // Default to Welcome list
+    private int currentListId = 3;
 
     private EditText searchBar;
     private String searchKeyword = "";
@@ -60,15 +60,17 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.home); // Layout chính sau đăng nhập
+        setContentView(R.layout.home);
 
         loginSessionManager = LoginSessionManager.getInstance(this);
         if (!loginSessionManager.isLoggedIn()) {
-            loginSessionManager.createSession(1); // tạo giả user
+            Log.d("HomeActivity", "User not logged in, creating a session");
+            loginSessionManager.createSession(1);
         }
         Log.d("HomeActivity", "User ID: " + loginSessionManager.getUserId());
 
         ReminderService.scheduleReminders(this);
+        DatabaseHelper.checkAndUpdatePremiumStatus(this, loginSessionManager.getUserId());
 
         // Ánh xạ UI
         fabAdd = findViewById(R.id.fab_add);

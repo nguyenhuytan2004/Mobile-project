@@ -304,4 +304,7 @@
     <string name="calendar_task_none">There are no task for this day</string>
     <string name="calendar_note_none">There are no note for this day</string>
 
+    <string name="register_premium_success">Subscribed to premium package for 30 days</string>
+    <string name="extend_premium_success">Premium extended for 30 days</string>
+
 </resources>

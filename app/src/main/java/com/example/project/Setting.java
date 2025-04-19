@@ -43,6 +43,11 @@ public class Setting extends Activity {
         if (DatabaseHelper.isPremiumUser(this)) {
             btnUpgrade.setText(getResources().getString(R.string.setting_extend_premium));
         }
+        btnUpgrade.setOnClickListener(v -> {
+            Intent intent = new Intent(Setting.this, PremiumRequestActivity.class);
+            startActivity(intent);
+        });
+
         profileLayout.setOnClickListener(v -> {
             Intent intent = new Intent(Setting.this, Profile.class);
             startActivity(intent);
