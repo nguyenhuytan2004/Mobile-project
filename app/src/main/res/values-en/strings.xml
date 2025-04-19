@@ -15,6 +15,7 @@
         <item>4 - Not important and Not urgent</item>
     </string-array>
 
+    <string name="client_id">814608883132-3rjf27ov6f0277opa59d1nuugvque1ov.apps.googleusercontent.com</string>
     <string name="user">User</string>
     
     <!-- Habit Gallery -->

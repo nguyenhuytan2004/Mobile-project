@@ -3,6 +3,11 @@ package com.example.project;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.firebase.auth.FirebaseAuth;
+
 public class LoginSessionManager {
     private static final String PREF_NAME = "UserSession";
     private static final String KEY_IS_LOGGED_IN = "isLoggedIn";
@@ -34,9 +39,23 @@ public class LoginSessionManager {
         return pref.getBoolean(KEY_IS_LOGGED_IN, false);
     }
 
-    public void logout() {
+    public void logout(Context context) {
         editor.clear();
         editor.commit();
+
+        // Đăng xuất khỏi FirebaseAuth nếu đang đăng nhập
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        if (auth.getCurrentUser() != null) {
+            auth.signOut();
+        }
+
+        // Đăng xuất khỏi Google SignIn nếu cần
+        GoogleSignInOptions options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(context.getString(R.string.client_id))
+                .requestEmail()
+                .build();
+        GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(context, options);
+        googleSignInClient.signOut(); // async nhưng không cần chờ ở đây
     }
 
     public int getUserId() {

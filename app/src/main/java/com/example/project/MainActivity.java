@@ -75,7 +75,9 @@ public class MainActivity extends AppCompatActivity {
                                     @Override
                                     public void onResponse(Call call, Response response) throws IOException {
                                         if (!response.isSuccessful()) {
-                                            runOnUiThread(() -> Toast.makeText(MainActivity.this, "Xác minh token thất bại", Toast.LENGTH_SHORT).show());
+                                            String errorBody = response.body().string();
+                                            Log.e("TOKEN_VERIFY_ERROR", "Response code: " + response.code() + " | Body: " + errorBody);
+                                            runOnUiThread(() -> Toast.makeText(MainActivity.this, "Xác minh token thất bại: " + response.code(), Toast.LENGTH_SHORT).show());
                                             return;
                                         }
 
