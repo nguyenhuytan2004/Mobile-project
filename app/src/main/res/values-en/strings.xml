@@ -294,6 +294,7 @@
     <string name="setting_date_time">Date &amp; Time</string>
     <string name="setting_sound_notification">Sound &amp; Notification</string>
     <string name="setting_general">General</string>
+    <string name="logout">Logout</string>
 
     <!--  Profile  -->
     <string name="profile_title">Profile</string>
@@ -324,5 +325,8 @@
     <string name="calendar_note">Note</string>
     <string name="calendar_task_none">There are no task for this day</string>
     <string name="calendar_note_none">There are no note for this day</string>
+
+    <string name="register_premium_success">Subscribed to premium package for 30 days</string>
+    <string name="extend_premium_success">Premium extended for 30 days</string>
 
 </resources>

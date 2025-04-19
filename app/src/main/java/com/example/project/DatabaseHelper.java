@@ -135,6 +135,50 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return getInstance(context).isPremiumUser(context, currentUserId);
     }
 
+    public static void checkAndUpdatePremiumStatus(Context context, int userId) {
+        SQLiteDatabase db = null;
+
+        try {
+            db = DatabaseHelper.getInstance(context).openDatabase();
+
+            // Query the premium expiration date
+            Cursor cursor = db.rawQuery(
+                    "SELECT premium_expiration_date FROM tbl_user WHERE id = ?",
+                    new String[]{String.valueOf(userId)}
+            );
+
+            if (cursor.moveToFirst()) {
+                String expirationDate = cursor.getString(0);
+
+                if (expirationDate != null && !expirationDate.isEmpty()) {
+                    // Parse the expiration date
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd - MM - yyyy", Locale.US);
+                    Date expiration = dateFormat.parse(expirationDate);
+                    Date currentDate = new Date();
+
+                    // Check if the premium has expired
+                    if (expiration != null && expiration.before(currentDate)) {
+                        Log.d(TAG, "Premium has expired for user ID: " + userId);
+                        // Update the user's premium status
+                        ContentValues values = new ContentValues();
+                        values.put("is_premium", 0);
+                        values.putNull("premium_expiration_date");
+
+                        db.update("tbl_user", values, "id = ?", new String[]{String.valueOf(userId)});
+                    }
+                }
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Error checking/updating premium status", e);
+        } finally {
+            if (db != null) {
+                DatabaseHelper.getInstance(context).closeDatabase();
+            }
+        }
+    }
+
     public void markTaskAsCompleted(int taskId, boolean isCompleted) {
         SQLiteDatabase db = null;
         try {

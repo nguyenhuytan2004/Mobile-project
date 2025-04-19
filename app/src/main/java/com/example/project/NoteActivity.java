@@ -138,14 +138,6 @@ public class NoteActivity extends AppCompatActivity {
                             listNameTxt.setText(listName);
 
                             Toast.makeText(this, getResources().getString(R.string.note_move) + ": " + listName + " / " + categoryName, Toast.LENGTH_SHORT).show();
-
-                            if (noteId != null && !noteId.equals("-1")) {
-                                db.execSQL("UPDATE tbl_note SET category_id = ? WHERE id = ?",
-                                        new Object[]{categoryId, noteId});
-                                db.execSQL("UPDATE tbl_category SET list_id = ? WHERE id = ?",
-                                        new Object[]{listId, categoryId});
-                            }
-
                             bottomSheetDialog.dismiss();
                         });
 

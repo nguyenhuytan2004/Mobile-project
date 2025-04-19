@@ -168,6 +168,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Nếu đã đăng nhập -> chuyển thẳng đến HomeActivity
         if (auth.getCurrentUser() != null) {
+            Log.d("MainActivity", "User đã đăng nhập: " + auth.getCurrentUser().getEmail());
             startActivity(new Intent(this, HomeActivity.class));
             finish();
         }

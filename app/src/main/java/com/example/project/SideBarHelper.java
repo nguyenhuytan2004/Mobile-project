@@ -348,6 +348,7 @@ public class SideBarHelper {
     public static void dismissSideBar() {
         if (dialog != null && dialog.isShowing()) {
             dialog.dismiss();
+            dialog = null;
         }
     }
 
