@@ -179,6 +179,9 @@ public class SideBarHelper {
                 } else {
                     nameTextView.setText("Người dùng");
                 }
+            } else {
+                avatarImage.setImageResource(R.drawable.ic_user_avatar);
+                nameTextView.setText("User");
             }
             cursor.close();
         } catch (Exception e) {

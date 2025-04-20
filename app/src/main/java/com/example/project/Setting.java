@@ -127,6 +127,9 @@ public class Setting extends Activity {
                 } else {
                     nameTextView.setText(getResources().getString(R.string.user));
                 }
+            } else {
+                avatarImage.setImageResource(R.drawable.ic_user_avatar);
+                nameTextView.setText("User");
             }
             cursor.close();
         } catch (Exception e) {

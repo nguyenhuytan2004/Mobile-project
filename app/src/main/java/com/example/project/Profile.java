@@ -116,6 +116,11 @@ public class Profile extends Activity {
                      ? getResources().getString(R.string.profile_male)
                      : getResources().getString(R.string.profile_female));
             birthdayText.setText(cursor.getString(cursor.getColumnIndexOrThrow("birthday")));
+        } else {
+            avatarImage.setImageResource(R.drawable.ic_user_avatar);
+            nameText.setText("");
+            sexText.setText("");
+            birthdayText.setText("");
         }
         cursor.close();
     }
@@ -359,6 +364,13 @@ public class Profile extends Activity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+            }
+
+            Cursor cursor = db.rawQuery("SELECT * FROM tbl_user_information WHERE user_id = ?",
+                    new String[]{String.valueOf(sessionManager.getUserId())});
+            if (!cursor.moveToFirst()) {
+                db.execSQL("INSERT INTO tbl_user_information (user_id, sex) VALUES (?, 'Nam')",
+                        new Object[]{sessionManager.getUserId()});
             }
 
             int rowsAffected = db.update("tbl_user_information",
