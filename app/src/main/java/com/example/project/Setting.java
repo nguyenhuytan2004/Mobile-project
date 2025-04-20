@@ -78,7 +78,7 @@ public class Setting extends Activity {
             }
         });
         btnLogout.setOnClickListener(v -> {
-            sessionManager.logout();
+            sessionManager.logout(Setting.this); // Truyền context vào logout()
 
             Intent intent = new Intent(Setting.this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Clear activity stack
@@ -86,6 +86,7 @@ public class Setting extends Activity {
 
             finish();
         });
+
     }
 
     @Override
