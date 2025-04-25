@@ -45,7 +45,7 @@ public class LoginSessionManager {
         return pref.getInt(KEY_USER_ID, -1);
     }
 
-    public String getUserName() {
+    public String getUsername() {
         return pref.getString(KEY_USER_NAME, "");
     }
 

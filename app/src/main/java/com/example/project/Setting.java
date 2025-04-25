@@ -119,26 +119,27 @@ public class Setting extends Activity {
                 } else {
                     avatarImage.setImageResource(R.drawable.ic_user_avatar);
                 }
-
-                // Load name
-                String fullName = cursor.getString(cursor.getColumnIndexOrThrow("full_name"));
-                if (fullName != null && !fullName.isEmpty()) {
-                    nameTextView.setText(fullName);
-                } else {
-                    nameTextView.setText(getResources().getString(R.string.user));
-                }
             } else {
                 avatarImage.setImageResource(R.drawable.ic_user_avatar);
-                nameTextView.setText("User");
             }
+
+            String displayName = sessionManager.getUsername();
+            if (displayName != null && !displayName.isEmpty()) {
+                nameTextView.setText(displayName);
+            } else {
+                nameTextView.setText(getResources().getString(R.string.user));
+            }
+
             cursor.close();
         } catch (Exception e) {
             e.printStackTrace();
             Log.d("Setting", "Lỗi khi tải thông tin người dùng");
+            nameTextView.setText(getResources().getString(R.string.user));
         } finally {
             if (db != null) {
                 DatabaseHelper.getInstance(this).closeDatabase();
             }
         }
     }
+
 }

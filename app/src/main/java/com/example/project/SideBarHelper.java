@@ -53,16 +53,14 @@ public class SideBarHelper {
         }
     }
     public static void showSideBar(Context context, SideBarCallback callback, TaskProvider taskProvider) {
-        // Create dialog if it doesn't exist
         if (dialog == null || !dialog.isShowing()) {
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
             View view = LayoutInflater.from(context).inflate(R.layout.side_bar, null);
             builder.setView(view);
-            
+
             dialog = builder.create();
             dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-            
-            // Find views in the sidebar layout
+
             ImageView btnSetting = view.findViewById(R.id.btnSetting);
             LinearLayout categorySection = view.findViewById(R.id.category_section);
             LinearLayout btnAddList = view.findViewById(R.id.btn_add_list);
@@ -70,61 +68,44 @@ public class SideBarHelper {
             imgUserProfile = view.findViewById(R.id.img_user_profile);
             tvUserName = view.findViewById(R.id.tv_user_name);
 
-            // Load user profile data
             loadUserProfileData(context, imgUserProfile, tvUserName);
             needsProfileRefresh = false;
 
             btnSetting.setOnClickListener(v -> {
-                // Open settings activity
                 Intent intent = new Intent(context, Setting.class);
                 context.startActivity(intent);
             });
-            
-            // Load lists from database
+
             List<String> lists = getListsFromDatabase(context);
             addCategoryItems(context, categorySection, lists, callback);
-            
-            
+
             btnAddList.setOnClickListener(v -> {
-                // Create dialog to get new list name
                 final EditText input = new EditText(context);
                 input.setHint(context.getString(R.string.sidebar_new_list_hint));
                 input.setTextColor(Color.WHITE);
                 input.setHintTextColor(Color.GRAY);
-                
+
                 AlertDialog.Builder addListDialog = new AlertDialog.Builder(context);
                 addListDialog.setTitle(context.getString(R.string.sidebar_add_list_title));
                 addListDialog.setView(input);
-                
-                // Add buttons
+
                 addListDialog.setPositiveButton(context.getString(R.string.sidebar_btn_add), (dialogInterface, which) -> {
                     String listName = input.getText().toString().trim();
                     if (!listName.isEmpty()) {
-                        // Add list to database
                         int newListId = addListToDatabase(context, listName);
                         if (newListId != -1) {
-                            Toast.makeText(context, 
-                                context.getString(R.string.sidebar_list_added, listName), 
-                                Toast.LENGTH_SHORT).show();
-                            
-                            // Refresh sidebar
+                            Toast.makeText(context, context.getString(R.string.sidebar_list_added, listName), Toast.LENGTH_SHORT).show();
                             List<String> updatedLists = getListsFromDatabase(context);
                             addCategoryItems(context, categorySection, updatedLists, callback);
                         } else {
-                            Toast.makeText(context, 
-                                context.getString(R.string.sidebar_list_add_failed), 
-                                Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, context.getString(R.string.sidebar_list_add_failed), Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        Toast.makeText(context, 
-                            context.getString(R.string.sidebar_list_name_empty), 
-                            Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, context.getString(R.string.sidebar_list_name_empty), Toast.LENGTH_SHORT).show();
                     }
                 });
-                
-                addListDialog.setNegativeButton(context.getString(R.string.sidebar_btn_cancel), 
-                    (dialogInterface, which) -> dialogInterface.cancel());
-                
+
+                addListDialog.setNegativeButton(context.getString(R.string.sidebar_btn_cancel), (dialogInterface, which) -> dialogInterface.cancel());
                 addListDialog.show();
             });
         } else if (needsProfileRefresh) {
@@ -143,49 +124,54 @@ public class SideBarHelper {
         dialog.getWindow().setAttributes(params);
     }
 
+
+
     private static void loadUserProfileData(Context context, ImageView avatarImage, TextView nameTextView) {
         SQLiteDatabase db = null;
         LoginSessionManager sessionManager = LoginSessionManager.getInstance(context);
+        String displayName = sessionManager.getUsername();
 
         try {
             db = DatabaseHelper.getInstance(context).openDatabase();
-            Cursor cursor = db.rawQuery("SELECT * FROM tbl_user_information WHERE user_id = ?",
+            Cursor cursor = db.rawQuery("SELECT full_name, avatar FROM tbl_user_information WHERE user_id = ?",
                     new String[]{String.valueOf(sessionManager.getUserId())});
 
             if (cursor.moveToFirst()) {
-                // Load avatar
+                // Avatar
                 String avatarPath = cursor.getString(cursor.getColumnIndexOrThrow("avatar"));
                 if (avatarPath != null && !avatarPath.isEmpty()) {
-                    try {
-                        File imgFile = new File(avatarPath);
-                        if (imgFile.exists()) {
-                            Uri imageUri = Uri.fromFile(imgFile);
-                            avatarImage.setImageURI(imageUri);
-                            avatarImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                        } else {
-                            avatarImage.setImageResource(R.drawable.ic_user_avatar);
-                        }
-                    } catch (Exception e) {
+                    File imgFile = new File(avatarPath);
+                    if (imgFile.exists()) {
+                        Uri imageUri = Uri.fromFile(imgFile);
+                        avatarImage.setImageURI(imageUri);
+                        avatarImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                    } else {
                         avatarImage.setImageResource(R.drawable.ic_user_avatar);
                     }
                 } else {
                     avatarImage.setImageResource(R.drawable.ic_user_avatar);
                 }
 
-                // Load name
-                String fullName = cursor.getString(cursor.getColumnIndexOrThrow("full_name"));
-                if (fullName != null && !fullName.isEmpty()) {
-                    nameTextView.setText(fullName);
+                if (displayName != null && !displayName.isEmpty()) {
+                    nameTextView.setText(displayName);
                 } else {
-                    nameTextView.setText("Người dùng");
+                    String fullName = cursor.getString(cursor.getColumnIndexOrThrow("full_name"));
+                    if (fullName != null && !fullName.isEmpty()) {
+                        nameTextView.setText(fullName);
+                    } else {
+                        nameTextView.setText(R.string.user);
+                    }
                 }
             } else {
                 avatarImage.setImageResource(R.drawable.ic_user_avatar);
-                nameTextView.setText("User");
+                nameTextView.setText(displayName != null && !displayName.isEmpty() ? displayName : "User");
             }
+
             cursor.close();
         } catch (Exception e) {
             e.printStackTrace();
+            avatarImage.setImageResource(R.drawable.ic_user_avatar);
+            nameTextView.setText(displayName != null && !displayName.isEmpty() ? displayName : "User");
             Log.e("SideBarHelper", "Lỗi khi tải thông tin người dùng");
         } finally {
             if (db != null) {
