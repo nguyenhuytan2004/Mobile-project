@@ -30,8 +30,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -51,6 +53,8 @@ public class TaskActivity extends  AppCompatActivity{
     String taskId, listId, categoryId;
 
     private String reminderTime = "";
+
+    private String reminderDateRaw = "";
     private int reminderDaysBefore = 0;
     private boolean reminderRepeatEnabled = false;
 
@@ -231,39 +235,36 @@ public class TaskActivity extends  AppCompatActivity{
                 public void onReminderSet(String date, String time, int daysBefore, boolean isRepeat) {
                     if (date.isEmpty()) {
                         txtDate.setText("");
+                        reminderDateRaw = "";
                         reminderTime = "";
                         reminderDaysBefore = 0;
                         reminderRepeatEnabled = false;
                         return;
                     }
 
-                    // Lưu các thiết lập
+                    // Lưu cài đặt
+                    reminderDateRaw = date; // dd/MM/yyyy
                     reminderTime = time;
                     reminderDaysBefore = daysBefore;
                     reminderRepeatEnabled = isRepeat;
 
-                    // Parse và format ngày theo Locale hệ thống
+                    // Parse để hiển thị
                     LocalDate selectedDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
                     LocalDate today = LocalDate.now();
-
 
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMMM", Locale.getDefault());
                     String formattedDate = selectedDate.format(formatter);
 
-                    // Thêm prefix "Ngày" nếu có (chỉ có trong tiếng Việt)
-                    String prefix = getString(R.string.task_date);
+                    String prefix = getString(R.string.task_date); // "Ngày"
                     txtDate.setText(prefix.isEmpty() ? formattedDate : prefix + " " + formattedDate);
 
-                    // Đổi màu nếu là quá khứ
-                    if (selectedDate.isBefore(today)) {
-                        txtDate.setTextColor(getResources().getColor(R.color.red));
-                    } else {
-                        txtDate.setTextColor(getResources().getColor(R.color.statistics_blue));
-                    }
+                    txtDate.setTextColor(getResources().getColor(
+                            selectedDate.isBefore(today) ? R.color.red : R.color.statistics_blue));
                 }
             });
             dialog.show(getSupportFragmentManager(), "SetReminderDialogFragment");
         });
+
 
         btnBack.setOnClickListener(view -> {
             finish();
@@ -456,34 +457,36 @@ public class TaskActivity extends  AppCompatActivity{
             titleInput.setText(cursor.getString(cursor.getColumnIndexOrThrow("title")));
             contentInput.setText(cursor.getString(cursor.getColumnIndexOrThrow("content")));
 
-            String date = "";
+            String dateStr = "";
             int dateColumnIndex = cursor.getColumnIndexOrThrow("date");
             if (!cursor.isNull(dateColumnIndex)) {
-                date = cursor.getString(dateColumnIndex);
+                dateStr = cursor.getString(dateColumnIndex);
             }
 
-            txtDate.setText(date);
+            if (!dateStr.isEmpty()) {
+                try {
+                    LocalDate taskDate = LocalDate.parse(dateStr);
 
-            if (!date.isEmpty()) {
-                Pattern pattern = Pattern.compile("(\\d+)");
-                Matcher matcher = pattern.matcher(date);
+                    String monthText = getString(R.string.task_month);
+                    String formattedDate = taskDate.getDayOfMonth() + " " + monthText + " " + taskDate.getMonthValue();
 
-                int day = 0, month = 0;
-                if (matcher.find()) {
-                    day = Integer.parseInt(matcher.group(1));
-                }
-                if (matcher.find()) {
-                    month = Integer.parseInt(matcher.group(1));
-                }
+                    txtDate.setText(formattedDate);
 
-                LocalDate taskDate = LocalDate.of(LocalDate.now().getYear(), month, day);
-                if (taskDate.isBefore(LocalDate.now())) {
+                    // Đổi màu theo ngày quá hạn
+                    if (taskDate.isBefore(LocalDate.now())) {
+                        txtDate.setTextColor(getResources().getColor(R.color.red));
+                    } else {
+                        txtDate.setTextColor(getResources().getColor(R.color.statistics_blue));
+                    }
+
+                } catch (DateTimeParseException e) {
+                    Log.e("DateParse", "Lỗi khi parse ngày: " + dateStr, e);
+                    txtDate.setText("Ngày không hợp lệ");
                     txtDate.setTextColor(getResources().getColor(R.color.red));
-                } else {
-                    txtDate.setTextColor(getResources().getColor(R.color.statistics_blue));
                 }
-            }else{
+            } else {
                 txtDate.setText("Ngày & Lặp lại");
+                txtDate.setTextColor(getResources().getColor(R.color.statistics_blue));
             }
 
             // Load tags
@@ -649,42 +652,58 @@ public class TaskActivity extends  AppCompatActivity{
                     }
                 }
 
+
                 // Lưu cài đặt nhắc nhở
-                String reminderDate = txtDate.getText().toString();
+                String reminderDateDisplay = txtDate.getText().toString();
+                String reminderDate = reminderDateRaw;
+                Log.d("TaskActivity", "Reminder date input: " + reminderDate);
+
+                String dayPrefix = getString(R.string.task_date);    // Ví dụ "Ngày" hoặc "" nếu tiếng Anh
+                String monthPrefix = getString(R.string.task_month); // Ví dụ "tháng" hoặc "Month"
+
                 if (!reminderDate.isEmpty()) {
                     ContentValues reminderValues = new ContentValues();
                     reminderValues.put("task_id", taskId);
 
-                    // Parse date từ "Ngày X, tháng Y"
-                    String[] parts = reminderDate.split(", ");
-                    if (parts.length == 2) {
-                        String day = parts[0].replace("Ngày ", "");
-                        String month = parts[1].replace("tháng ", "");
-                        reminderValues.put("date", String.format("Ngày %d, tháng %d",
-                                Integer.parseInt(day), Integer.parseInt(month)));
+                    try {
+                        // Parse lại để lưu dạng chuẩn yyyy-MM-dd
+                        LocalDate parsedDate = LocalDate.parse(reminderDate, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+                        String formattedDate = parsedDate.format(DateTimeFormatter.ISO_LOCAL_DATE); // yyyy-MM-dd
+                        reminderValues.put("date", formattedDate);
+                        Log.d("TaskActivity", "Lưu ngày nhắc nhở: " + formattedDate);
+                    } catch (Exception e) {
+                        Log.e("TaskActivity", "Lỗi khi parse date reminder: " + e.getMessage());
                     }
 
                     reminderValues.put("time", reminderTime);
                     reminderValues.put("days_before", reminderDaysBefore);
                     reminderValues.put("is_repeat", reminderRepeatEnabled ? 1 : 0);
 
-                    db.insert("tbl_task_reminder", null, reminderValues);
+                    long insertResult = db.insert("tbl_task_reminder", null, reminderValues);
+                    if (insertResult != -1) {
+                        Log.d("TaskActivity", "Reminder lưu thành công, ID: " + insertResult);
+                    } else {
+                        Log.e("TaskActivity", "Lưu reminder thất bại.");
+                    }
 
-                    // Nếu bạn có ReminderService riêng cho Task thì đặt ở đây
                     ReminderService.scheduleTaskReminder(
                             this,
                             taskId,
                             title,
-                            reminderDate,
+                            reminderDateDisplay, // vẫn giữ giao diện đẹp
                             reminderTime,
                             reminderDaysBefore,
                             reminderRepeatEnabled
                     );
-
+                }
+                else {
+                    Log.d("TaskActivity", "Không có ngày nhắc nhở được nhập.");
                 }
 
                 db.setTransactionSuccessful();
                 Log.d("TaskActivity", taskExists ? "Task updated successfully" : "Task created successfully");
+
+
             }
         } catch (Exception e) {
             Log.e("TaskActivity", "Error saving task", e);

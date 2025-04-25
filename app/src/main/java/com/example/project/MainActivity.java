@@ -24,6 +24,7 @@ import okhttp3.*;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -40,14 +41,18 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         GoogleSignInAccount signInAccount = accountTask.getResult(ApiException.class);
                         AuthCredential credential = GoogleAuthProvider.getCredential(signInAccount.getIdToken(), null);
-                        System.out.println("MainActivity ID Token: " + signInAccount.getIdToken());
 
                         auth.signInWithCredential(credential).addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
                                 String idToken = signInAccount.getIdToken();
 
-                                //OkHttpClient client = SecureHttpClient.getSecureClient(MainActivity.this);
-                                OkHttpClient client = new OkHttpClient();
+                                // hạn chế time out
+                                OkHttpClient client = new OkHttpClient.Builder()
+                                        .connectTimeout(60, TimeUnit.SECONDS)
+                                        .writeTimeout(60, TimeUnit.SECONDS)
+                                        .readTimeout(90, TimeUnit.SECONDS)
+                                        .build();
+
                                 JSONObject json = new JSONObject();
                                 try {
                                     json.put("idToken", idToken);
