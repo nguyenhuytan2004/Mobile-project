@@ -64,7 +64,7 @@ public class HomeActivity extends AppCompatActivity implements SideBarHelper.Sid
 
         loginSessionManager = LoginSessionManager.getInstance(this);
         if (!loginSessionManager.isLoggedIn()) {
-            loginSessionManager.createSession(1); // tạo giả user
+            loginSessionManager.createSession(1,"anonymous"); // tạo giả user
         }
         Log.d("HomeActivity", "User ID: " + loginSessionManager.getUserId());
 

@@ -123,8 +123,14 @@ public class MainActivity extends AppCompatActivity {
                                                 }
 
                                                 if (userId != -1) {
-                                                    // Gọi LoginSessionManager để tạo session
-                                                    LoginSessionManager.getInstance(MainActivity.this).createSession(userId);
+                                                    if (userId != -1) {
+                                                        // Lấy tên người dùng từ Firebase
+                                                        FirebaseUser firebaseUser = auth.getCurrentUser();
+                                                        String displayName = (firebaseUser != null) ? firebaseUser.getDisplayName() : "";
+
+                                                        // Tạo session với tên người dùng
+                                                        LoginSessionManager.getInstance(MainActivity.this).createSession(userId, displayName);
+                                                    }
                                                 }
 
                                             } catch (Exception e) {
